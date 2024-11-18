@@ -9,7 +9,7 @@ const CORES = {
   CINZA_CLARO: "#f0f0f0",
   BRANCO: "#FFFFFF",
   PRETO: "#000000",
-  BACKGROUND_GRADIENT: "linear-gradient(to right, #777777, #E2E1E0)",
+  BACKGROUND_GRADIENT: "linear-gradient(to right, #777777, #868686)",
   BACKGROUND_GRADIENT_ALT: "linear-gradient(to right, #D4D0CA, #E2E1E0)",
   AMARELO: "#FFC300",
 };

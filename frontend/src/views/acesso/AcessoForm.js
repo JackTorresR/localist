@@ -1,9 +1,9 @@
-import Estilos from "../../styles/Styles";
 import { useState } from "react";
 import { Box, Card, Paper, Typography } from "@mui/material";
 import CORES from "../../styles/Cores";
 import Formulario from "../../components/Formularios/Formulario";
 import { acessarSistema } from "../../database/dbAuth";
+import Estilos from "../../styles/Styles";
 
 const AcessoForm = () => {
   const [dados, setDados] = useState({});
@@ -34,7 +34,14 @@ const AcessoForm = () => {
 
   return (
     <div>
-      <div style={Estilos.containerPrincipal}>
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          height: "97vh",
+          ...Estilos.containerFlexCentralizado,
+        }}
+      >
         <Card
           sx={{
             width: { xs: "80%", sm: "50%", md: "35%" },
@@ -42,6 +49,7 @@ const AcessoForm = () => {
             paddingBottom: 0,
             overflow: "unset",
             position: "relative",
+            backgroundColor: CORES.CINZA_PADRAO,
           }}
         >
           <Box
