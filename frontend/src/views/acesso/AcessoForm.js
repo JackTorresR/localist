@@ -34,14 +34,7 @@ const AcessoForm = () => {
 
   return (
     <div>
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          height: "97vh",
-          ...Estilos.containerFlexCentralizado,
-        }}
-      >
+      <div style={Estilos.containerPrincipal}>
         <Card
           sx={{
             width: { xs: "80%", sm: "50%", md: "35%" },

@@ -19,13 +19,12 @@ const sombraTexto = {
 
 const Estilos = {
   containerPrincipal: {
-    margin: 40,
-    padding: 10,
-    height: "80vh",
+    flex: 1,
     display: "flex",
-    borderRadius: 5,
-    backgroundColor: CORES.BRANCO,
+    height: "97vh",
+    justifyContent: "center",
   },
+  clicavel: { cursor: "pointer" },
   containerModal: {
     ...containerFlexCentralizado,
     ...sombraContainer,
