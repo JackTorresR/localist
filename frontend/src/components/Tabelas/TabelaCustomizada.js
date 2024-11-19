@@ -38,13 +38,18 @@ const TabelaCustomizada = (props = {}) => {
     (state) => state?.parametroBusca?.[entidade] || {}
   );
 
+  const parametrosGerais = (pag) => ({
+    ...parametrosBusca,
+    offset: pag * limiteItemsPorPagina,
+  });
+
   const infosPaginacao = gerarInformacoesPaginacao(
     {
       quantidade,
       paginaAtual: pagina,
-      alterarPagina: (pag) =>
+      alterarPagina: async (pag) =>
         acao
-          ? acao({ ...parametrosBusca, offset: pag * limiteItemsPorPagina })
+          ? await acao(parametrosGerais(pag))
           : toast.error("Ação não informada!"),
     } || {}
   );

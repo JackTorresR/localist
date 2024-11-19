@@ -52,12 +52,21 @@ const criarCaixaArquivo = async (req, res) => {
 
 const listarCaixasArquivos = async (req, res) => {
   try {
-    const { offset = 0, limit = 15 } = req.query;
+    const { offset = 0, limit = 15, ...params } = req.query;
     const offsetInt = parseInt(offset, 10);
     const limitInt = parseInt(limit, 10);
 
-    const quantidade = await CaixaArquivo.countDocuments();
-    const lista = await CaixaArquivo.find({}, "-__v")
+    const camposPermitidos = ["situacao"];
+
+    const filtro = {};
+    for (const key of camposPermitidos) {
+      if (params[key] !== undefined) {
+        filtro[key] = new RegExp(params[key], "i");
+      }
+    }
+
+    const quantidade = await CaixaArquivo.countDocuments(filtro);
+    const lista = await CaixaArquivo.find(filtro, "-__v")
       .skip(offsetInt)
       .limit(limitInt);
 

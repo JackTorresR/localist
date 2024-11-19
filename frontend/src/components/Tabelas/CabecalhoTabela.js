@@ -32,31 +32,43 @@ const CabecalhoTabela = (props = {}) => {
           width: "100%",
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
         }}
       >
-        {exibirFiltro && (
-          <IoFilter
-            style={Estilos.clicavel}
-            size={50}
-            onClick={() =>
-              onFilter ? onFilter() : toast.error("🚧 Em construção!")
-            }
-          />
-        )}
-        <div style={{ ...Estilos.estiloLinhaLinha, textAlign: "center" }}>
+        <div style={{ width: 50, height: 50 }}>
+          {exibirFiltro && (
+            <IoFilter
+              style={Estilos.clicavel}
+              size={50}
+              onClick={() =>
+                onFilter ? onFilter() : toast.error("🚧 Em construção!")
+              }
+            />
+          )}
+        </div>
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            textAlign: "center",
+            flexDirection: "column",
+          }}
+        >
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
             {titulo}
           </Typography>
           <Typography variant="h6">{quantidade} registros</Typography>
         </div>
-        {exibirBotaoAdicionar && (
-          <TiPlus
-            style={Estilos.clicavel}
-            size={50}
-            onClick={() => (onAdd ? onAdd() : toast.error("🚧 Em construção!"))}
-          />
-        )}
+        <div style={{ width: 50, height: 50 }}>
+          {exibirBotaoAdicionar && (
+            <TiPlus
+              style={Estilos.clicavel}
+              size={50}
+              onClick={() =>
+                onAdd ? onAdd() : toast.error("🚧 Em construção!")
+              }
+            />
+          )}
+        </div>
       </Box>
     </Box>
   );

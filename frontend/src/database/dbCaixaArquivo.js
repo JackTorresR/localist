@@ -1,18 +1,30 @@
-import { dadoExiste, dispatcher, gerarNomeSemPontuacao } from "../utils/utils"; 
+import { dadoExiste, dispatcher, gerarNomeSemPontuacao } from "../utils/utils";
 import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
 import { toast } from "react-hot-toast";
 import configs from "../config/config";
-import { detalharCaixaArquivo, limparCaixaArquivoDetalhe } from "../redux/acoes/acoesCaixaArquivo";
+import {
+  detalharCaixaArquivo,
+  limparCaixaArquivoDetalhe,
+} from "../redux/acoes/acoesCaixaArquivo";
 
 const prefixo = "caixaArquivo";
 
 export const getCaixasArquivo = async (params = {}) => {
-  const { offset = 0, limite = limiteItemsPorPagina, ...outrosParams } = params;
+  const {
+    offset = 0,
+    listarNotificacoes = false,
+    limite = limiteItemsPorPagina,
+    ...outrosParams
+  } = params;
 
   limparCaixaArquivoDetalhe();
 
   const searchParams = new URLSearchParams({ offset, limit: limite });
+
+  if (listarNotificacoes) {
+    searchParams.append("situacao", "Aguardando descarte");
+  }
 
   Object.entries(outrosParams).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
@@ -36,7 +48,8 @@ export const getCaixasArquivo = async (params = {}) => {
 
     const pagina = offset / limite;
 
-    dispatcher(`${prefixo}/LISTAR`, { lista, pagina, quantidade });
+    const prefixoUtilizado = listarNotificacoes ? "notificacao" : prefixo;
+    dispatcher(`${prefixoUtilizado}/LISTAR`, { lista, pagina, quantidade });
 
     const filtrouAchouSoUm =
       Object.keys(outrosParams)?.length > 0 && quantidade === 1;
@@ -48,6 +61,9 @@ export const getCaixasArquivo = async (params = {}) => {
     verificarPorErros(erro);
   }
 };
+
+export const getNotificacoes = async (params = {}) =>
+  getCaixasArquivo({ ...params, listarNotificacoes: true });
 
 export const getCaixaArquivo = async (id) => {
   try {
@@ -153,7 +169,9 @@ export const removerCaixaArquivo = async (id) => {
     await getCaixasArquivo();
     limparCaixaArquivoDetalhe();
 
-    toast.success(resultado.mensagem || "Caixa de arquivo removida com sucesso!");
+    toast.success(
+      resultado.mensagem || "Caixa de arquivo removida com sucesso!"
+    );
   } catch (erro) {
     verificarPorErros(erro);
   }
