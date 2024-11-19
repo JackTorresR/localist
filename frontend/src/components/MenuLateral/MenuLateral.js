@@ -120,10 +120,9 @@ const MenuLateral = () => {
           {acoesRapidas.map(
             (item, index) =>
               item?.descricao && (
-                <TooltipAplicavel titulo={item?.descricao}>
+                <TooltipAplicavel titulo={item?.descricao} key={index}>
                   <ListItem
                     button={1}
-                    key={index}
                     style={Estilos.clicavel}
                     onClick={() =>
                       item?.acao
