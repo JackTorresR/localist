@@ -21,6 +21,7 @@ export const dadoExiste = (dado) => {
     const dadoValido =
       dado !== "" &&
       dado?.trim() !== "" &&
+      dado?.trim() !== "---" &&
       dado?.toUpperCase() !== "NÃO INFORMADO" &&
       dado?.toUpperCase() !== "NAO INFORMADO" &&
       dado?.toUpperCase() !== "NI" &&
@@ -69,3 +70,27 @@ export const mascaras = { cpf: "###.###.###-##" };
 
 export const separarPrimeiroNome = (nome = "") =>
   nome?.toString()?.trim()?.split(" ")?.[0];
+
+export const calcularTempo = (dias) => {
+  const anos = Math.floor(dias / 365);
+  dias = dias % 365;
+
+  const meses = Math.floor(dias / 30);
+  dias = dias % 30;
+
+  let resultado = [];
+
+  if (anos > 0) resultado.push(`${anos} Ano${anos > 1 ? "s" : ""}`);
+  if (meses > 0) resultado.push(`${meses} M${meses > 1 ? "eses" : "ês"}`);
+  if (dias > 0) resultado.push(`${dias} Dia${dias > 1 ? "s" : ""}`);
+
+  if (resultado.length > 1) {
+    return (
+      resultado.slice(0, -1).join(", ") +
+      " e " +
+      resultado[resultado.length - 1]
+    );
+  }
+
+  return resultado.length ? resultado.join("") : "0 Dia";
+};

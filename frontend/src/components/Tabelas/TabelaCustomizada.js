@@ -16,6 +16,7 @@ import CORES from "../../styles/Cores";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
+import { dadoExiste } from "../../utils/utils";
 
 const TabelaCustomizada = (props = {}) => {
   const {
@@ -90,11 +91,19 @@ const TabelaCustomizada = (props = {}) => {
           <TableBody>
             {lista.map((item, index) => (
               <TableRow key={`linha-${index}`}>
-                {colunas.map((coluna, colIndex) => (
-                  <TableCell key={`dado-coluna-${colIndex}`}>
-                    {item?.[coluna?.valor || coluna?.nome] || "-"}
-                  </TableCell>
-                ))}
+                {colunas.map((coluna, colIndex) => {
+                  let dado = item?.[coluna?.valor || coluna?.nome] || "---";
+                  if (coluna?.formato) {
+                    const infoFormatacao = dadoExiste(dado) ? dado : item;
+                    dado = coluna?.formato(infoFormatacao);
+                  }
+
+                  return (
+                    <TableCell key={`dado-coluna-${colIndex}`}>
+                      {dado}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             ))}
           </TableBody>
