@@ -7,20 +7,48 @@ import {
   TableRow,
   Box,
 } from "@mui/material";
-import Paginacao, { gerarInformacoesPaginacao } from "./Paginacao";
+import Paginacao, {
+  gerarInformacoesPaginacao,
+  limiteItemsPorPagina,
+} from "./Paginacao";
 import CabecalhoTabela from "./CabecalhoTabela";
 import CORES from "../../styles/Cores";
-import { useState } from "react";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 const TabelaCustomizada = (props = {}) => {
-  const [paginaAtual, setPaginaAtual] = useState(props?.pagina || 0);
-  const { lista = [], quantidade = 0, colunas = [] } = props;
+  const {
+    lista = [],
+    pagina = 0,
+    acao = null,
+    colunas = [],
+    quantidade = 0,
+    entidade = null,
+  } = props;
 
-  const { inicioLista, fimLista, listaPaginas } = gerarInformacoesPaginacao({
-    quantidade,
-    paginaAtual,
-    alterarPagina: (p) => setPaginaAtual(p),
-  });
+  useEffect(() => {
+    const fetchData = async () => (acao ? acao() : null);
+
+    fetchData();
+  }, [acao]);
+
+  const parametrosBusca = useSelector(
+    (state) => state?.parametroBusca?.[entidade] || {}
+  );
+
+  const infosPaginacao = gerarInformacoesPaginacao(
+    {
+      quantidade,
+      paginaAtual: pagina,
+      alterarPagina: (pag) =>
+        acao
+          ? acao({ ...parametrosBusca, offset: pag * limiteItemsPorPagina })
+          : toast.error("Ação não informada!"),
+    } || {}
+  );
+
+  const { listaPaginas } = infosPaginacao;
 
   return (
     <Box sx={{ mt: 4, borderRadius: "8px", boxShadow: 3 }}>
@@ -60,7 +88,7 @@ const TabelaCustomizada = (props = {}) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {lista?.slice(inicioLista, fimLista).map((item, index) => (
+            {lista.map((item, index) => (
               <TableRow key={`linha-${index}`}>
                 {colunas.map((coluna, colIndex) => (
                   <TableCell key={`dado-coluna-${colIndex}`}>

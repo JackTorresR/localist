@@ -3,17 +3,10 @@ import TabelaCustomizada from "../../components/Tabelas/TabelaCustomizada";
 import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
 import { TiThMenu } from "react-icons/ti";
-import { useEffect } from "react";
 import { getClientes } from "../../database/dbCliente";
 
 const Cliente = () => {
   const clientes = useSelector((state) => state?.cliente);
-
-  useEffect(() => {
-    const fetchData = async () => getClientes();
-
-    fetchData();
-  }, []);
 
   return (
     <div style={Estilos.containerPrincipal}>
@@ -32,6 +25,7 @@ const Cliente = () => {
             { nome: "Telefone", valor: "telefone" },
             { nome: "Observações", valor: "observacoes" },
           ]}
+          acao={getClientes}
           exibirFiltro={true}
           exibirBotaoAdicionar={true}
         />

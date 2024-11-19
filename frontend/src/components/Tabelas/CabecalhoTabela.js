@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 const CabecalhoTabela = (props = {}) => {
   const {
     titulo = "Tabela",
+    quantidade = 0,
     onAdd = null,
     onFilter = null,
     exibirFiltro = false,
@@ -43,9 +44,12 @@ const CabecalhoTabela = (props = {}) => {
             }
           />
         )}
-        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-          {titulo}
-        </Typography>
+        <div style={{ ...Estilos.estiloLinhaLinha, textAlign: "center" }}>
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+            {titulo}
+          </Typography>
+          <Typography variant="h6">{quantidade} registros</Typography>
+        </div>
         {exibirBotaoAdicionar && (
           <TiPlus
             style={Estilos.clicavel}
