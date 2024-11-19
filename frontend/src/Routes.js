@@ -7,7 +7,7 @@ import { Toaster } from "react-hot-toast";
 import Cliente from "./views/cliente/Cliente";
 import MenuLateral from "./components/MenuLateral/MenuLateral";
 import Usuario from "./views/usuario/Usuario";
-import Area from "./views/area/Area";
+import AreaDepartamento from "./views/areaDepartamento/AreaDepartamento";
 import EspecieDocumental from "./views/especieDocumental/EspecieDocumental";
 import CaixaArquivo from "./views/caixaArquivo/CaixaArquivo";
 import AlterarSenhaForm from "./views/usuario/AlterarSenhaForm";
@@ -51,7 +51,7 @@ const Rotas = () => {
 
   const rotasExtras = [
     { caminho: "/usuario", componente: <Usuario /> },
-    { caminho: "/area", componente: <Area /> },
+    { caminho: "/area", componente: <AreaDepartamento /> },
     { caminho: "/especie-documental", componente: <EspecieDocumental /> },
     { caminho: "/caixa-arquivo", componente: <CaixaArquivo /> },
     { caminho: "/alterar-senha", componente: <AlterarSenhaForm /> },

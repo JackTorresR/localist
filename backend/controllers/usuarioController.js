@@ -53,7 +53,7 @@ const criarUsuario = async (req, res) => {
 
 const listarUsuarios = async (req, res) => {
   try {
-    const { offset = 0, limite = 10 } = req.query;
+    const { offset = 0, limite = 15 } = req.query;
 
     const quantidade = await Usuario.countDocuments();
     const lista = await Usuario.find({}, "-senha")

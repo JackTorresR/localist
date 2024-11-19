@@ -62,7 +62,7 @@ const MenuLateral = () => {
     },
     {
       Icon: FaMapLocationDot,
-      nome: "Áreas",
+      nome: "Áreas/Departamentos",
       acao: () => navigate("/area"),
     },
     {
