@@ -26,6 +26,9 @@ import { useNavigate } from "react-router-dom";
 
 const MenuLateral = () => {
   const navigate = useNavigate();
+  const quantidadeNotificacoes = useSelector(
+    (state) => state?.notificacao?.quantidade
+  );
   const drawerAberto = useSelector((state) => state?.modal?.["drawer"]);
 
   const acoesRapidas = [
@@ -44,6 +47,7 @@ const MenuLateral = () => {
       Icon: MdNotificationsActive,
       descricao: "Minhas notificações",
       acao: () => navigate("/notificacao"),
+      quantitativo: true,
     },
   ];
 
@@ -77,6 +81,8 @@ const MenuLateral = () => {
       acao: () => navigate("/caixa-arquivo"),
     },
   ];
+
+  const temMuitaNotificacao = quantidadeNotificacoes > 9;
 
   return (
     <Drawer
@@ -117,8 +123,11 @@ const MenuLateral = () => {
         }}
       >
         <Box display="flex" justifyContent="space-between">
-          {acoesRapidas.map(
-            (item, index) =>
+          {acoesRapidas.map((item, index) => {
+            const temNotificacao =
+              item?.quantitativo === true && quantidadeNotificacoes > 0;
+
+            return (
               item?.descricao && (
                 <TooltipAplicavel titulo={item?.descricao} key={index}>
                   <ListItem
@@ -130,11 +139,27 @@ const MenuLateral = () => {
                         : toast.error(`🚧 '${item?.descricao}' em construção!`)
                     }
                   >
-                    <item.Icon size={25} />
+                    <item.Icon
+                      size={25}
+                      color={temNotificacao ? CORES.BRANCO : CORES.PRETO}
+                    />
+                    {temNotificacao && (
+                      <ListItemText
+                        style={{
+                          color: CORES.BRANCO,
+                          position: "absolute",
+                          right: temMuitaNotificacao ? -3 : 5,
+                        }}
+                        primary={
+                          temMuitaNotificacao ? "9+" : quantidadeNotificacoes
+                        }
+                      />
+                    )}
                   </ListItem>
                 </TooltipAplicavel>
               )
-          )}
+            );
+          })}
         </Box>
       </Box>
       <List>

@@ -42,6 +42,7 @@ const listarClientes = async (req, res) => {
     const limitInt = parseInt(limit, 10);
 
     const lista = await Cliente.find({}, "-__v")
+      .sort({ nomeSemPontuacao: 1 })
       .skip(offsetInt)
       .limit(limitInt);
 

@@ -47,6 +47,7 @@ const listarAreasDepartamentos = async (req, res) => {
 
     const quantidade = await AreaDepartamento.countDocuments();
     const lista = await AreaDepartamento.find()
+      .sort({ nomeSemPontuacao: 1 })
       .skip(parseInt(offset))
       .limit(parseInt(limite));
 

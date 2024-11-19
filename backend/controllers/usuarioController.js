@@ -57,6 +57,7 @@ const listarUsuarios = async (req, res) => {
 
     const quantidade = await Usuario.countDocuments();
     const lista = await Usuario.find({}, "-senha")
+      .sort({ nomeSemPontuacao: 1 })
       .skip(parseInt(offset))
       .limit(parseInt(limite));
 

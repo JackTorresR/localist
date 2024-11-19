@@ -67,6 +67,7 @@ const listarCaixasArquivos = async (req, res) => {
 
     const quantidade = await CaixaArquivo.countDocuments(filtro);
     const lista = await CaixaArquivo.find(filtro, "-__v")
+      .sort({ dataExpiracao: 1 })
       .skip(offsetInt)
       .limit(limitInt);
 

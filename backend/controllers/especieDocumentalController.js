@@ -51,6 +51,7 @@ const listarEspeciesDocumentais = async (req, res) => {
 
     const quantidade = await EspecieDocumental.countDocuments();
     const lista = await EspecieDocumental.find()
+      .sort({ nomeSemPontuacao: 1 })
       .skip(parseInt(offset))
       .limit(parseInt(limite));
 

@@ -13,6 +13,7 @@ import CaixaArquivo from "./views/caixaArquivo/CaixaArquivo";
 import AlterarSenhaForm from "./views/usuario/AlterarSenhaForm";
 import MeuPerfil from "./views/usuario/MeuPerfil";
 import Notificacao from "./views/notificacao/Notificacao";
+import { getNotificacoes } from "./database/dbCaixaArquivo";
 
 const RotaPrivativa = ({ children }) => {
   const token = useSelector((state) => state.auth.token);
@@ -35,6 +36,7 @@ const Rotas = () => {
   useEffect(() => {
     const fetchData = async () => {
       await acessoAutomatico(dispatch);
+      await getNotificacoes();
       setLoading(false);
     };
 
