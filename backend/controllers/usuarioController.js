@@ -53,8 +53,14 @@ const criarUsuario = async (req, res) => {
 
 const listarUsuarios = async (req, res) => {
   try {
-    const usuarios = await Usuario.find({}, "-senha");
-    res.status(200).json(usuarios);
+    const { offset = 0, limite = 10 } = req.query;
+
+    const quantidade = await Usuario.countDocuments();
+    const lista = await Usuario.find({}, "-senha")
+      .skip(parseInt(offset))
+      .limit(parseInt(limite));
+
+    res.status(200).json({ lista, quantidade });
   } catch (error) {
     console.error("Erro ao listar usuários:", error);
     res.status(500).json({ mensagem: "Erro interno do servidor!" });
