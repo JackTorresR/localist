@@ -7,7 +7,6 @@ const especieDocumentalSchema = new mongoose.Schema({
   nome: { type: String, required: true },
   nomeSemPontuacao: { type: String, required: true },
   descricao: { type: String, trim: true },
-  dataInicioRetencao: { type: Date, required: true, default: Date.now },
   retencao: { type: Number, required: true },
   tipoRetencao: { type: String, enum: ["Dia", "Mês", "Ano"], required: true },
   categoria: {
