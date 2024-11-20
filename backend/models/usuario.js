@@ -9,6 +9,8 @@ const usuarioSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   usuario: { type: String, required: true, unique: true },
   senha: { type: String, required: true },
+  matricula: { type: String },
+  funcao: { type: String },
   telefone: { type: String },
   perfilAcesso: {
     type: String,

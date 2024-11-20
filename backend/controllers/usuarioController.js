@@ -152,18 +152,19 @@ const acessarSistema = async (req, res) => {
       return res.status(401).json({ mensagem: "Informações incorretas!" });
     }
 
-    const token = jwt.sign(
-      { id: usuarioEncontrado.id, usuario: usuarioEncontrado.usuario },
-      CHAVE_SECRETA,
-      { expiresIn: "1h" }
-    );
-
     const dadosUsuario = {
-      token,
-      id: usuarioEncontrado.id,
-      nome: usuarioEncontrado.nome,
-      usuario: usuarioEncontrado.usuario,
+      id: usuarioEncontrado?.id,
+      nome: usuarioEncontrado?.nome,
+      usuario: usuarioEncontrado?.usuario,
+      matricula: usuarioEncontrado?.matricula || "---",
+      funcao: usuarioEncontrado?.funcao || "---",
+      telefone: usuarioEncontrado?.telefone || "---",
+      perfilAcesso: usuarioEncontrado?.perfilAcesso || "---",
     };
+
+    const token = jwt.sign(dadosUsuario, CHAVE_SECRETA, { expiresIn: "1h" });
+
+    dadosUsuario.token = token;
 
     res.status(200).json({ mensagem: "Acesso autorizado!", dadosUsuario });
   } catch (error) {
