@@ -34,6 +34,8 @@ const Formulario = (props) => {
 
   const mostrarBotaoLimpar = onReset;
 
+  const defaultSubmitText = dadoExiste(dados?._id) ? "Salvar" : "Criar";
+
   const handleToggleSenha = useCallback(
     (name) => setMostrarSenha((prev) => ({ ...prev, [name]: !prev[name] })),
     []
@@ -184,7 +186,7 @@ const Formulario = (props) => {
             variant="contained"
             color="primary"
           >
-            {buttonTitleSubmit || "Gravar"}
+            {buttonTitleSubmit || defaultSubmitText}
           </Button>
         </Grid>
       </Grid>

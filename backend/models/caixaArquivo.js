@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const caixaArquivoSchema = new mongoose.Schema({
-  _id: { type: mongoose.Schema.Types.ObjectId, required: true, auto: true },
   ativo: { type: Boolean, default: true },
   dataCriacao: { type: Date, default: Date.now },
   idCliente: {

@@ -60,7 +60,6 @@ const AlterarSenhaForm = () => {
               dados={dados}
               onChange={handleChange}
               onSubmit={handleApply}
-              onReset={null}
               sx={{ m: 0, ml: 0, mr: 0, pb: 0 }}
               buttonTitleSubmit="Alterar"
             />
