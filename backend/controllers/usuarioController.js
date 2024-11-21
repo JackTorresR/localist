@@ -153,7 +153,7 @@ const acessarSistema = async (req, res) => {
     }
 
     const dadosUsuario = {
-      id: usuarioEncontrado?.id,
+      _id: usuarioEncontrado?._id,
       nome: usuarioEncontrado?.nome,
       usuario: usuarioEncontrado?.usuario,
       matricula: usuarioEncontrado?.matricula || "---",
@@ -195,31 +195,32 @@ const validarAcesso = (req, res) => {
 
 const editarSenha = async (req, res) => {
   try {
-    const { id, novaSenha } = req.query;
+    const { usuarioId, senhaAtual, novaSenha } = req.body;
 
-    if (!id || !novaSenha || novaSenha.trim().length < 6) {
+    if (!usuarioId || !senhaAtual || !novaSenha) {
       return res.status(400).json({
-        mensagem:
-          "O ID e a nova senha são obrigatórios e a senha deve ter pelo menos 6 caracteres!",
+        mensagem: "Usuário, senha atual e nova senha são obrigatórios!",
       });
     }
 
-    const usuario = await Usuario.findOne({ id });
-
-    if (!usuario || !usuario.ativo) {
-      return res
-        .status(404)
-        .json({ mensagem: "Usuário não encontrado ou inativo!" });
+    const usuario = await Usuario.findById(usuarioId);
+    if (!usuario) {
+      return res.status(404).json({ mensagem: "Usuário não encontrado!" });
     }
 
-    const senhaHash = md5(novaSenha);
-    usuario.senha = senhaHash;
+    const senhaHash = md5(senhaAtual);
+    const senhaValida =
+      senhaHash === usuario?.senha || senhaAtual === usuario?.senha;
 
+    if (!senhaValida) {
+      return res.status(401).json({ mensagem: "Senha atual incorreta!" });
+    }
+
+    usuario.senha = md5(novaSenha);
     await usuario.save();
 
-    res.status(200).json({ mensagem: "Senha atualizada com sucesso!" });
+    res.status(200).json({ mensagem: "Senha alterada com sucesso!" });
   } catch (error) {
-    console.error("Erro ao atualizar senha:", error);
     res.status(500).json({ mensagem: "Erro interno do servidor!" });
   }
 };

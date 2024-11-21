@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const usuarioSchema = new mongoose.Schema({
-  id: { type: Number, unique: true, required: true, autoIncrement: true },
   ativo: { type: Boolean, default: true },
   dataCriacao: { type: Date, default: Date.now },
   nome: { type: String, required: true },
@@ -19,4 +18,7 @@ const usuarioSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Usuario", usuarioSchema);
+const Usuario =
+  mongoose.models.Usuario || mongoose.model("Usuario", usuarioSchema);
+
+module.exports = Usuario;

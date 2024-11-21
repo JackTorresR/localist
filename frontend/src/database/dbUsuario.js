@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 import configs from "../config/config";
 import {
   detalharUsuario,
-  limparUsuarioDetalhe
+  limparUsuarioDetalhe,
 } from "../redux/acoes/acoesUsuario";
 
 const prefixo = "usuario";
@@ -157,6 +157,31 @@ export const removerUsuario = async (id) => {
     limparUsuarioDetalhe();
 
     toast.success(resultado.mensagem || "Usuário removido com sucesso!");
+  } catch (erro) {
+    verificarPorErros(erro);
+  }
+};
+
+export const alterarSenhaUsuario = async (dados) => {
+  try {
+    const { usuarioId, senhaAtual, novaSenha } = dados;
+
+    const url = `${configs.API_URL}/usuario/editar-senha`;
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ usuarioId, senhaAtual, novaSenha }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData?.mensagem || "Erro ao alterar senha!");
+    }
+
+    const { mensagem } = await response.json();
+    toast.success(mensagem || "Senha alterada com sucesso!");
+    window.location.href = "/cliente";
   } catch (erro) {
     verificarPorErros(erro);
   }
