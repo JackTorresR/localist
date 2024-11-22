@@ -10,15 +10,18 @@ const criarEspecieDocumental = async (req, res) => {
       retencao,
       tipoRetencao,
       categoria,
+      idAreaDepartamento,
     } = req.body;
 
-    if (
+    const camposNaoPreenchidos =
       !nome ||
       !nomeSemPontuacao ||
       !retencao ||
       !tipoRetencao ||
-      !categoria
-    ) {
+      !categoria ||
+      !idAreaDepartamento;
+
+    if (camposNaoPreenchidos) {
       return res
         .status(400)
         .json({ mensagem: "Campos obrigatórios faltando!" });
@@ -31,6 +34,7 @@ const criarEspecieDocumental = async (req, res) => {
       retencao,
       tipoRetencao,
       categoria,
+      idAreaDepartamento,
     });
 
     await novaEspecieDocumental.save();

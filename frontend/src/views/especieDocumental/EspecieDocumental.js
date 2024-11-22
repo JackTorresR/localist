@@ -5,13 +5,17 @@ import Estilos from "../../styles/Styles";
 import { TiThMenu } from "react-icons/ti";
 import { getEspeciesDocumentais } from "../../database/dbEspecieDocumental";
 import { calcularTempo } from "../../utils/utils";
+import EspecieDocumentalModalForm from "./EspecieDocumentalModalForm";
+import { useState } from "react";
 
 const EspecieDocumental = () => {
   const especiesDocumentais = useSelector((state) => state?.especieDocumental);
+  const [itemDetalhe, setItemDetalhe] = useState({});
 
   return (
     <div style={Estilos.containerPrincipal}>
       <div style={{ flex: 1 }}>
+        <EspecieDocumentalModalForm itemDetalhe={itemDetalhe} />
         <TiThMenu
           onClick={() => abrirModal("drawer")}
           size={40}
@@ -33,6 +37,10 @@ const EspecieDocumental = () => {
           acao={getEspeciesDocumentais}
           exibirFiltro={true}
           exibirBotaoAdicionar={true}
+          onAdd={() => {
+            setItemDetalhe({});
+            abrirModal("especieDocumental-modal-form");
+          }}
         />
       </div>
     </div>
