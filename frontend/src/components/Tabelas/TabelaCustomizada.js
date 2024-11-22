@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import { dadoExiste } from "../../utils/utils";
+import TooltipAplicavel from "../Tooltip/TooltipAplicavel";
 
 const TabelaCustomizada = (props = {}) => {
   const {
@@ -25,7 +26,7 @@ const TabelaCustomizada = (props = {}) => {
     acao = null,
     colunas = [],
     quantidade = 0,
-    entidade = null,
+    nomeModalFiltro = "filtro-modal-form",
   } = props;
 
   useEffect(() => {
@@ -35,7 +36,7 @@ const TabelaCustomizada = (props = {}) => {
   }, [acao]);
 
   const parametrosBusca = useSelector(
-    (state) => state?.parametroBusca?.[entidade] || {}
+    (state) => state?.parametroBusca?.[nomeModalFiltro] || {}
   );
 
   const parametrosGerais = (pag) => ({
@@ -103,11 +104,28 @@ const TabelaCustomizada = (props = {}) => {
                     dado = coluna?.formato(infoFormatacao);
                   }
 
-                  return (
+                  const componenteItem = (
                     <TableCell key={`dado-coluna-${colIndex}`}>
                       {dado}
                     </TableCell>
                   );
+
+                  const mostrarTooltip =
+                    dado?.length > 100 || !dadoExiste(dado);
+
+                  const texto = dadoExiste(dado) ? dado : "Não informado";
+                  if (mostrarTooltip) {
+                    return (
+                      <TooltipAplicavel
+                        key={`dado-coluna-tooltip-${colIndex}`}
+                        titulo={texto?.substring(0, 300)}
+                      >
+                        {componenteItem}
+                      </TooltipAplicavel>
+                    );
+                  }
+
+                  return componenteItem;
                 })}
               </TableRow>
             ))}

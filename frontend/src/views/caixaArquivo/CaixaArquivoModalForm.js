@@ -26,7 +26,7 @@ const CaixaArquivoModalForm = (props = {}) => {
     },
     {
       tamanhoGrid: { md: 6 },
-      label: "Anos dos documentos",
+      label: "Ano dos documentos",
       name: "anoDocumentos",
       obrigatorio: true,
     },

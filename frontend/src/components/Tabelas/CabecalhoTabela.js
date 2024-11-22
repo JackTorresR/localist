@@ -5,16 +5,21 @@ import Estilos from "../../styles/Styles";
 import { TiPlus } from "react-icons/ti";
 import toast from "react-hot-toast";
 import { dadoExiste } from "../../utils/utils";
+import FiltrarRegistrosModal from "../Modal/FiltrarRegistrosModal";
+import { abrirModal } from "../../redux/acoes/acoesModal";
 
 const CabecalhoTabela = (props = {}) => {
   const {
     titulo = "Tabela",
     quantidade,
     onAdd = null,
-    onFilter = null,
+    camposFiltro = [],
     exibirFiltro = false,
     exibirBotaoAdicionar = false,
+    nomeModalFiltro = "filtro-modal-form",
   } = props;
+
+  const temCamposFiltro = camposFiltro?.length > 0;
 
   return (
     <Box
@@ -27,6 +32,7 @@ const CabecalhoTabela = (props = {}) => {
         borderBottom: "1px solid #ddd",
       }}
     >
+      {temCamposFiltro && <FiltrarRegistrosModal {...props} />}
       <Box
         sx={{
           gap: "8px",
@@ -41,7 +47,9 @@ const CabecalhoTabela = (props = {}) => {
               style={Estilos.clicavel}
               size={50}
               onClick={() =>
-                onFilter ? onFilter() : toast.error("🚧 Em construção!")
+                temCamposFiltro
+                  ? abrirModal(nomeModalFiltro)
+                  : toast.error("🚧 Não existem campos no filtro!")
               }
             />
           )}

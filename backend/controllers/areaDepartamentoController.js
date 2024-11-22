@@ -1,5 +1,6 @@
 const AreaDepartamento = require("../models/areaDepartamento");
 const Cliente = require("../models/cliente");
+const { identificarParametros } = require("../utils");
 
 const criarAreaDepartamento = async (req, res) => {
   try {
@@ -45,10 +46,21 @@ const criarAreaDepartamento = async (req, res) => {
 
 const listarAreasDepartamentos = async (req, res) => {
   try {
-    const { offset = 0, limite = 15 } = req.query;
+    const { offset = 0, limite = 15, ...params } = req.query;
 
-    const quantidade = await AreaDepartamento.countDocuments();
-    const lista = await AreaDepartamento.find()
+    const camposPermitidos = [
+      { campo: "nomeSemPontuacao" },
+      { campo: "sigla" },
+      { campo: "responsavel" },
+      { campo: "idCliente", tipo: "REF" },
+      { campo: "codigoArea" },
+      { campo: "tipo" },
+    ];
+
+    const filtro = identificarParametros({ params, camposPermitidos });
+
+    const quantidade = await AreaDepartamento.countDocuments(filtro);
+    const lista = await AreaDepartamento.find(filtro, "-__v")
       .sort({ nomeSemPontuacao: 1 })
       .skip(parseInt(offset))
       .limit(parseInt(limite));

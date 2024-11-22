@@ -1,6 +1,7 @@
 const CaixaArquivo = require("../models/caixaArquivo");
 const EspecieDocumental = require("../models/especieDocumental");
 const Cliente = require("../models/cliente");
+const { identificarParametros } = require("../utils");
 
 const criarCaixaArquivo = async (req, res) => {
   try {
@@ -15,8 +16,6 @@ const criarCaixaArquivo = async (req, res) => {
       situacao,
       observacoes,
     } = req.body;
-
-    console.error(req.body)
 
     const algumCamposVazios =
       !identificador ||
@@ -65,14 +64,18 @@ const listarCaixasArquivos = async (req, res) => {
     const offsetInt = parseInt(offset, 10);
     const limitInt = parseInt(limit, 10);
 
-    const camposPermitidos = ["situacao"];
+    const camposPermitidos = [
+      { campo: "identificador" },
+      { campo: "anoDocumentos" },
+      { campo: "localizacao" },
+      { campo: "idCliente", tipo: "REF" },
+      { campo: "idEspecieDocumental", tipo: "REF" },
+      { campo: "dataArmazenamento", tipo: "DATE" },
+      { campo: "dataExpiracao", tipo: "DATE" },
+      { campo: "situacao" },
+    ];
 
-    const filtro = {};
-    for (const key of camposPermitidos) {
-      if (params[key] !== undefined) {
-        filtro[key] = new RegExp(params[key], "i");
-      }
-    }
+    const filtro = identificarParametros({ params, camposPermitidos });
 
     const quantidade = await CaixaArquivo.countDocuments(filtro);
     const lista = await CaixaArquivo.find(filtro, "-__v")

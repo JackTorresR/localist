@@ -1,4 +1,5 @@
 const Cliente = require("../models/cliente");
+const { identificarParametros } = require("../utils");
 
 const criarCliente = async (req, res) => {
   try {
@@ -47,16 +48,25 @@ const criarCliente = async (req, res) => {
 
 const listarClientes = async (req, res) => {
   try {
-    const { offset = 0, limit = 15 } = req.query;
+    const { offset = 0, limit = 15, ...params } = req.query;
     const offsetInt = parseInt(offset, 10);
     const limitInt = parseInt(limit, 10);
 
-    const lista = await Cliente.find({}, "-__v")
+    const camposPermitidos = [
+      { campo: "nomeSemPontuacao" },
+      { campo: "email" },
+      { campo: "endereco" },
+      { campo: "cpfCnpj" },
+      { campo: "telefone" },
+    ];
+
+    const filtro = identificarParametros({ params, camposPermitidos });
+
+    const quantidade = await Cliente.countDocuments(filtro);
+    const lista = await Cliente.find(filtro, "-__v")
       .sort({ nomeSemPontuacao: 1 })
       .skip(offsetInt)
       .limit(limitInt);
-
-    const quantidade = await Cliente.countDocuments();
 
     const resposta = { lista, quantidade };
 

@@ -6,10 +6,55 @@ import { TiThMenu } from "react-icons/ti";
 import { getUsuarios } from "../../database/dbUsuario";
 import UsuarioModalForm from "./UsuarioModalForm";
 import { useState } from "react";
+import { normalizarTelefone } from "../../utils/utils";
 
 const Usuario = () => {
   const usuarios = useSelector((state) => state?.usuario);
   const [itemDetalhe, setItemDetalhe] = useState({});
+
+  const camposFiltro = [
+    {
+      tamanhoGrid: { md: 12 },
+      label: "Nome completo",
+      name: "nomeSemPontuacao",
+    },
+    {
+      tamanhoGrid: { md: 12 },
+      label: "Nome de usuário",
+      name: "usuario",
+    },
+    {
+      tamanhoGrid: { md: 12 },
+      label: "Email",
+      name: "email",
+    },
+    {
+      tamanhoGrid: { md: 6 },
+      label: "Matrícula",
+      name: "matricula",
+    },
+    {
+      tamanhoGrid: { md: 6 },
+      label: "Função",
+      name: "funcao",
+    },
+    {
+      tamanhoGrid: { md: 6 },
+      label: "Telefone",
+      name: "telefone",
+      mask: "telefone",
+    },
+    {
+      tamanhoGrid: { md: 6 },
+      label: "Perfil de acesso",
+      name: "perfilAcesso",
+      tipo: "select",
+      selectItems: [
+        { label: "Administrativo", value: "Administrativo" },
+        { label: "Operacional", value: "Operacional" },
+      ],
+    },
+  ];
 
   return (
     <div style={Estilos.containerPrincipal}>
@@ -24,12 +69,19 @@ const Usuario = () => {
           {...usuarios}
           titulo="Usuários"
           colunas={[
+            { nome: "Matrícula", valor: "matricula" },
             { nome: "Nome", valor: "nome" },
             { nome: "Email", valor: "email" },
-            { nome: "Telefone", valor: "telefone" },
+            { nome: "Função", valor: "funcao" },
+            {
+              nome: "Telefone",
+              valor: "telefone",
+              formato: (v) => normalizarTelefone(v),
+            },
             { nome: "Perfil", valor: "perfilAcesso" },
           ]}
           acao={getUsuarios}
+          camposFiltro={camposFiltro}
           exibirFiltro={true}
           exibirBotaoAdicionar={true}
           onAdd={() => {

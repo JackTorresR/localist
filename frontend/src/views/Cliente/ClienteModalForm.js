@@ -39,7 +39,7 @@ const ClienteModalForm = (props = {}) => {
       tamanhoGrid: { md: 6 },
       label: "CPF/CNPJ",
       name: "cpfCnpj",
-      mask: 'cpfCnpj'
+      mask: "cpfCnpj",
     },
     {
       tamanhoGrid: { md: 6 },

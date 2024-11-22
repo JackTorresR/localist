@@ -23,6 +23,57 @@ const CaixaArquivo = () => {
   const caixasArquivos = useSelector((state) => state?.caixaArquivo);
   const [itemDetalhe, setItemDetalhe] = useState({});
 
+  const camposFiltro = [
+    {
+      tamanhoGrid: { md: 6 },
+      label: "Identificador",
+      name: "identificador",
+    },
+    {
+      tamanhoGrid: { md: 6 },
+      label: "Ano dos documentos",
+      name: "anoDocumentos",
+    },
+    {
+      tamanhoGrid: { md: 12 },
+      label: "Localização",
+      name: "localizacao",
+    },
+    {
+      tamanhoGrid: { md: 12 },
+      label: "Cliente",
+      name: "idCliente",
+    },
+    {
+      tamanhoGrid: { md: 12 },
+      label: "Espécie documental",
+      name: "idEspecieDocumental",
+    },
+    {
+      tamanhoGrid: { md: 6 },
+      label: "Data armazenamento",
+      name: "dataArmazenamento",
+      tipo: "date",
+    },
+    {
+      tamanhoGrid: { md: 6 },
+      label: "Data expiração",
+      name: "dataExpiracao",
+      tipo: "date",
+    },
+    {
+      tamanhoGrid: { md: 12 },
+      label: "Situação",
+      name: "situacao",
+      tipo: "select",
+      selectItems: [
+        { label: "Em Prazo", value: "Em Prazo" },
+        { label: "Aguardando descarte", value: "Aguardando descarte" },
+        { label: "Descartado", value: "Descartado" },
+      ],
+    },
+  ];
+
   return (
     <div style={Estilos.containerPrincipal}>
       <div style={{ flex: 1 }}>
@@ -51,6 +102,7 @@ const CaixaArquivo = () => {
             { nome: "Observações", valor: "observacoes" },
           ]}
           acao={getCaixasArquivo}
+          camposFiltro={camposFiltro}
           exibirFiltro={true}
           exibirBotaoAdicionar={true}
           onAdd={() => {

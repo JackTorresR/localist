@@ -1,5 +1,6 @@
 const EspecieDocumental = require("../models/especieDocumental");
 const AreaDepartamento = require("../models/areaDepartamento");
+const { identificarParametros } = require("../utils");
 
 const criarEspecieDocumental = async (req, res) => {
   try {
@@ -51,10 +52,20 @@ const criarEspecieDocumental = async (req, res) => {
 
 const listarEspeciesDocumentais = async (req, res) => {
   try {
-    const { offset = 0, limite = 15 } = req.query;
+    const { offset = 0, limite = 15, ...params } = req.query;
 
-    const quantidade = await EspecieDocumental.countDocuments();
-    const lista = await EspecieDocumental.find()
+    const camposPermitidos = [
+      { campo: "nomeSemPontuacao" },
+      { campo: "idAreaDepartamento", tipo: "REF" },
+      { campo: "retencao", tipo: "NUMBER" },
+      { campo: "tipoRetencao" },
+      { campo: "categoria" },
+    ];
+
+    const filtro = identificarParametros({ params, camposPermitidos });
+
+    const quantidade = await EspecieDocumental.countDocuments(filtro);
+    const lista = await EspecieDocumental.find(filtro, "-__v")
       .sort({ nomeSemPontuacao: 1 })
       .skip(parseInt(offset))
       .limit(parseInt(limite));

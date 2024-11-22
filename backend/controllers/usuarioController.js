@@ -2,6 +2,7 @@ const { CHAVE_SECRETA } = require("../config");
 const Usuario = require("../models/usuario");
 const md5 = require("md5");
 const jwt = require("jsonwebtoken");
+const { identificarParametros } = require("../utils");
 
 const criarUsuario = async (req, res) => {
   try {
@@ -53,10 +54,22 @@ const criarUsuario = async (req, res) => {
 
 const listarUsuarios = async (req, res) => {
   try {
-    const { offset = 0, limite = 15 } = req.query;
+    const { offset = 0, limite = 15, ...params } = req.query;
 
-    const quantidade = await Usuario.countDocuments();
-    const lista = await Usuario.find({}, "-senha")
+    const camposPermitidos = [
+      { campo: "nomeSemPontuacao" },
+      { campo: "usuario" },
+      { campo: "email" },
+      { campo: "matricula" },
+      { campo: "funcao" },
+      { campo: "telefone" },
+      { campo: "perfilAcesso" },
+    ];
+
+    const filtro = identificarParametros({ params, camposPermitidos });
+
+    const quantidade = await Usuario.countDocuments(filtro);
+    const lista = await Usuario.find(filtro, "-senha")
       .sort({ nomeSemPontuacao: 1 })
       .skip(parseInt(offset))
       .limit(parseInt(limite));
