@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const caixaArquivoSchema = new mongoose.Schema({
   ativo: { type: Boolean, default: true },
   dataCriacao: { type: Date, default: Date.now },
+  identificador: { type: String, required: true },
+  localizacao: { type: String, required: true },
   idCliente: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Cliente",

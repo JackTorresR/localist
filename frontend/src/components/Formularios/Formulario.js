@@ -170,33 +170,33 @@ const Formulario = (props) => {
               )}
             </Grid>
           ))}
-        <Grid
-          item
-          sx={{ mt: 2 }}
-          container
-          flex={1}
-          alignItems="center"
-          justifyContent={buttonsAlignment || "flex-end"}
-        >
-          {mostrarBotaoLimpar && (
-            <Button
-              sx={{ ml: 2 }}
-              type="reset"
-              variant="contained"
-              color="warning"
-            >
-              Limpar
-            </Button>
-          )}
+      </Grid>
+      <Grid
+        item
+        sx={{ mt: 2 }}
+        container
+        flex={1}
+        alignItems="center"
+        justifyContent={buttonsAlignment || "flex-end"}
+      >
+        {mostrarBotaoLimpar && (
           <Button
             sx={{ ml: 2 }}
-            type="submit"
+            type="reset"
             variant="contained"
-            color="primary"
+            color="warning"
           >
-            {buttonTitleSubmit || defaultSubmitText}
+            Limpar
           </Button>
-        </Grid>
+        )}
+        <Button
+          sx={{ ml: 2 }}
+          type="submit"
+          variant="contained"
+          color="primary"
+        >
+          {buttonTitleSubmit || defaultSubmitText}
+        </Button>
       </Grid>
     </Box>
   );

@@ -10,6 +10,8 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import localeData from "dayjs/plugin/localeData";
+import { useState } from "react";
+import CaixaArquivoModalForm from "./CaixaArquivoModalForm";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(utc);
@@ -19,10 +21,12 @@ dayjs.locale("pt-br");
 
 const CaixaArquivo = () => {
   const caixasArquivos = useSelector((state) => state?.caixaArquivo);
+  const [itemDetalhe, setItemDetalhe] = useState({});
 
   return (
     <div style={Estilos.containerPrincipal}>
       <div style={{ flex: 1 }}>
+        <CaixaArquivoModalForm itemDetalhe={itemDetalhe} />
         <TiThMenu
           onClick={() => abrirModal("drawer")}
           size={40}
@@ -49,6 +53,10 @@ const CaixaArquivo = () => {
           acao={getCaixasArquivo}
           exibirFiltro={true}
           exibirBotaoAdicionar={true}
+          onAdd={() => {
+            setItemDetalhe({});
+            abrirModal("caixaArquivo-modal-form");
+          }}
         />
       </div>
     </div>

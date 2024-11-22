@@ -5,6 +5,8 @@ const Cliente = require("../models/cliente");
 const criarCaixaArquivo = async (req, res) => {
   try {
     const {
+      identificador,
+      localizacao,
       idCliente,
       idEspecieDocumental,
       anoDocumentos,
@@ -14,20 +16,27 @@ const criarCaixaArquivo = async (req, res) => {
       observacoes,
     } = req.body;
 
-    if (
+    console.error(req.body)
+
+    const algumCamposVazios =
+      !identificador ||
+      !localizacao ||
       !idCliente ||
       !idEspecieDocumental ||
       !anoDocumentos ||
       !dataArmazenamento ||
       !dataExpiracao ||
-      !situacao
-    ) {
+      !situacao;
+
+    if (algumCamposVazios) {
       return res
         .status(400)
         .json({ mensagem: "Campos obrigatórios faltando!" });
     }
 
     const novaCaixaArquivo = new CaixaArquivo({
+      identificador,
+      localizacao,
       idCliente,
       idEspecieDocumental,
       anoDocumentos,
