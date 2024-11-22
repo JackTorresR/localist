@@ -67,7 +67,7 @@ export const normalizarCPF = (cpf = "") =>
     : "Não informado";
 
 export const mascaras = {
-  cpf: "###.###.###-##",
+  cpf: "###.###.###-###",
   cnpj: "##.###.###/####-##",
   telefone: "(##) # ####-####",
 };

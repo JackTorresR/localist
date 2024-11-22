@@ -4,29 +4,31 @@ const Cliente = require("../models/cliente");
 const criarAreaDepartamento = async (req, res) => {
   try {
     const {
-      idCliente,
-      tipo,
       nome,
-      descricao,
+      nomeSemPontuacao,
+      sigla,
       responsavel,
-      status,
+      idCliente,
       codigoArea,
+      tipo,
+      descricao,
     } = req.body;
 
-    if (!idCliente || !tipo || !nome) {
+    if (!nome || !idCliente || !nomeSemPontuacao || !sigla || !tipo) {
       return res
         .status(400)
         .json({ mensagem: "Campos obrigatórios faltando!" });
     }
 
     const novaAreaDepartamento = new AreaDepartamento({
-      idCliente,
-      tipo,
       nome,
-      descricao,
+      nomeSemPontuacao,
+      sigla,
       responsavel,
-      status,
+      idCliente,
       codigoArea,
+      tipo,
+      descricao,
     });
 
     await novaAreaDepartamento.save();

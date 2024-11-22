@@ -6,10 +6,10 @@ import Estilos from "../../styles/Styles";
 import { dadoExiste } from "../../utils/utils";
 import Formulario from "../../components/Formularios/Formulario";
 import { useState } from "react";
-import { salvarCliente } from "../../database/dbCliente";
+import { salvarAreaDepartamento } from "../../database/dbAreaDepartamento";
 
-const nomeModal = "cliente-modal-form";
-const ClienteModalForm = (props = {}) => {
+const nomeModal = "areaDepartamento-modal-form";
+const AreaDepartamentoModalForm = (props = {}) => {
   const { itemDetalhe = {} } = props;
 
   const open = useSelector((state) => state?.modal?.[nomeModal]) || false;
@@ -19,38 +19,46 @@ const ClienteModalForm = (props = {}) => {
 
   const campos = [
     {
-      tamanhoGrid: { md: 12 },
+      tamanhoGrid: { md: 9 },
       label: "Nome",
       name: "nome",
       obrigatorio: true,
     },
     {
-      tamanhoGrid: { md: 12 },
-      label: "Email",
-      name: "email",
+      tamanhoGrid: { md: 3 },
+      label: "Sigla",
+      name: "sigla",
       obrigatorio: true,
     },
     {
       tamanhoGrid: { md: 12 },
-      label: "Endereço",
-      name: "endereco",
-    },
-    {
-      tamanhoGrid: { md: 6 },
-      label: "CPF/CNPJ",
-      name: "cpfCnpj",
-      mask: 'cpfCnpj'
-    },
-    {
-      tamanhoGrid: { md: 6 },
-      label: "Telefone",
-      name: "telefone",
-      mask: "telefone",
+      label: "Responsável",
+      name: "responsavel",
     },
     {
       tamanhoGrid: { md: 12 },
-      label: "Observações",
-      name: "observacoes",
+      label: "Cliente",
+      name: "idCliente",
+    },
+    {
+      tamanhoGrid: { md: 6 },
+      label: "Código da área",
+      name: "codigoArea",
+    },
+    {
+      tamanhoGrid: { md: 6 },
+      label: "Tipo",
+      name: "tipo",
+      tipo: "select",
+      selectItems: [
+        { label: "Área", value: "Área" },
+        { label: "Departamento", value: "Departamento" },
+      ],
+    },
+    {
+      tamanhoGrid: { md: 12 },
+      label: "Descrição",
+      name: "descricao",
       rows: 3,
     },
   ];
@@ -62,7 +70,7 @@ const ClienteModalForm = (props = {}) => {
 
   const handleApply = (event) => {
     event.preventDefault();
-    salvarCliente(dados);
+    salvarAreaDepartamento(dados);
   };
 
   return (
@@ -97,7 +105,7 @@ const ClienteModalForm = (props = {}) => {
             color={CORES.PRETO}
             fontWeight="bold"
           >
-            {editando ? "Editando" : "Criando"} cliente
+            {editando ? "Editando" : "Criando"} área e/ou departamento
           </Typography>
         </Box>
         <Box maxHeight={"80vh"} overflow={"auto"} sx={{ p: 2 }}>
@@ -114,4 +122,4 @@ const ClienteModalForm = (props = {}) => {
   );
 };
 
-export default ClienteModalForm;
+export default AreaDepartamentoModalForm;

@@ -153,7 +153,13 @@ const Formulario = (props) => {
               ) : campo.mask ? (
                 <PatternFormat
                   customInput={TextField}
-                  format={mascaras[campo.mask]}
+                  format={
+                    campo?.mask === "cpfCnpj"
+                      ? dados?.[campo?.name]?.length > 11
+                        ? mascaras?.cnpj
+                        : mascaras?.cpf
+                      : mascaras[campo.mask]
+                  }
                   onValueChange={({ value }) =>
                     handleValueChange({ name: campo.name, value })
                   }
