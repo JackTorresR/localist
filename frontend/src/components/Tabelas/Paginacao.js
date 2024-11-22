@@ -30,8 +30,8 @@ const Paginacao = (props = {}) => {
               ...Estilos.sombraContainer,
               ...Estilos.containerFlexCentralizado,
               backgroundColor: item?.selecionado
-                ? CORES.VERDE_CLARO
-                : CORES.BRANCO,
+                ? CORES.CINZA_ESCURO
+                : CORES.CINZA_CLARO,
               cursor: "pointer",
               borderRadius: 8,
               padding: 10,

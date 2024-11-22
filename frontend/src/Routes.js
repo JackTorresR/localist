@@ -2,9 +2,18 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import AcessoForm from "./views/acesso/AcessoForm";
-import { acessoAutomatico, sairDoSistema } from "./database/dbAuth";
+import { acessoAutomatico } from "./database/dbAuth";
 import { Toaster } from "react-hot-toast";
-import BotaoVoltar from "./components/Botoes/BotaoVoltar";
+import Cliente from "./views/cliente/Cliente";
+import MenuLateral from "./components/MenuLateral/MenuLateral";
+import Usuario from "./views/usuario/Usuario";
+import AreaDepartamento from "./views/areaDepartamento/AreaDepartamento";
+import EspecieDocumental from "./views/especieDocumental/EspecieDocumental";
+import CaixaArquivo from "./views/caixaArquivo/CaixaArquivo";
+import AlterarSenhaForm from "./views/usuario/AlterarSenhaForm";
+import MeuPerfil from "./views/usuario/MeuPerfil";
+import Notificacao from "./views/notificacao/Notificacao";
+import { getNotificacoes } from "./database/dbCaixaArquivo";
 
 const RotaPrivativa = ({ children }) => {
   const token = useSelector((state) => state.auth.token);
@@ -17,14 +26,7 @@ const RotaPrivativa = ({ children }) => {
 
 const RotaLoginOuTelaInicial = () => {
   const token = useSelector((state) => state.auth.token);
-  return token || localStorage.getItem("token") ? (
-    <div>
-      <BotaoVoltar acaoCustomizada={() => sairDoSistema()} />
-      <h2 style={{ marginLeft: 60 }}>Tela inicial</h2>
-    </div>
-  ) : (
-    <AcessoForm />
-  );
+  return token || localStorage.getItem("token") ? <Cliente /> : <AcessoForm />;
 };
 
 const Rotas = () => {
@@ -34,6 +36,7 @@ const Rotas = () => {
   useEffect(() => {
     const fetchData = async () => {
       await acessoAutomatico(dispatch);
+      await getNotificacoes();
       setLoading(false);
     };
 
@@ -48,6 +51,16 @@ const Rotas = () => {
     );
   }
 
+  const rotasExtras = [
+    { caminho: "/usuario", componente: <Usuario /> },
+    { caminho: "/area", componente: <AreaDepartamento /> },
+    { caminho: "/especie-documental", componente: <EspecieDocumental /> },
+    { caminho: "/caixa-arquivo", componente: <CaixaArquivo /> },
+    { caminho: "/alterar-senha", componente: <AlterarSenhaForm /> },
+    { caminho: "/meu-perfil", componente: <MeuPerfil /> },
+    { caminho: "/notificacao", componente: <Notificacao /> },
+  ];
+
   return (
     <BrowserRouter>
       <Toaster
@@ -55,19 +68,17 @@ const Rotas = () => {
           style: { maxWidth: "95%", fontSize: 20, wordBreak: "break-word" },
         }}
       />
+      <MenuLateral />
       <Routes>
-        <Route path="/" element={<RotaLoginOuTelaInicial />} />
-        <Route
-          path="/clientes"
-          element={
-            <RotaPrivativa>
-              <div>
-                <h2>Clientes</h2>
-              </div>
-            </RotaPrivativa>
-          }
-        />
         <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/" element={<RotaLoginOuTelaInicial />} />
+        {rotasExtras?.map((item, index) => (
+          <Route
+            key={index}
+            path={item?.caminho}
+            element={<RotaPrivativa>{item?.componente}</RotaPrivativa>}
+          />
+        ))}
       </Routes>
     </BrowserRouter>
   );

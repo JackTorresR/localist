@@ -16,13 +16,13 @@ const VisibilidadeCampo = React.memo((props = {}) => {
         {toggle
           ? iconeToggleOn || (
               <MdOutlineVisibilityOff
-                style={{ color: CORES.CINZA_PADRAO }}
+                style={{ color: CORES.CINZA_ESCURO }}
                 size={24}
               />
             )
           : iconeToggleOff || (
               <MdOutlineVisibility
-                style={{ color: CORES.CINZA_PADRAO }}
+                style={{ color: CORES.CINZA_ESCURO }}
                 size={24}
               />
             )}

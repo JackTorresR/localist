@@ -34,6 +34,8 @@ const Formulario = (props) => {
 
   const mostrarBotaoLimpar = onReset;
 
+  const defaultSubmitText = dadoExiste(dados?._id) ? "Salvar" : "Criar";
+
   const handleToggleSenha = useCallback(
     (name) => setMostrarSenha((prev) => ({ ...prev, [name]: !prev[name] })),
     []
@@ -60,6 +62,8 @@ const Formulario = (props) => {
     fullWidth: true,
     variant: "outlined",
     required: campo.obrigatorio || false,
+    rows: campo?.rows || 1,
+    multiline: campo?.rows > 1,
     type:
       campo?.tipo === "password" && mostrarSenha?.[campo.name]
         ? "text"
@@ -149,7 +153,13 @@ const Formulario = (props) => {
               ) : campo.mask ? (
                 <PatternFormat
                   customInput={TextField}
-                  format={mascaras[campo.mask]}
+                  format={
+                    campo?.mask === "cpfCnpj"
+                      ? dados?.[campo?.name]?.length > 11
+                        ? mascaras?.cnpj
+                        : mascaras?.cpf
+                      : mascaras[campo.mask]
+                  }
                   onValueChange={({ value }) =>
                     handleValueChange({ name: campo.name, value })
                   }
@@ -160,33 +170,33 @@ const Formulario = (props) => {
               )}
             </Grid>
           ))}
-        <Grid
-          item
-          sx={{ mt: 2 }}
-          container
-          flex={1}
-          alignItems="center"
-          justifyContent={buttonsAlignment || "flex-end"}
-        >
-          {mostrarBotaoLimpar && (
-            <Button
-              sx={{ ml: 2 }}
-              type="reset"
-              variant="contained"
-              color="warning"
-            >
-              Limpar
-            </Button>
-          )}
+      </Grid>
+      <Grid
+        item
+        sx={{ mt: 2 }}
+        container
+        flex={1}
+        alignItems="center"
+        justifyContent={buttonsAlignment || "flex-end"}
+      >
+        {mostrarBotaoLimpar && (
           <Button
             sx={{ ml: 2 }}
-            type="submit"
+            type="reset"
             variant="contained"
-            color="primary"
+            color="warning"
           >
-            {buttonTitleSubmit || "Gravar"}
+            Limpar
           </Button>
-        </Grid>
+        )}
+        <Button
+          sx={{ ml: 2 }}
+          type="submit"
+          variant="contained"
+          color="primary"
+        >
+          {buttonTitleSubmit || defaultSubmitText}
+        </Button>
       </Grid>
     </Box>
   );

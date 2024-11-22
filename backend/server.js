@@ -1,6 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const app = require("./app");
+const cronJobs = require("./cronJobs");
 
 const ENV = process.env.APP_ENV || "LOCAL";
 
@@ -21,6 +22,8 @@ mongoose
 
     app.listen(config.PORT, () => {
       console.log(`Job iniciado com sucesso na porta: ${config.PORT}`);
+
+      cronJobs();
     });
   })
   .catch((error) =>
