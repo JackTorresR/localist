@@ -2,6 +2,14 @@ const CaixaArquivo = require("../models/caixaArquivo");
 const EspecieDocumental = require("../models/especieDocumental");
 const Cliente = require("../models/cliente");
 const { identificarParametros } = require("../utils");
+const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+const timezone = require("dayjs/plugin/timezone");
+const customParseFormat = require("dayjs/plugin/customParseFormat");
+
+dayjs.extend(customParseFormat);
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const criarCaixaArquivo = async (req, res) => {
   try {
@@ -177,10 +185,36 @@ const deletarCaixaArquivo = async (req, res) => {
   }
 };
 
+const atualizarSituacaoCaixas = async () => {
+  try {
+    const dataAtual = dayjs().tz("America/Sao_Paulo").toDate();
+    const caixasParaAtualizar = await CaixaArquivo.find({
+      situacao: "Em Prazo",
+      dataExpiracao: { $lt: dataAtual },
+    });
+
+    if (caixasParaAtualizar.length > 0) {
+      const idsAtualizar = caixasParaAtualizar.map((caixa) => caixa._id);
+      await CaixaArquivo.updateMany(
+        { _id: { $in: idsAtualizar } },
+        { $set: { situacao: "Aguardando descarte" } }
+      );
+      console.log(
+        `${caixasParaAtualizar.length} caixas de arquivo atualizadas para "Aguardando descarte"!`
+      );
+    } else {
+      console.log("Nenhuma caixa de arquivo necessita atualização!");
+    }
+  } catch (error) {
+    console.error("Erro ao atualizar situação das caixas de arquivo:", error);
+  }
+};
+
 module.exports = {
   criarCaixaArquivo,
   listarCaixasArquivos,
   detalharCaixaArquivo,
   editarCaixaArquivo,
   deletarCaixaArquivo,
+  atualizarSituacaoCaixas,
 };

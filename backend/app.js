@@ -9,9 +9,7 @@ const areaDepartamentoRoutes = require("./routes/areaDepartamentoRoutes");
 const especieDocumentalRoutes = require("./routes/especieDocumentalRoutes");
 
 const app = express();
-
 app.use(express.json());
-
 app.use(cors());
 
 app.use("/usuario", usuarioRoutes);
