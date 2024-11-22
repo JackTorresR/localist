@@ -1,11 +1,19 @@
-const Cliente = require("../models/Cliente");
+const Cliente = require("../models/cliente");
 
 const criarCliente = async (req, res) => {
   try {
-    const { nome, nomeSemPontuacao, email, telefone, endereco, perfilAcesso } =
-      req.body;
+    const {
+      nome,
+      nomeSemPontuacao,
+      email,
+      telefone,
+      endereco,
+      cpfCnpj,
+      observacoes,
+      dataContrato,
+    } = req.body;
 
-    if (!nome || !email || !perfilAcesso) {
+    if (!nome || !nomeSemPontuacao || !email) {
       return res
         .status(400)
         .json({ mensagem: "Campos obrigatórios faltando!" });
@@ -17,7 +25,9 @@ const criarCliente = async (req, res) => {
       email,
       telefone,
       endereco,
-      perfilAcesso,
+      cpfCnpj,
+      observacoes,
+      dataContrato,
     });
 
     await novoCliente.save();

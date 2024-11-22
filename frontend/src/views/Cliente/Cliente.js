@@ -4,13 +4,17 @@ import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
 import { TiThMenu } from "react-icons/ti";
 import { getClientes } from "../../database/dbCliente";
+import ClienteModalForm from "./ClienteModalForm";
+import { useState } from "react";
 
 const Cliente = () => {
   const clientes = useSelector((state) => state?.cliente);
+  const [itemDetalhe, setItemDetalhe] = useState({});
 
   return (
     <div style={Estilos.containerPrincipal}>
       <div style={{ flex: 1 }}>
+        <ClienteModalForm itemDetalhe={itemDetalhe} />
         <TiThMenu
           onClick={() => abrirModal("drawer")}
           size={40}
@@ -28,6 +32,10 @@ const Cliente = () => {
           acao={getClientes}
           exibirFiltro={true}
           exibirBotaoAdicionar={true}
+          onAdd={() => {
+            setItemDetalhe({});
+            abrirModal("cliente-modal-form");
+          }}
         />
       </div>
     </div>

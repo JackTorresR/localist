@@ -62,6 +62,8 @@ const Formulario = (props) => {
     fullWidth: true,
     variant: "outlined",
     required: campo.obrigatorio || false,
+    rows: campo?.rows || 1,
+    multiline: campo?.rows > 1,
     type:
       campo?.tipo === "password" && mostrarSenha?.[campo.name]
         ? "text"

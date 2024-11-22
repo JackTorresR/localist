@@ -4,17 +4,17 @@ import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
 import { TiThMenu } from "react-icons/ti";
 import { getUsuarios } from "../../database/dbUsuario";
-import UsuarioModalForm from "./UsuarioForm";
+import UsuarioModalForm from "./UsuarioModalForm";
 import { useState } from "react";
 
 const Usuario = () => {
   const usuarios = useSelector((state) => state?.usuario);
-  const [usuarioDetalhe, setUsuarioDetalhe] = useState({});
+  const [itemDetalhe, setItemDetalhe] = useState({});
 
   return (
     <div style={Estilos.containerPrincipal}>
       <div style={{ flex: 1 }}>
-        <UsuarioModalForm usuarioDetalhe={usuarioDetalhe} />
+        <UsuarioModalForm itemDetalhe={itemDetalhe} />
         <TiThMenu
           onClick={() => abrirModal("drawer")}
           size={40}
@@ -33,7 +33,7 @@ const Usuario = () => {
           exibirFiltro={true}
           exibirBotaoAdicionar={true}
           onAdd={() => {
-            setUsuarioDetalhe({});
+            setItemDetalhe({});
             abrirModal("usuario-modal-form");
           }}
         />

@@ -8,11 +8,9 @@ const clienteSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   telefone: { type: String },
   endereco: { type: String },
-  perfilAcesso: {
-    type: String,
-    enum: ["Cliente", "Parceiro", "Fornecedor"],
-    required: true,
-  },
+  cpfCnpj: { type: String },
+  observacoes: { type: String },
+  dataContrato: { type: Date, default: Date.now },
 });
 
 module.exports =

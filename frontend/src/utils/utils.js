@@ -66,7 +66,11 @@ export const normalizarCPF = (cpf = "") =>
       : "CPF não é válido!"
     : "Não informado";
 
-export const mascaras = { cpf: "###.###.###-##" };
+export const mascaras = {
+  cpf: "###.###.###-##",
+  cnpj: "##.###.###/####-##",
+  telefone: "(##) # ####-####",
+};
 
 export const separarPrimeiroNome = (nome = "") =>
   nome?.toString()?.trim()?.split(" ")?.[0];

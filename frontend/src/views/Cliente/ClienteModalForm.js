@@ -6,35 +6,22 @@ import Estilos from "../../styles/Styles";
 import { dadoExiste } from "../../utils/utils";
 import Formulario from "../../components/Formularios/Formulario";
 import { useState } from "react";
-import { salvarUsuario } from "../../database/dbUsuario";
+import { salvarCliente } from "../../database/dbCliente";
 
-const nomeModal = "usuario-modal-form";
-const UsuarioModalForm = (props = {}) => {
-  const { usuarioDetalhe = {} } = props;
+const nomeModal = "cliente-modal-form";
+const ClienteModalForm = (props = {}) => {
+  const { itemDetalhe = {} } = props;
 
   const open = useSelector((state) => state?.modal?.[nomeModal]) || false;
-  const [dados, setDados] = useState(usuarioDetalhe);
+  const [dados, setDados] = useState(itemDetalhe);
 
-  const editando = dadoExiste(usuarioDetalhe?._id);
+  const editando = dadoExiste(itemDetalhe?._id);
 
   const campos = [
     {
       tamanhoGrid: { md: 12 },
-      label: "Nome completo",
+      label: "Nome",
       name: "nome",
-      obrigatorio: true,
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Nome de usuário",
-      name: "usuario",
-      obrigatorio: true,
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Senha",
-      name: "senha",
-      tipo: "password",
       obrigatorio: true,
     },
     {
@@ -44,29 +31,26 @@ const UsuarioModalForm = (props = {}) => {
       obrigatorio: true,
     },
     {
-      tamanhoGrid: { md: 6 },
-      label: "Matrícula",
-      name: "matricula",
+      tamanhoGrid: { md: 12 },
+      label: "Endereço",
+      name: "endereco",
     },
     {
       tamanhoGrid: { md: 6 },
-      label: "Função",
-      name: "funcao",
+      label: "CPF/CNPJ",
+      name: "cpfCnpj",
     },
     {
       tamanhoGrid: { md: 6 },
       label: "Telefone",
       name: "telefone",
+      mask: "telefone",
     },
     {
-      tamanhoGrid: { md: 6 },
-      label: "Perfil de acesso",
-      name: "perfilAcesso",
-      tipo: "select",
-      selectItems: [
-        { label: "Administrativo", value: "Administrativo" },
-        { label: "Operacional", value: "Operacional" },
-      ],
+      tamanhoGrid: { md: 12 },
+      label: "Observações",
+      name: "observacoes",
+      rows: 3,
     },
   ];
 
@@ -77,7 +61,7 @@ const UsuarioModalForm = (props = {}) => {
 
   const handleApply = (event) => {
     event.preventDefault();
-    salvarUsuario(dados);
+    salvarCliente(dados);
   };
 
   return (
@@ -112,7 +96,7 @@ const UsuarioModalForm = (props = {}) => {
             color={CORES.PRETO}
             fontWeight="bold"
           >
-            {editando ? "Editando" : "Criando"} usuário
+            {editando ? "Editando" : "Criando"} cliente
           </Typography>
         </Box>
         <Box maxHeight={"80vh"} overflow={"auto"} sx={{ p: 2 }}>
@@ -129,4 +113,4 @@ const UsuarioModalForm = (props = {}) => {
   );
 };
 
-export default UsuarioModalForm;
+export default ClienteModalForm;
