@@ -3,15 +3,22 @@ import TabelaCustomizada from "../../components/Tabelas/TabelaCustomizada";
 import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
 import { TiThMenu } from "react-icons/ti";
-import { getAreasDepartamentos } from "../../database/dbAreaDepartamento";
+import {
+  getAreasDepartamentos,
+  removerAreaDepartamento,
+  salvarAreaDepartamento,
+} from "../../database/dbAreaDepartamento";
 import { useState } from "react";
-import AreaDepartamentoModalForm from "./AreaDepartamentoModalForm";
+import FormModal from "../../components/Modal/FormModal";
+import InfoModal from "../../components/Modal/InfoModal";
+import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
+import { dadoExiste } from "../../utils/utils";
 
 const AreaDepartamento = () => {
   const areasDepartamentos = useSelector((state) => state?.areaDepartamento);
   const [itemDetalhe, setItemDetalhe] = useState({});
 
-  const camposFiltro = [
+  const campos = [
     {
       tamanhoGrid: { md: 9 },
       label: "Nome",
@@ -49,10 +56,34 @@ const AreaDepartamento = () => {
     },
   ];
 
+  const handleSubmit = (dados) => {
+    salvarAreaDepartamento(dados);
+    setItemDetalhe({});
+  };
+
+  const entidade = "areaDepartamento";
+  const propsComponentes = { campos, entidade, itemDetalhe };
+  const tituloCard =
+    (dadoExiste(itemDetalhe?._id) ? "Editar" : "Criar") +
+    " área ou departamento";
+
   return (
     <div style={Estilos.containerPrincipal}>
       <div style={{ flex: 1 }}>
-        <AreaDepartamentoModalForm itemDetalhe={itemDetalhe} />
+        <FormModal
+          {...propsComponentes}
+          tituloCard={tituloCard}
+          onSubmit={handleSubmit}
+          onClose={() => setItemDetalhe({})}
+        />
+        <InfoModal
+          {...propsComponentes}
+          titulo="Informações da área ou departamento"
+        />
+        <ConfirmarAcaoModal
+          {...propsComponentes}
+          acao={() => removerAreaDepartamento(itemDetalhe?._id)}
+        />
         <TiThMenu
           onClick={() => abrirModal("drawer")}
           size={40}
@@ -62,19 +93,31 @@ const AreaDepartamento = () => {
           {...areasDepartamentos}
           titulo="Áreas e departamentos"
           colunas={[
-            { nome: "Código", valor: "codigoArea" },
-            { nome: "Tipo", valor: "tipo" },
-            { nome: "Nome", valor: "nome" },
-            { nome: "Cliente", valor: "nomeCliente" },
-            { nome: "Descrição", valor: "descricao" },
+            { name: "Código", value: "codigoArea" },
+            { name: "Tipo", value: "tipo" },
+            { name: "Nome", value: "nome" },
+            { name: "Cliente", value: "nomeCliente" },
+            { name: "Descrição", value: "descricao" },
           ]}
           acao={getAreasDepartamentos}
-          camposFiltro={camposFiltro}
+          camposFiltro={campos}
           exibirFiltro={true}
           exibirBotaoAdicionar={true}
+          acaoRemover={(item) => {
+            setItemDetalhe(item);
+            abrirModal(`${entidade}-modal-delete`);
+          }}
+          acaoDetalhar={(item) => {
+            setItemDetalhe(item);
+            abrirModal(`${entidade}-modal-info`);
+          }}
+          acaoEditar={(item) => {
+            setItemDetalhe(item);
+            abrirModal(`${entidade}-modal-form`);
+          }}
           onAdd={() => {
             setItemDetalhe({});
-            abrirModal("areaDepartamento-modal-form");
+            abrirModal(`${entidade}-modal-form`);
           }}
         />
       </div>

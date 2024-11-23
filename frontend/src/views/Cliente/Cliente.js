@@ -72,7 +72,8 @@ const Cliente = () => {
     setItemDetalhe({});
   };
 
-  const propsComponentes = { campos, itemDetalhe, entidade: "cliente" };
+  const entidade = "cliente";
+  const propsComponentes = { campos, entidade, itemDetalhe };
 
   return (
     <div style={Estilos.containerPrincipal}>
@@ -102,19 +103,19 @@ const Cliente = () => {
           exibirBotaoAdicionar={true}
           acaoRemover={(item) => {
             setItemDetalhe(item);
-            abrirModal("cliente-modal-delete");
+            abrirModal(`${entidade}-modal-delete`);
           }}
           acaoDetalhar={(item) => {
             setItemDetalhe(item);
-            abrirModal("cliente-modal-info");
+            abrirModal(`${entidade}-modal-info`);
           }}
           acaoEditar={(item) => {
             setItemDetalhe(item);
-            abrirModal("cliente-modal-form");
+            abrirModal(`${entidade}-modal-form`);
           }}
           onAdd={() => {
             setItemDetalhe({});
-            abrirModal("cliente-modal-form");
+            abrirModal(`${entidade}-modal-form`);
           }}
         />
       </div>

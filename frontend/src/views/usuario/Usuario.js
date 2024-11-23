@@ -86,7 +86,8 @@ const Usuario = () => {
     setItemDetalhe({});
   };
 
-  const propsComponentes = { campos, itemDetalhe, entidade: "usuario" };
+  const entidade = "usuario";
+  const propsComponentes = { campos, entidade, itemDetalhe };
 
   return (
     <div style={Estilos.containerPrincipal}>
@@ -127,19 +128,19 @@ const Usuario = () => {
           exibirBotaoAdicionar={true}
           acaoRemover={(item) => {
             setItemDetalhe(item);
-            abrirModal("usuario-modal-delete");
+            abrirModal(`${entidade}-modal-delete`);
           }}
           acaoDetalhar={(item) => {
             setItemDetalhe(item);
-            abrirModal("usuario-modal-info");
+            abrirModal(`${entidade}-modal-info`);
           }}
           acaoEditar={(item) => {
             setItemDetalhe(item);
-            abrirModal("usuario-modal-form");
+            abrirModal(`${entidade}-modal-form`);
           }}
           onAdd={() => {
             setItemDetalhe({});
-            abrirModal("usuario-modal-form");
+            abrirModal(`${entidade}-modal-form`);
           }}
         />
       </div>

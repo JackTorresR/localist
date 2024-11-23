@@ -7,6 +7,7 @@ import {
   detalharAreaDepartamento,
   limparAreaDepartamentoDetalhe,
 } from "../redux/acoes/acoesAreaDepartamento";
+import Store from "../redux/Store";
 
 const prefixo = "areaDepartamento";
 
@@ -104,11 +105,14 @@ export const editarAreaDepartamento = async (areaDepartamento) => {
       throw new Error("Erro ao editar área/departamento!");
     }
 
-    const { mensagem, areaDepartamentoAtualizado } = await response.json();
+    const { mensagem } = await response.json();
 
-    detalharAreaDepartamento(areaDepartamentoAtualizado);
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    getAreasDepartamentos(parametrosBusca);
+
     toast.success(mensagem);
-    window.history.back();
   } catch (erro) {
     verificarPorErros(erro);
   }
