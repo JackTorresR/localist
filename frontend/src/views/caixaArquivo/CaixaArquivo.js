@@ -3,7 +3,11 @@ import TabelaCustomizada from "../../components/Tabelas/TabelaCustomizada";
 import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
 import { TiThMenu } from "react-icons/ti";
-import { getCaixasArquivo } from "../../database/dbCaixaArquivo";
+import {
+  getCaixasArquivo,
+  removerCaixaArquivo,
+  salvarCaixaArquivo,
+} from "../../database/dbCaixaArquivo";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -11,7 +15,9 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import localeData from "dayjs/plugin/localeData";
 import { useState } from "react";
-import CaixaArquivoModalForm from "./CaixaArquivoModalForm";
+import FormModal from "../../components/Modal/FormModal";
+import InfoModal from "../../components/Modal/InfoModal";
+import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(utc);
@@ -23,61 +29,102 @@ const CaixaArquivo = () => {
   const caixasArquivos = useSelector((state) => state?.caixaArquivo);
   const [itemDetalhe, setItemDetalhe] = useState({});
 
-  const camposFiltro = [
+  const campos = [
     {
       tamanhoGrid: { md: 6 },
       label: "Identificador",
       name: "identificador",
+      obrigatorio: true,
     },
     {
       tamanhoGrid: { md: 6 },
       label: "Ano dos documentos",
       name: "anoDocumentos",
+      obrigatorio: true,
     },
     {
       tamanhoGrid: { md: 12 },
       label: "Localização",
       name: "localizacao",
+      obrigatorio: true,
     },
     {
       tamanhoGrid: { md: 12 },
       label: "Cliente",
       name: "idCliente",
+      obrigatorio: true,
+      formatar: (item) => item?.nomeCliente,
     },
     {
       tamanhoGrid: { md: 12 },
       label: "Espécie documental",
       name: "idEspecieDocumental",
+      obrigatorio: true,
+      formatar: (item) => item?.nomeEspecieDocumental,
     },
     {
       tamanhoGrid: { md: 6 },
       label: "Data armazenamento",
       name: "dataArmazenamento",
       tipo: "date",
+      obrigatorio: true,
+      formatar: (item) =>
+        dayjs(item?.dataExpiracao).tz("America/Sao_Paulo").format("DD/MM/YYYY"),
     },
     {
       tamanhoGrid: { md: 6 },
       label: "Data expiração",
       name: "dataExpiracao",
       tipo: "date",
+      obrigatorio: true,
+      formatar: (item) =>
+        dayjs(item?.dataExpiracao).tz("America/Sao_Paulo").format("DD/MM/YYYY"),
     },
     {
       tamanhoGrid: { md: 12 },
       label: "Situação",
       name: "situacao",
       tipo: "select",
+      obrigatorio: true,
       selectItems: [
         { label: "Em Prazo", value: "Em Prazo" },
         { label: "Aguardando descarte", value: "Aguardando descarte" },
         { label: "Descartado", value: "Descartado" },
       ],
     },
+    {
+      tamanhoGrid: { md: 12 },
+      label: "Observações",
+      name: "observacoes",
+      rows: 3,
+      filtravel: false,
+    },
   ];
+
+  const handleSubmit = (dados) => {
+    salvarCaixaArquivo(dados);
+    setItemDetalhe({});
+  };
+
+  const entidade = "cliente";
+  const propsComponentes = { campos, entidade, itemDetalhe };
 
   return (
     <div style={Estilos.containerPrincipal}>
       <div style={{ flex: 1 }}>
-        <CaixaArquivoModalForm itemDetalhe={itemDetalhe} />
+        <FormModal
+          {...propsComponentes}
+          onSubmit={handleSubmit}
+          onClose={() => setItemDetalhe({})}
+        />
+        <InfoModal
+          {...propsComponentes}
+          titulo="Informações da caixa de arquivos"
+        />
+        <ConfirmarAcaoModal
+          {...propsComponentes}
+          acao={() => removerCaixaArquivo(itemDetalhe?._id)}
+        />
         <TiThMenu
           onClick={() => abrirModal("drawer")}
           size={40}
@@ -87,27 +134,47 @@ const CaixaArquivo = () => {
           {...caixasArquivos}
           titulo="Caixas de arquivos"
           colunas={[
-            { nome: "Ano", valor: "anoDocumentos", alinhar: "center" },
+            { name: "Ano", value: "anoDocumentos", alinhar: "center" },
             {
-              nome: "Expiração",
+              name: "Expiração",
               alinhar: "center",
               formatar: (item) =>
                 dayjs(item?.dataExpiracao)
                   .tz("America/Sao_Paulo")
                   .format("DD/MM/YYYY"),
             },
-            { nome: "Espécie", valor: "nomeEspecieDocumental" },
-            { nome: "Cliente", valor: "nomeCliente" },
-            { nome: "Situação", valor: "situacao" },
-            { nome: "Observações", valor: "observacoes" },
+            { name: "Espécie", value: "nomeEspecieDocumental" },
+            { name: "Cliente", value: "nomeCliente" },
+            { name: "Situação", value: "situacao" },
+            { name: "Observações", value: "observacoes" },
           ]}
           acao={getCaixasArquivo}
-          camposFiltro={camposFiltro}
+          camposFiltro={campos}
           exibirFiltro={true}
           exibirBotaoAdicionar={true}
+          acaoRemover={(item) => {
+            setItemDetalhe(item);
+            abrirModal(`${entidade}-modal-delete`);
+          }}
+          acaoDetalhar={(item) => {
+            setItemDetalhe(item);
+            abrirModal(`${entidade}-modal-info`);
+          }}
+          acaoEditar={(item) => {
+            setItemDetalhe({
+              ...item,
+              dataArmazenamento: dayjs(item?.dataArmazenamento)
+                .tz("America/Sao_Paulo")
+                .format("YYYY-MM-DD"),
+              dataExpiracao: dayjs(item?.dataExpiracao)
+                .tz("America/Sao_Paulo")
+                .format("YYYY-MM-DD"),
+            });
+            abrirModal(`${entidade}-modal-form`);
+          }}
           onAdd={() => {
             setItemDetalhe({});
-            abrirModal("caixaArquivo-modal-form");
+            abrirModal(`${entidade}-modal-form`);
           }}
         />
       </div>
