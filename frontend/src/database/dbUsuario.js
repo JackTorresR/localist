@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 import configs from "../config/config";
 import {
   detalharUsuario,
-  limparUsuarioDetalhe
+  limparUsuarioDetalhe,
 } from "../redux/acoes/acoesUsuario";
 import Store from "../redux/Store";
 
@@ -130,9 +130,13 @@ export const criarUsuario = async (usuario) => {
       throw new Error(errorData?.mensagem);
     }
 
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    getUsuarios(parametrosBusca);
+
     const data = await response.json();
     toast.success(data.mensagem);
-    window.history.go("/usuario");
   } catch (erro) {
     verificarPorErros(erro);
   }

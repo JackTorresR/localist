@@ -3,30 +3,49 @@ import TabelaCustomizada from "../../components/Tabelas/TabelaCustomizada";
 import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
 import { TiThMenu } from "react-icons/ti";
-import { getEspeciesDocumentais } from "../../database/dbEspecieDocumental";
+import {
+  getEspeciesDocumentais,
+  removerEspecieDocumental,
+  salvarEspecieDocumental,
+} from "../../database/dbEspecieDocumental";
 import { calcularTempo } from "../../utils/utils";
-import EspecieDocumentalModalForm from "./EspecieDocumentalModalForm";
 import { useState } from "react";
+import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
+import FormModal from "../../components/Modal/FormModal";
+import InfoModal from "../../components/Modal/InfoModal";
 
 const EspecieDocumental = () => {
   const especiesDocumentais = useSelector((state) => state?.especieDocumental);
   const [itemDetalhe, setItemDetalhe] = useState({});
 
-  const camposFiltro = [
+  const campos = [
     {
       tamanhoGrid: { md: 12 },
       label: "Nome",
+      name: "nome",
+      filtravel: false,
+    },
+    {
+      tamanhoGrid: { md: 12 },
+      label: "Nome sem pontuação",
       name: "nomeSemPontuacao",
+      mostrarFormulario: false,
     },
     {
       tamanhoGrid: { md: 12 },
       label: "Área/Departamento",
       name: "idAreaDepartamento",
+      formatar: (item) => item?.nomeAreaDepartamento,
     },
     {
       tamanhoGrid: { md: 6 },
       label: "Retenção",
       name: "retencao",
+      formatar: (item) =>
+        calcularTempo({
+          retencao: item?.retencao,
+          tipoRetencao: item?.tipoRetencao,
+        }),
     },
     {
       tamanhoGrid: { md: 6 },
@@ -51,12 +70,38 @@ const EspecieDocumental = () => {
         { label: "Outros", value: "Outros" },
       ],
     },
+    {
+      tamanhoGrid: { md: 12 },
+      label: "Descrição",
+      name: "descricao",
+      rows: 3,
+      filtravel: false,
+    },
   ];
+  const handleSubmit = (dados) => {
+    salvarEspecieDocumental(dados);
+    setItemDetalhe({});
+  };
+
+  const entidade = "cliente";
+  const propsComponentes = { campos, entidade, itemDetalhe };
 
   return (
     <div style={Estilos.containerPrincipal}>
       <div style={{ flex: 1 }}>
-        <EspecieDocumentalModalForm itemDetalhe={itemDetalhe} />
+        <FormModal
+          {...propsComponentes}
+          onSubmit={handleSubmit}
+          onClose={() => setItemDetalhe({})}
+        />
+        <InfoModal
+          {...propsComponentes}
+          titulo="Informações da espécie documental"
+        />
+        <ConfirmarAcaoModal
+          {...propsComponentes}
+          acao={() => removerEspecieDocumental(itemDetalhe?._id)}
+        />
         <TiThMenu
           onClick={() => abrirModal("drawer")}
           size={40}
@@ -66,21 +111,33 @@ const EspecieDocumental = () => {
           {...especiesDocumentais}
           titulo="Espécies documentais"
           colunas={[
-            { nome: "Nome", valor: "nome" },
-            { nome: "Área", valor: "nomeAreaDepartamento" },
+            { name: "Nome", value: "nome" },
+            { name: "Área", value: "nomeAreaDepartamento" },
             {
-              nome: "Retenção",
-              formato: (item) => calcularTempo(item),
+              name: "Retenção",
+              formatar: (item) => calcularTempo(item),
             },
-            { nome: "Descrição", valor: "descricao" },
+            { name: "Descrição", value: "descricao" },
           ]}
           acao={getEspeciesDocumentais}
-          camposFiltro={camposFiltro}
+          camposFiltro={campos}
           exibirFiltro={true}
           exibirBotaoAdicionar={true}
+          acaoRemover={(item) => {
+            setItemDetalhe(item);
+            abrirModal(`${entidade}-modal-delete`);
+          }}
+          acaoDetalhar={(item) => {
+            setItemDetalhe(item);
+            abrirModal(`${entidade}-modal-info`);
+          }}
+          acaoEditar={(item) => {
+            setItemDetalhe(item);
+            abrirModal(`${entidade}-modal-form`);
+          }}
           onAdd={() => {
             setItemDetalhe({});
-            abrirModal("especieDocumental-modal-form");
+            abrirModal(`${entidade}-modal-form`);
           }}
         />
       </div>

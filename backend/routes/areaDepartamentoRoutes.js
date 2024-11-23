@@ -11,7 +11,7 @@ const {
 router.post("/", criarAreaDepartamento);
 router.get("/", listarAreasDepartamentos);
 router.get("/:id", detalharAreaDepartamento);
-router.put("/:id", editarAreaDepartamento);
+router.patch("/:id", editarAreaDepartamento);
 router.delete("/:id", deletarAreaDepartamento);
 
 module.exports = router;

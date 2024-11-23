@@ -132,9 +132,13 @@ export const criarAreaDepartamento = async (areaDepartamento) => {
       throw new Error(errorData?.mensagem);
     }
 
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    getAreasDepartamentos(parametrosBusca);
+
     const data = await response.json();
     toast.success(data.mensagem);
-    window.history.go("/area-departamento");
   } catch (erro) {
     verificarPorErros(erro);
   }

@@ -132,9 +132,13 @@ export const criarCliente = async (cliente) => {
       throw new Error(errorData?.mensagem);
     }
 
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    getClientes(parametrosBusca);
+
     const data = await response.json();
     toast.success(data.mensagem);
-    window.history.go("/cliente");
   } catch (erro) {
     verificarPorErros(erro);
   }

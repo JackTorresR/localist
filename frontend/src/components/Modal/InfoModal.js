@@ -63,9 +63,9 @@ const InfoModal = (props = {}) => {
                     {campo?.label}:
                   </Typography>
                   <Typography variant="body1" color={CORES.CINZA}>
-                    {campo?.formatar
-                      ? campo?.formatar(itemDetalhe?.[campo?.name])
-                      : itemDetalhe?.[campo.name] || "---"}
+                    {(campo?.formatar
+                      ? campo?.formatar(itemDetalhe)
+                      : itemDetalhe?.[campo.name]) || "---"}
                   </Typography>
                 </Grid>
               ))}

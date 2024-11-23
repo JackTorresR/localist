@@ -30,7 +30,6 @@ const Cliente = () => {
       label: "Nome sem pontuação",
       name: "nomeSemPontuacao",
       mostrarFormulario: false,
-      mostrarColuna: false,
     },
     {
       tamanhoGrid: { md: 12 },
@@ -41,22 +40,20 @@ const Cliente = () => {
       tamanhoGrid: { md: 12 },
       label: "Endereço",
       name: "endereco",
-      mostrarColuna: false,
     },
     {
       tamanhoGrid: { md: 6 },
       label: "CPF/CNPJ",
       name: "cpfCnpj",
       mask: "cpfCnpj",
-      formatar: (item) => normalizarDocumento(item),
-      mostrarColuna: false,
+      formatar: (item) => normalizarDocumento(item?.cpfCnpj),
     },
     {
       tamanhoGrid: { md: 6 },
       label: "Telefone",
       name: "telefone",
       mask: "telefone",
-      formatar: (item) => normalizarTelefone(item),
+      formatar: (item) => normalizarTelefone(item?.telefone),
     },
     {
       tamanhoGrid: { md: 12 },
@@ -83,7 +80,7 @@ const Cliente = () => {
           onSubmit={handleSubmit}
           onClose={() => setItemDetalhe({})}
         />
-        <InfoModal {...propsComponentes} titulo="Informações do Cliente" />
+        <InfoModal {...propsComponentes} titulo="Informações do cliente" />
         <ConfirmarAcaoModal
           {...propsComponentes}
           acao={() => removerCliente(itemDetalhe?._id)}
@@ -96,7 +93,12 @@ const Cliente = () => {
         <TabelaCustomizada
           {...clientes}
           titulo="Clientes"
-          colunas={campos}
+          colunas={[
+            { name: "Nome", value: "nome" },
+            { name: "Email", value: "email" },
+            { name: "Telefone", value: "telefone" },
+            { name: "Observações", value: "observacoes" },
+          ]}
           camposFiltro={campos}
           acao={getClientes}
           exibirFiltro={true}

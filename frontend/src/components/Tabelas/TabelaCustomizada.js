@@ -130,8 +130,6 @@ const TabelaCustomizada = (props = {}) => {
     backgroundColor: CORES.CINZA_PADRAO,
   };
 
-  const listaColunas = colunas?.filter((item) => item?.mostrarColuna !== false);
-
   return (
     <Box sx={{ mt: 4, borderRadius: "8px", boxShadow: 3 }}>
       <CabecalhoTabela {...props} />
@@ -155,7 +153,7 @@ const TabelaCustomizada = (props = {}) => {
           <TableHead>
             <TableRow>
               <TableCell key={"botao-cell"} sx={estiloColuna} />
-              {listaColunas?.map((item, index) => (
+              {colunas?.map((item, index) => (
                 <TableCell key={index} sx={estiloColuna}>
                   {item?.name}
                 </TableCell>
@@ -182,7 +180,7 @@ const TabelaCustomizada = (props = {}) => {
                         )}
                       </IconButton>
                     </TableCell>
-                    {listaColunas?.map((coluna, colIndex) => {
+                    {colunas?.map((coluna, colIndex) => {
                       let dado = item?.[coluna?.value || coluna?.name] || "---";
                       if (coluna?.formatar) {
                         const infoFormatacao = dadoExiste(dado) ? dado : item;
@@ -214,7 +212,7 @@ const TabelaCustomizada = (props = {}) => {
                   <TableRow>
                     <TableCell
                       style={{ paddingBottom: 0, paddingTop: 0 }}
-                      colSpan={listaColunas?.length + 1}
+                      colSpan={colunas?.length + 1}
                     >
                       <Collapse
                         in={estaSelecionado}

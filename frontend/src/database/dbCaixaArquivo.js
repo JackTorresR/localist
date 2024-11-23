@@ -7,6 +7,7 @@ import {
   detalharCaixaArquivo,
   limparCaixaArquivoDetalhe,
 } from "../redux/acoes/acoesCaixaArquivo";
+import Store from "../redux/Store";
 
 const prefixo = "caixaArquivo";
 
@@ -115,11 +116,14 @@ export const editarCaixaArquivo = async (caixaArquivo) => {
       throw new Error("Erro ao editar caixa de arquivo!");
     }
 
-    const { mensagem, caixaArquivoAtualizado } = await response.json();
+    const { mensagem } = await response.json();
 
-    detalharCaixaArquivo(caixaArquivoAtualizado);
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    getCaixasArquivo(parametrosBusca);
+
     toast.success(mensagem);
-    window.history.back();
   } catch (erro) {
     verificarPorErros(erro);
   }
@@ -140,8 +144,13 @@ export const criarCaixaArquivo = async (caixaArquivo) => {
     }
 
     const data = await response.json();
+
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    getCaixasArquivo(parametrosBusca);
+
     toast.success(data.mensagem);
-    window.history.go("/caixa-arquivo");
   } catch (erro) {
     verificarPorErros(erro);
   }

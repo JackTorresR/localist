@@ -87,7 +87,7 @@ const Notificacao = () => {
             {
               nome: "Expiração",
               alinhar: "center",
-              formato: (item) =>
+              formatar: (item) =>
                 dayjs(item?.dataExpiracao)
                   .tz("America/Sao_Paulo")
                   .format("DD/MM/YYYY"),

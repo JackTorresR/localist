@@ -119,7 +119,7 @@ const editarEspecieDocumental = async (req, res) => {
     const atualizacoes = req.body;
 
     const especieDocumentalAtualizado =
-      await EspecieDocumental.findByIdAndUpdate(id, atualizacoes, {
+      await EspecieDocumental.findByIdAndUpdate({ _id: id }, atualizacoes, {
         new: true,
         runValidators: true,
       });
