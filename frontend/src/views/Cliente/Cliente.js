@@ -96,7 +96,11 @@ const Cliente = () => {
           colunas={[
             { name: "Nome", value: "nome" },
             { name: "Email", value: "email" },
-            { name: "Telefone", value: "telefone" },
+            {
+              name: "Telefone",
+              value: "telefone",
+              formatar: (item) => normalizarTelefone(item),
+            },
             { name: "Observações", value: "observacoes" },
           ]}
           camposFiltro={campos}

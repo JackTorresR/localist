@@ -23,6 +23,7 @@ const ConfirmarAcaoModal = (props = {}) => {
 
   const tituloDefault = "CONFIRMAR";
   const descricaoDefault = "Tem certeza que deseja excluir este item?";
+  const nomeRegistro = itemDetalhe?.nome || itemDetalhe?.observacoes
 
   return (
     <Modal
@@ -79,7 +80,7 @@ const ConfirmarAcaoModal = (props = {}) => {
           >
             {descricao || descricaoDefault}
           </Typography>
-          {dadoExiste(itemDetalhe?.nome) && (
+          {dadoExiste(nomeRegistro) && (
             <Typography
               id={`${nomeModal}-nome`}
               variant="body1"
@@ -87,7 +88,7 @@ const ConfirmarAcaoModal = (props = {}) => {
               fontSize={18}
               sx={{ flex: 1, flexGrow: 1 }}
             >
-              {itemDetalhe?.nome}
+              {nomeRegistro}
             </Typography>
           )}
           <div
