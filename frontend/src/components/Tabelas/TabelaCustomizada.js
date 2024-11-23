@@ -108,7 +108,9 @@ const TabelaCustomizada = (props = {}) => {
           ...botao?.sx,
         }}
         key={`${ix}_botao_acao`}
-        onClick={() => (botao?.acao ? botao?.acao(item) : null)}
+        onClick={() =>
+          botao?.acao ? botao?.acao(item) : toast.error("🚧 em construção!")
+        }
       >
         <Typography
           fontSize={18}

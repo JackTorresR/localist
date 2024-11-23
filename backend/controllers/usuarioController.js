@@ -107,7 +107,7 @@ const editarUsuario = async (req, res) => {
     }
 
     const usuarioAtualizado = await Usuario.findOneAndUpdate(
-      { id },
+      { _id: id },
       atualizacoes,
       { new: true, runValidators: true }
     );

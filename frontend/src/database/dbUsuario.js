@@ -5,8 +5,9 @@ import { toast } from "react-hot-toast";
 import configs from "../config/config";
 import {
   detalharUsuario,
-  limparUsuarioDetalhe,
+  limparUsuarioDetalhe
 } from "../redux/acoes/acoesUsuario";
+import Store from "../redux/Store";
 
 const prefixo = "usuario";
 
@@ -102,11 +103,14 @@ export const editarUsuario = async (usuario) => {
       throw new Error("Erro ao editar usuário!");
     }
 
-    const { mensagem, usuarioAtualizado } = await response.json();
+    const { mensagem } = await response.json();
 
-    detalharUsuario(usuarioAtualizado);
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    await getUsuarios(parametrosBusca);
+
     toast.success(mensagem);
-    window.history.back();
   } catch (erro) {
     verificarPorErros(erro);
   }

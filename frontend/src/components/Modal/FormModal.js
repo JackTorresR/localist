@@ -83,7 +83,11 @@ const FormModal = (props = {}) => {
         </Box>
         <Box maxHeight={"80vh"} overflow={"auto"} sx={{ p: 2 }}>
           <Formulario
-            campos={campos?.filter((item) => item?.mostrarFormulario !== false)}
+            campos={campos?.filter(
+              (item) =>
+                item?.mostrarFormulario !== false &&
+                (editando ? item?.editavel !== false : true)
+            )}
             dados={dados}
             onChange={handleChange}
             onSubmit={handleApply}

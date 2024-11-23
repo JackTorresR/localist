@@ -14,8 +14,9 @@ import Estilos from "../../styles/Styles";
 import { dadoExiste } from "../../utils/utils";
 
 const ConfirmarAcaoModal = (props = {}) => {
-  const { acao, titulo, nomeModal, descricao, nomeRegistro } = props;
+  const { acao, titulo, entidade = "", descricao, itemDetalhe = {} } = props;
 
+  const nomeModal = `${entidade}-modal-delete`;
   const open = useSelector((state) => state?.modal?.[nomeModal]) || false;
 
   const handleClose = () => fecharModal(nomeModal);
@@ -78,7 +79,7 @@ const ConfirmarAcaoModal = (props = {}) => {
           >
             {descricao || descricaoDefault}
           </Typography>
-          {dadoExiste(nomeRegistro) && (
+          {dadoExiste(itemDetalhe?.nome) && (
             <Typography
               id={`${nomeModal}-nome`}
               variant="body1"
@@ -86,7 +87,7 @@ const ConfirmarAcaoModal = (props = {}) => {
               fontSize={18}
               sx={{ flex: 1, flexGrow: 1 }}
             >
-              {nomeRegistro}
+              {itemDetalhe?.nome}
             </Typography>
           )}
           <div

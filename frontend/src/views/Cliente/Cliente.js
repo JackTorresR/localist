@@ -72,25 +72,19 @@ const Cliente = () => {
     setItemDetalhe({});
   };
 
+  const propsComponentes = { campos, itemDetalhe, entidade: "cliente" };
+
   return (
     <div style={Estilos.containerPrincipal}>
       <div style={{ flex: 1 }}>
         <FormModal
-          campos={campos}
-          entidade="cliente"
+          {...propsComponentes}
           onSubmit={handleSubmit}
-          itemDetalhe={itemDetalhe}
           onClose={() => setItemDetalhe({})}
         />
-        <InfoModal
-          campos={campos}
-          dados={itemDetalhe}
-          nomeModal="cliente-modal-info"
-          titulo="Informações do Cliente"
-        />
+        <InfoModal {...propsComponentes} titulo="Informações do Cliente" />
         <ConfirmarAcaoModal
-          nomeRegistro={itemDetalhe?.nome}
-          nomeModal="cliente-modal-delete"
+          {...propsComponentes}
           acao={() => removerCliente(itemDetalhe?._id)}
         />
         <TiThMenu

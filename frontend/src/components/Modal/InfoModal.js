@@ -5,8 +5,9 @@ import CORES from "../../styles/Cores";
 import Estilos from "../../styles/Styles";
 
 const InfoModal = (props = {}) => {
-  const { nomeModal, titulo, campos, dados } = props;
+  const { entidade = "", titulo, campos, itemDetalhe } = props;
 
+  const nomeModal = `${entidade}-modal-info`;
   const open = useSelector((state) => state?.modal?.[nomeModal]) || false;
 
   const handleClose = () => fecharModal(nomeModal);
@@ -48,24 +49,26 @@ const InfoModal = (props = {}) => {
         </Box>
         <Box maxHeight={"80vh"} overflow={"auto"} sx={{ p: 2 }}>
           <Grid container spacing={2}>
-            {campos.map((campo, index) => (
-              <Grid
-                key={index}
-                item
-                xs={campo?.tamanhoGrid?.xs || 12}
-                md={campo?.tamanhoGrid?.md || 6}
-                sm={campo?.tamanhoGrid?.sm || 6}
-              >
-                <Typography variant="subtitle2" color={CORES.PRETO}>
-                  {campo?.label}:
-                </Typography>
-                <Typography variant="body1" color={CORES.CINZA}>
-                  {campo?.formatar
-                    ? campo?.formatar(dados?.[campo?.name])
-                    : dados?.[campo.name] || "---"}
-                </Typography>
-              </Grid>
-            ))}
+            {campos
+              ?.filter((item) => item?.tipo !== "password")
+              ?.map((campo, index) => (
+                <Grid
+                  key={index}
+                  item
+                  xs={campo?.tamanhoGrid?.xs || 12}
+                  md={campo?.tamanhoGrid?.md || 6}
+                  sm={campo?.tamanhoGrid?.sm || 6}
+                >
+                  <Typography variant="subtitle2" color={CORES.PRETO}>
+                    {campo?.label}:
+                  </Typography>
+                  <Typography variant="body1" color={CORES.CINZA}>
+                    {campo?.formatar
+                      ? campo?.formatar(itemDetalhe?.[campo?.name])
+                      : itemDetalhe?.[campo.name] || "---"}
+                  </Typography>
+                </Grid>
+              ))}
           </Grid>
         </Box>
       </Card>
