@@ -1,4 +1,9 @@
-import { dadoExiste, dispatcher, gerarNomeSemPontuacao } from "../utils/utils";
+import {
+  dadoExiste,
+  dispatcher,
+  gerarNomeSemPontuacao,
+  normalizarData,
+} from "../utils/utils";
 import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
 import { toast } from "react-hot-toast";
@@ -9,6 +14,18 @@ import {
 } from "../redux/acoes/acoesCaixaArquivo";
 import Store from "../redux/Store";
 import httpRequest from "../utils/httpRequest";
+import {
+  camposFormCliente,
+  colunasTabelaClientes,
+  getClientes,
+  salvarCliente,
+} from "./dbCliente";
+import {
+  camposFormEspecieDocumental,
+  colunasTabelaEspecieDocumental,
+  getEspeciesDocumentais,
+  salvarEspecieDocumental,
+} from "./dbEspecieDocumental";
 
 const prefixo = "caixaArquivo";
 const url = "caixa-arquivo";
@@ -210,3 +227,98 @@ export const informarDescarteCaixaArquivo = async (id) => {
     verificarPorErros(erro);
   }
 };
+
+export const colunasTabelaCaixaArquivo = [
+  { name: "Ano", value: "anoDocumentos", alinhar: "center" },
+  {
+    name: "Expiração",
+    alinhar: "center",
+    formatar: (item) => normalizarData(item?.dataExpiracao),
+  },
+  { name: "Espécie", value: "nomeEspecieDocumental" },
+  { name: "Cliente", value: "nomeCliente" },
+  { name: "Situação", value: "situacao" },
+  { name: "Observações", value: "observacoes" },
+];
+
+export const camposFormCaixaArquivo = [
+  {
+    tamanhoGrid: { md: 6 },
+    label: "Identificador",
+    name: "identificador",
+    obrigatorio: true,
+  },
+  {
+    tamanhoGrid: { md: 6 },
+    label: "Ano dos documentos",
+    name: "anoDocumentos",
+    obrigatorio: true,
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Localização",
+    name: "localizacao",
+    obrigatorio: true,
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Cliente",
+    name: "nomeCliente",
+    componente: {
+      acao: getClientes,
+      entidade: "cliente",
+      campoId: "idCliente",
+      acaoSalvar: salvarCliente,
+      campos: camposFormCliente,
+      colunas: colunasTabelaClientes,
+    },
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Espécie documental",
+    name: "nomeEspecieDocumental",
+    componente: {
+      acao: getEspeciesDocumentais,
+      entidade: "especieDocumental",
+      campoId: "idEspecieDocumental",
+      acaoSalvar: salvarEspecieDocumental,
+      campos: camposFormEspecieDocumental,
+      colunas: colunasTabelaEspecieDocumental,
+    },
+  },
+  {
+    tamanhoGrid: { md: 6 },
+    label: "Data armazenamento",
+    name: "dataArmazenamento",
+    tipo: "date",
+    obrigatorio: true,
+    formatar: (item) => normalizarData(item?.dataArmazenamento),
+  },
+  {
+    tamanhoGrid: { md: 6 },
+    label: "Data expiração",
+    name: "dataExpiracao",
+    tipo: "date",
+    obrigatorio: true,
+    formatar: (item) => normalizarData(item?.dataExpiracao),
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Situação",
+    name: "situacao",
+    tipo: "select",
+    obrigatorio: true,
+    selectItems: [
+      { label: "Em Prazo", value: "Em Prazo" },
+      { label: "Aguardando descarte", value: "Aguardando descarte" },
+      { label: "Descartado", value: "Descartado" },
+    ],
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Observações",
+    name: "observacoes",
+    rows: 3,
+    filtravel: false,
+  },
+];

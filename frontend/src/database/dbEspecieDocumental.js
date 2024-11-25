@@ -1,4 +1,4 @@
-import { dadoExiste, dispatcher, gerarNomeSemPontuacao } from "../utils/utils";
+import { calcularTempo, dadoExiste, dispatcher, gerarNomeSemPontuacao } from "../utils/utils";
 import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
 import { toast } from "react-hot-toast";
@@ -8,6 +8,12 @@ import {
   limparEspecieDocumentalDetalhe,
 } from "../redux/acoes/acoesEspecieDocumental";
 import Store from "../redux/Store";
+import {
+  camposFormAreaDepartamento,
+  colunasTabelaAreaDepartamento,
+  getAreasDepartamentos,
+  salvarAreaDepartamento,
+} from "./dbAreaDepartamento";
 
 const prefixo = "especieDocumental";
 const url = "especie-documental";
@@ -174,3 +180,81 @@ export const removerEspecieDocumental = async (id) => {
     verificarPorErros(erro);
   }
 };
+
+export const colunasTabelaEspecieDocumental = [
+  { name: "Nome", value: "nome" },
+  { name: "Área", value: "nomeAreaDepartamento" },
+  {
+    name: "Retenção",
+    formatar: (item) => calcularTempo(item),
+  },
+  { name: "Descrição", value: "descricao" },
+]
+
+export const camposFormEspecieDocumental = [
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Nome",
+    name: "nome",
+    filtravel: false,
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Nome sem pontuação",
+    name: "nomeSemPontuacao",
+    mostrarFormulario: false,
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Área/Departamento",
+    name: "nomeAreaDepartamento",
+    componente: {
+      acao: getAreasDepartamentos,
+      entidade: "areaDepartamento",
+      campoId: "idAreaDepartamento",
+      acaoSalvar: salvarAreaDepartamento,
+      campos: camposFormAreaDepartamento,
+      colunas: colunasTabelaAreaDepartamento,
+    },
+  },
+  {
+    tamanhoGrid: { md: 6 },
+    label: "Retenção",
+    name: "retencao",
+    formatar: (item) =>
+      calcularTempo({
+        retencao: item?.retencao,
+        tipoRetencao: item?.tipoRetencao,
+      }),
+  },
+  {
+    tamanhoGrid: { md: 6 },
+    label: "Tipo retenção",
+    name: "tipoRetencao",
+    tipo: "select",
+    selectItems: [
+      { label: "Dia", value: "Dia" },
+      { label: "Mês", value: "Mês" },
+      { label: "Ano", value: "Ano" },
+    ],
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Categoria",
+    name: "categoria",
+    tipo: "select",
+    selectItems: [
+      { label: "Pessoal", value: "Pessoal" },
+      { label: "Empresarial", value: "Empresarial" },
+      { label: "Fiscal", value: "Fiscal" },
+      { label: "Outros", value: "Outros" },
+    ],
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Descrição",
+    name: "descricao",
+    rows: 3,
+    filtravel: false,
+  },
+];
