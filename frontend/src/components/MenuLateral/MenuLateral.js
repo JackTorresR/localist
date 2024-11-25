@@ -56,7 +56,7 @@ const MenuLateral = () => {
       Icon: IoIosPeople,
       iconeTamanho: 28,
       nome: "Clientes",
-      acao: () => navigate("/"),
+      acao: () => navigate("/cliente"),
     },
     {
       Icon: FaUserLarge,

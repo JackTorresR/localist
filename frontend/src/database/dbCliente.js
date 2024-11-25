@@ -8,6 +8,7 @@ import {
   detalharCliente,
   limparClienteDetalhe,
 } from "../redux/acoes/acoesCliente";
+import { fecharModal } from "../redux/acoes/acoesModal";
 
 const prefixo = "cliente";
 
@@ -15,6 +16,7 @@ export const getClientes = async (params = {}) => {
   const { offset = 0, limite = limiteItemsPorPagina, ...outrosParams } = params;
 
   limparClienteDetalhe();
+  fecharModal();
 
   const searchParams = new URLSearchParams({ offset, limit: limite });
 
@@ -103,11 +105,14 @@ export const editarCliente = async (cliente) => {
       throw new Error("Erro ao editar cliente!");
     }
 
-    const { mensagem, clienteAtualizado } = await response.json();
+    const { mensagem } = await response.json();
 
-    detalharCliente(clienteAtualizado);
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    getClientes(parametrosBusca);
+
     toast.success(mensagem);
-    window.history.back();
   } catch (erro) {
     verificarPorErros(erro);
   }
@@ -127,9 +132,13 @@ export const criarCliente = async (cliente) => {
       throw new Error(errorData?.mensagem);
     }
 
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    getClientes(parametrosBusca);
+
     const data = await response.json();
     toast.success(data.mensagem);
-    window.history.go("/cliente");
   } catch (erro) {
     verificarPorErros(erro);
   }
@@ -151,7 +160,7 @@ export const removerCliente = async (id) => {
 
     if (!resposta.ok) {
       toast.error(resultado.mensagem || "Erro ao remover cliente!");
-      return;
+      return null;
     }
 
     await getClientes();

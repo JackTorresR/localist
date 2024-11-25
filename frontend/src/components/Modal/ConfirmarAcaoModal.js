@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Modal,
   Button,
@@ -12,26 +11,37 @@ import { useSelector } from "react-redux";
 import { fecharModal } from "../../redux/acoes/acoesModal";
 import CORES from "../../styles/Cores";
 import Estilos from "../../styles/Styles";
+import { dadoExiste } from "../../utils/utils";
 
-const ConfirmarAcaoModal = ({
-  modalName,
-  executeAction,
-  titulo,
-  descricao,
-}) => {
-  const open = useSelector((state) => state?.modal?.[modalName]) || false;
+const ConfirmarAcaoModal = (props = {}) => {
+  const {
+    acao,
+    titulo,
+    descricao,
+    entidade = "",
+    itemDetalhe = {},
+    nomeAlternativoModal = "",
+  } = props;
 
-  const handleClose = () => fecharModal(modalName);
+  const nomeModal = dadoExiste(nomeAlternativoModal)
+    ? nomeAlternativoModal
+    : `${entidade}-modal-delete`;
+
+  const open = useSelector((state) => state?.modal?.[nomeModal]) || false;
+
+  const handleClose = () => fecharModal(nomeModal);
 
   const tituloDefault = "CONFIRMAR";
   const descricaoDefault = "Tem certeza que deseja excluir este item?";
+  const nomeRegistro =
+    itemDetalhe?.nome || itemDetalhe?.observacoes || itemDetalhe?.descricao;
 
   return (
     <Modal
       open={open}
       onClose={handleClose}
-      aria-labelledby={`${modalName}-titulo`}
-      aria-describedby={`${modalName}-descricao`}
+      aria-labelledby={`${nomeModal}-titulo`}
+      aria-describedby={`${nomeModal}-descricao`}
       sx={Estilos.containerFlexCentralizado}
     >
       <Card
@@ -56,31 +66,42 @@ const ConfirmarAcaoModal = ({
           }}
         >
           <Typography
-            id={`${modalName}-titulo`}
-            variant="h6"
-            color={CORES.BRANCO}
+            variant="h5"
+            fontWeight="bold"
+            color={CORES.PRETO}
+            id={`${nomeModal}-titulo`}
           >
             {titulo?.toUpperCase() || tituloDefault.toUpperCase()}
           </Typography>
         </Box>
-
         <CardContent
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            paddingBottom: 0,
             minHeight: 200,
+            display: "flex",
+            paddingBottom: 0,
+            flexDirection: "column",
           }}
         >
           <Typography
-            id={`${modalName}-descricao`}
+            id={`${nomeModal}-descricao`}
             variant="body1"
             color="textPrimary"
             fontSize={18}
-            sx={{ flex: 1, flexGrow: 1 }}
+            fontWeight="bold"
           >
             {descricao || descricaoDefault}
           </Typography>
+          {dadoExiste(nomeRegistro) && (
+            <Typography
+              id={`${nomeModal}-nome`}
+              variant="body1"
+              color="textPrimary"
+              fontSize={18}
+              sx={{ flex: 1, flexGrow: 1 }}
+            >
+              {nomeRegistro}
+            </Typography>
+          )}
           <div
             style={{
               display: "flex",
@@ -95,8 +116,9 @@ const ConfirmarAcaoModal = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                executeAction();
                 handleClose();
+
+                return acao ? acao() : null;
               }}
             >
               Confirmar

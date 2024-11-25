@@ -107,7 +107,7 @@ const editarUsuario = async (req, res) => {
     }
 
     const usuarioAtualizado = await Usuario.findOneAndUpdate(
-      { id },
+      { _id: id },
       atualizacoes,
       { new: true, runValidators: true }
     );
@@ -238,6 +238,28 @@ const editarSenha = async (req, res) => {
   }
 };
 
+const autenticar = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ mensagem: "Token não fornecido!" });
+    }
+
+    const decoded = jwt.verify(token, CHAVE_SECRETA);
+    const usuario = await Usuario.findById(decoded._id);
+
+    if (!usuario) {
+      return res.status(401).json({ mensagem: "Usuário não encontrado!" });
+    }
+
+    req.user = { id: usuario?._id?.toString(), nome: usuario.nome };
+    next();
+  } catch (error) {
+    console.error("Erro na autenticação:", error);
+    return res.status(401).json({ mensagem: "Autenticação inválida!" });
+  }
+};
+
 module.exports = {
   criarUsuario,
   listarUsuarios,
@@ -247,4 +269,5 @@ module.exports = {
   acessarSistema,
   validarAcesso,
   editarSenha,
+  autenticar,
 };

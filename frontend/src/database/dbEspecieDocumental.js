@@ -7,8 +7,10 @@ import {
   detalharEspecieDocumental,
   limparEspecieDocumentalDetalhe,
 } from "../redux/acoes/acoesEspecieDocumental";
+import Store from "../redux/Store";
 
 const prefixo = "especieDocumental";
+const url = "especie-documental";
 
 export const getEspeciesDocumentais = async (params = {}) => {
   const { offset = 0, limite = limiteItemsPorPagina, ...outrosParams } = params;
@@ -25,7 +27,7 @@ export const getEspeciesDocumentais = async (params = {}) => {
 
   try {
     const response = await fetch(
-      `${configs.API_URL}/especie-documental?${searchParams.toString()}`,
+      `${configs.API_URL}/${url}?${searchParams.toString()}`,
       { method: "GET", headers: { "Content-Type": "application/json" } }
     );
     if (!response.ok) {
@@ -54,13 +56,10 @@ export const getEspeciesDocumentais = async (params = {}) => {
 
 export const getEspecieDocumental = async (id) => {
   try {
-    const resposta = await fetch(
-      `${configs.API_URL}/especie-documental/${id}`,
-      {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    const resposta = await fetch(`${configs.API_URL}/${url}/${id}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
 
     const resultado = await resposta.json();
 
@@ -96,8 +95,8 @@ export const salvarEspecieDocumental = async (dados = {}) => {
 
 export const editarEspecieDocumental = async (especieDocumental) => {
   try {
-    const url = `${configs.API_URL}/especie-documental/${especieDocumental._id}`;
-    const response = await fetch(url, {
+    const urlCompleta = `${configs.API_URL}/${url}/${especieDocumental?._id}`;
+    const response = await fetch(urlCompleta, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(especieDocumental),
@@ -107,11 +106,14 @@ export const editarEspecieDocumental = async (especieDocumental) => {
       throw new Error("Erro ao editar espécie documental!");
     }
 
-    const { mensagem, especieDocumentalAtualizado } = await response.json();
+    const { mensagem } = await response.json();
 
-    detalharEspecieDocumental(especieDocumentalAtualizado);
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    getEspeciesDocumentais(parametrosBusca);
+
     toast.success(mensagem);
-    window.history.back();
   } catch (erro) {
     verificarPorErros(erro);
   }
@@ -119,8 +121,8 @@ export const editarEspecieDocumental = async (especieDocumental) => {
 
 export const criarEspecieDocumental = async (especieDocumental) => {
   try {
-    const url = `${configs.API_URL}/especie-documental`;
-    const response = await fetch(url, {
+    const urlCompleta = `${configs.API_URL}/${url}`;
+    const response = await fetch(urlCompleta, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(especieDocumental),
@@ -131,9 +133,13 @@ export const criarEspecieDocumental = async (especieDocumental) => {
       throw new Error(errorData?.mensagem);
     }
 
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    getEspeciesDocumentais(parametrosBusca);
+
     const data = await response.json();
     toast.success(data.mensagem);
-    window.history.go("/especie-documental");
   } catch (erro) {
     verificarPorErros(erro);
   }
@@ -146,13 +152,10 @@ export const removerEspecieDocumental = async (id) => {
   }
 
   try {
-    const resposta = await fetch(
-      `${configs.API_URL}/especie-documental/${id}`,
-      {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    const resposta = await fetch(`${configs.API_URL}/${url}/${id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
 
     const resultado = await resposta.json();
 

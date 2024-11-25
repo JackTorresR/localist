@@ -111,7 +111,7 @@ const editarAreaDepartamento = async (req, res) => {
     const atualizacoes = req.body;
 
     const areaDepartamentoAtualizado = await AreaDepartamento.findByIdAndUpdate(
-      id,
+      { _id: id },
       atualizacoes,
       { new: true, runValidators: true }
     );

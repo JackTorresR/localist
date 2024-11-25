@@ -7,6 +7,7 @@ import {
   detalharUsuario,
   limparUsuarioDetalhe,
 } from "../redux/acoes/acoesUsuario";
+import Store from "../redux/Store";
 
 const prefixo = "usuario";
 
@@ -102,11 +103,14 @@ export const editarUsuario = async (usuario) => {
       throw new Error("Erro ao editar usuário!");
     }
 
-    const { mensagem, usuarioAtualizado } = await response.json();
+    const { mensagem } = await response.json();
 
-    detalharUsuario(usuarioAtualizado);
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    await getUsuarios(parametrosBusca);
+
     toast.success(mensagem);
-    window.history.back();
   } catch (erro) {
     verificarPorErros(erro);
   }
@@ -126,9 +130,13 @@ export const criarUsuario = async (usuario) => {
       throw new Error(errorData?.mensagem);
     }
 
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    getUsuarios(parametrosBusca);
+
     const data = await response.json();
     toast.success(data.mensagem);
-    window.history.go("/usuario");
   } catch (erro) {
     verificarPorErros(erro);
   }

@@ -34,6 +34,10 @@ const FiltrarRegistrosModal = (props = {}) => {
 
   const handleReset = () => setDadosFiltrados({});
 
+  const camposFiltraveis = camposFiltro
+    ?.filter((item) => item?.filtravel !== false)
+    ?.map((item) => ({ ...item, obrigatorio: false }));
+
   return (
     <Modal
       open={open}
@@ -67,16 +71,17 @@ const FiltrarRegistrosModal = (props = {}) => {
           }}
         >
           <Typography
+            variant="h5"
+            fontWeight="bold"
+            color={CORES.PRETO}
             id={`${nomeModalFiltro}-titulo`}
-            variant="h6"
-            color={CORES.BRANCO}
           >
-            FILTRAR REGISTROS
+            Filtrar registros
           </Typography>
         </Box>
         <Box maxHeight={"80vh"} overflow={"auto"} sx={{ p: 2 }}>
           <Formulario
-            campos={camposFiltro}
+            campos={camposFiltraveis}
             dados={dadosFiltrados}
             onChange={handleChange}
             onSubmit={handleApply}
