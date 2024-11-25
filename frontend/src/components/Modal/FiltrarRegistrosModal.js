@@ -8,11 +8,9 @@ import { atualizarParametrosBusca } from "../../redux/acoes/acoesParametroBusca"
 import toast from "react-hot-toast";
 
 const FiltrarRegistrosModal = (props = {}) => {
-  const {
-    acao = null,
-    camposFiltro = [],
-    nomeModalFiltro = "filtro-modal-form",
-  } = props;
+  const { acao = null, camposFiltro = [], entidade = "filtro" } = props;
+
+  const nomeModalFiltro = `${entidade}-modal-filter`;
 
   const parametrosBusca = useSelector(
     (state) => state?.parametroBusca?.[nomeModalFiltro] || {}

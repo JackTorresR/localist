@@ -4,12 +4,13 @@ import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
 import { TiThMenu } from "react-icons/ti";
 import {
+  camposFormCliente,
   getClientes,
   removerCliente,
-  salvarCliente,
+  salvarCliente
 } from "../../database/dbCliente";
 import { useState } from "react";
-import { normalizarDocumento, normalizarTelefone } from "../../utils/utils";
+import { normalizarTelefone } from "../../utils/utils";
 import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
 import InfoModal from "../../components/Modal/InfoModal";
 import FormModal from "../../components/Modal/FormModal";
@@ -18,58 +19,13 @@ const Cliente = () => {
   const clientes = useSelector((state) => state?.cliente);
   const [itemDetalhe, setItemDetalhe] = useState({});
 
-  const campos = [
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Nome",
-      name: "nome",
-      filtravel: false,
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Nome sem pontuação",
-      name: "nomeSemPontuacao",
-      mostrarFormulario: false,
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Email",
-      name: "email",
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Endereço",
-      name: "endereco",
-    },
-    {
-      tamanhoGrid: { md: 6 },
-      label: "CPF/CNPJ",
-      name: "cpfCnpj",
-      mask: "cpfCnpj",
-      formatar: (item) => normalizarDocumento(item?.cpfCnpj),
-    },
-    {
-      tamanhoGrid: { md: 6 },
-      label: "Telefone",
-      name: "telefone",
-      mask: "telefone",
-      formatar: (item) => normalizarTelefone(item?.telefone),
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Observações",
-      name: "observacoes",
-      rows: 3,
-      filtravel: false,
-    },
-  ];
-
   const handleSubmit = (dados) => {
     salvarCliente(dados);
     setItemDetalhe({});
   };
 
   const entidade = "cliente";
+  const campos = camposFormCliente;
   const propsComponentes = { campos, entidade, itemDetalhe };
 
   return (

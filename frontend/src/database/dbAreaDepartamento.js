@@ -173,3 +173,11 @@ export const removerAreaDepartamento = async (id) => {
     verificarPorErros(erro);
   }
 };
+
+export const colunasTabelaAreaDepartamento = [
+  { name: "Código", value: "codigoArea" },
+  { name: "Tipo", value: "tipo" },
+  { name: "Nome", value: "nome" },
+  { name: "Cliente", value: "nomeCliente" },
+  { name: "Descrição", value: "descricao" },
+];

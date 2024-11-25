@@ -4,6 +4,7 @@ import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
 import { TiThMenu } from "react-icons/ti";
 import {
+  colunasTabelaAreaDepartamento,
   getAreasDepartamentos,
   removerAreaDepartamento,
   salvarAreaDepartamento,
@@ -13,6 +14,12 @@ import FormModal from "../../components/Modal/FormModal";
 import InfoModal from "../../components/Modal/InfoModal";
 import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
 import { dadoExiste } from "../../utils/utils";
+import {
+  camposFormCliente,
+  colunasTabelaClientes,
+  getClientes,
+  salvarCliente,
+} from "../../database/dbCliente";
 
 const AreaDepartamento = () => {
   const areasDepartamentos = useSelector((state) => state?.areaDepartamento);
@@ -37,7 +44,15 @@ const AreaDepartamento = () => {
     {
       tamanhoGrid: { md: 12 },
       label: "Cliente",
-      name: "idCliente",
+      name: "nomeCliente",
+      componente: {
+        acao: getClientes,
+        entidade: "cliente",
+        campoId: "idCliente",
+        acaoSalvar: salvarCliente,
+        campos: camposFormCliente,
+        colunas: colunasTabelaClientes,
+      },
     },
     {
       tamanhoGrid: { md: 6 },
@@ -92,13 +107,7 @@ const AreaDepartamento = () => {
         <TabelaCustomizada
           {...areasDepartamentos}
           titulo="Áreas e departamentos"
-          colunas={[
-            { name: "Código", value: "codigoArea" },
-            { name: "Tipo", value: "tipo" },
-            { name: "Nome", value: "nome" },
-            { name: "Cliente", value: "nomeCliente" },
-            { name: "Descrição", value: "descricao" },
-          ]}
+          colunas={colunasTabelaAreaDepartamento}
           acao={getAreasDepartamentos}
           camposFiltro={campos}
           exibirFiltro={true}

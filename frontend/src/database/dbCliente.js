@@ -1,4 +1,10 @@
-import { dadoExiste, dispatcher, gerarNomeSemPontuacao } from "../utils/utils";
+import {
+  dadoExiste,
+  dispatcher,
+  gerarNomeSemPontuacao,
+  normalizarDocumento,
+  normalizarTelefone,
+} from "../utils/utils";
 import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
 import Store from "../redux/Store";
@@ -8,7 +14,6 @@ import {
   detalharCliente,
   limparClienteDetalhe,
 } from "../redux/acoes/acoesCliente";
-import { fecharModal } from "../redux/acoes/acoesModal";
 
 const prefixo = "cliente";
 
@@ -16,7 +21,6 @@ export const getClientes = async (params = {}) => {
   const { offset = 0, limite = limiteItemsPorPagina, ...outrosParams } = params;
 
   limparClienteDetalhe();
-  fecharModal();
 
   const searchParams = new URLSearchParams({ offset, limit: limite });
 
@@ -226,3 +230,60 @@ export const removerImagemCliente = async (idCliente, nomeImagem) => {
     verificarPorErros(erro);
   }
 };
+
+export const colunasTabelaClientes = [
+  { name: "Nome", value: "nome" },
+  { name: "Email", value: "email" },
+  {
+    name: "Telefone",
+    value: "telefone",
+    formatar: (item) => normalizarTelefone(item),
+  },
+  { name: "Observações", value: "observacoes" },
+];
+
+export const camposFormCliente = [
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Nome",
+    name: "nome",
+    filtravel: false,
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Nome sem pontuação",
+    name: "nomeSemPontuacao",
+    mostrarFormulario: false,
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Email",
+    name: "email",
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Endereço",
+    name: "endereco",
+  },
+  {
+    tamanhoGrid: { md: 6 },
+    label: "CPF/CNPJ",
+    name: "cpfCnpj",
+    mask: "cpfCnpj",
+    formatar: (item) => normalizarDocumento(item?.cpfCnpj),
+  },
+  {
+    tamanhoGrid: { md: 6 },
+    label: "Telefone",
+    name: "telefone",
+    mask: "telefone",
+    formatar: (item) => normalizarTelefone(item?.telefone),
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Observações",
+    name: "observacoes",
+    rows: 3,
+    filtravel: false,
+  },
+];
