@@ -8,6 +8,7 @@ import {
   limparAreaDepartamentoDetalhe,
 } from "../redux/acoes/acoesAreaDepartamento";
 import Store from "../redux/Store";
+import { camposFormCliente, colunasTabelaClientes, getClientes, salvarCliente } from "./dbCliente";
 
 const prefixo = "areaDepartamento";
 
@@ -180,4 +181,50 @@ export const colunasTabelaAreaDepartamento = [
   { name: "Nome", value: "nome" },
   { name: "Cliente", value: "nomeCliente" },
   { name: "Descrição", value: "descricao" },
+];
+
+export const camposFormAreaDepartamento = [
+  {
+    tamanhoGrid: { md: 9 },
+    label: "Nome",
+    name: "nomeSemPontuacao",
+  },
+  {
+    tamanhoGrid: { md: 3 },
+    label: "Sigla",
+    name: "sigla",
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Responsável",
+    name: "responsavel",
+  },
+  {
+    tamanhoGrid: { md: 12 },
+    label: "Cliente",
+    name: "nomeCliente",
+    componente: {
+      acao: getClientes,
+      entidade: "cliente",
+      campoId: "idCliente",
+      acaoSalvar: salvarCliente,
+      campos: camposFormCliente,
+      colunas: colunasTabelaClientes,
+    },
+  },
+  {
+    tamanhoGrid: { md: 6 },
+    label: "Código da área",
+    name: "codigoArea",
+  },
+  {
+    tamanhoGrid: { md: 6 },
+    label: "Tipo",
+    name: "tipo",
+    tipo: "select",
+    selectItems: [
+      { label: "Área", value: "Área" },
+      { label: "Departamento", value: "Departamento" },
+    ],
+  },
 ];

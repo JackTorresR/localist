@@ -13,6 +13,12 @@ import { useState } from "react";
 import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
 import FormModal from "../../components/Modal/FormModal";
 import InfoModal from "../../components/Modal/InfoModal";
+import {
+  camposFormAreaDepartamento,
+  colunasTabelaAreaDepartamento,
+  getAreasDepartamentos,
+  salvarAreaDepartamento,
+} from "../../database/dbAreaDepartamento";
 
 const EspecieDocumental = () => {
   const especiesDocumentais = useSelector((state) => state?.especieDocumental);
@@ -34,8 +40,15 @@ const EspecieDocumental = () => {
     {
       tamanhoGrid: { md: 12 },
       label: "Área/Departamento",
-      name: "idAreaDepartamento",
-      formatar: (item) => item?.nomeAreaDepartamento,
+      name: "nomeAreaDepartamento",
+      componente: {
+        acao: getAreasDepartamentos,
+        entidade: "areaDepartamento",
+        campoId: "idAreaDepartamento",
+        acaoSalvar: salvarAreaDepartamento,
+        campos: camposFormAreaDepartamento,
+        colunas: colunasTabelaAreaDepartamento,
+      },
     },
     {
       tamanhoGrid: { md: 6 },
@@ -78,6 +91,7 @@ const EspecieDocumental = () => {
       filtravel: false,
     },
   ];
+
   const handleSubmit = (dados) => {
     salvarEspecieDocumental(dados);
     setItemDetalhe({});

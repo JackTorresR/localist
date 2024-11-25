@@ -4,6 +4,7 @@ import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
 import { TiThMenu } from "react-icons/ti";
 import {
+  camposFormAreaDepartamento,
   colunasTabelaAreaDepartamento,
   getAreasDepartamentos,
   removerAreaDepartamento,
@@ -14,62 +15,11 @@ import FormModal from "../../components/Modal/FormModal";
 import InfoModal from "../../components/Modal/InfoModal";
 import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
 import { dadoExiste } from "../../utils/utils";
-import {
-  camposFormCliente,
-  colunasTabelaClientes,
-  getClientes,
-  salvarCliente,
-} from "../../database/dbCliente";
+import {} from "../../database/dbCliente";
 
 const AreaDepartamento = () => {
   const areasDepartamentos = useSelector((state) => state?.areaDepartamento);
   const [itemDetalhe, setItemDetalhe] = useState({});
-
-  const campos = [
-    {
-      tamanhoGrid: { md: 9 },
-      label: "Nome",
-      name: "nomeSemPontuacao",
-    },
-    {
-      tamanhoGrid: { md: 3 },
-      label: "Sigla",
-      name: "sigla",
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Responsável",
-      name: "responsavel",
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Cliente",
-      name: "nomeCliente",
-      componente: {
-        acao: getClientes,
-        entidade: "cliente",
-        campoId: "idCliente",
-        acaoSalvar: salvarCliente,
-        campos: camposFormCliente,
-        colunas: colunasTabelaClientes,
-      },
-    },
-    {
-      tamanhoGrid: { md: 6 },
-      label: "Código da área",
-      name: "codigoArea",
-    },
-    {
-      tamanhoGrid: { md: 6 },
-      label: "Tipo",
-      name: "tipo",
-      tipo: "select",
-      selectItems: [
-        { label: "Área", value: "Área" },
-        { label: "Departamento", value: "Departamento" },
-      ],
-    },
-  ];
 
   const handleSubmit = (dados) => {
     salvarAreaDepartamento(dados);
@@ -77,6 +27,7 @@ const AreaDepartamento = () => {
   };
 
   const entidade = "areaDepartamento";
+  const campos = camposFormAreaDepartamento;
   const propsComponentes = { campos, entidade, itemDetalhe };
   const tituloCard =
     (dadoExiste(itemDetalhe?._id) ? "Editar" : "Criar") +
