@@ -4,6 +4,8 @@ import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
 import { TiThMenu } from "react-icons/ti";
 import {
+  camposFormAreaDepartamento,
+  colunasTabelaAreaDepartamento,
   getAreasDepartamentos,
   removerAreaDepartamento,
   salvarAreaDepartamento,
@@ -13,48 +15,11 @@ import FormModal from "../../components/Modal/FormModal";
 import InfoModal from "../../components/Modal/InfoModal";
 import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
 import { dadoExiste } from "../../utils/utils";
+import {} from "../../database/dbCliente";
 
 const AreaDepartamento = () => {
   const areasDepartamentos = useSelector((state) => state?.areaDepartamento);
   const [itemDetalhe, setItemDetalhe] = useState({});
-
-  const campos = [
-    {
-      tamanhoGrid: { md: 9 },
-      label: "Nome",
-      name: "nomeSemPontuacao",
-    },
-    {
-      tamanhoGrid: { md: 3 },
-      label: "Sigla",
-      name: "sigla",
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Responsável",
-      name: "responsavel",
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Cliente",
-      name: "idCliente",
-    },
-    {
-      tamanhoGrid: { md: 6 },
-      label: "Código da área",
-      name: "codigoArea",
-    },
-    {
-      tamanhoGrid: { md: 6 },
-      label: "Tipo",
-      name: "tipo",
-      tipo: "select",
-      selectItems: [
-        { label: "Área", value: "Área" },
-        { label: "Departamento", value: "Departamento" },
-      ],
-    },
-  ];
 
   const handleSubmit = (dados) => {
     salvarAreaDepartamento(dados);
@@ -62,6 +27,7 @@ const AreaDepartamento = () => {
   };
 
   const entidade = "areaDepartamento";
+  const campos = camposFormAreaDepartamento;
   const propsComponentes = { campos, entidade, itemDetalhe };
   const tituloCard =
     (dadoExiste(itemDetalhe?._id) ? "Editar" : "Criar") +
@@ -92,13 +58,7 @@ const AreaDepartamento = () => {
         <TabelaCustomizada
           {...areasDepartamentos}
           titulo="Áreas e departamentos"
-          colunas={[
-            { name: "Código", value: "codigoArea" },
-            { name: "Tipo", value: "tipo" },
-            { name: "Nome", value: "nome" },
-            { name: "Cliente", value: "nomeCliente" },
-            { name: "Descrição", value: "descricao" },
-          ]}
+          colunas={colunasTabelaAreaDepartamento}
           acao={getAreasDepartamentos}
           camposFiltro={campos}
           exibirFiltro={true}

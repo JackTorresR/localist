@@ -10,15 +10,16 @@ import { abrirModal } from "../../redux/acoes/acoesModal";
 
 const CabecalhoTabela = (props = {}) => {
   const {
-    titulo = "Tabela",
     quantidade,
     onAdd = null,
+    titulo = "Tabela",
     camposFiltro = [],
+    entidade = "filtro",
     exibirFiltro = false,
     exibirBotaoAdicionar = false,
-    nomeModalFiltro = "filtro-modal-form",
   } = props;
 
+  const nomeModalFiltro = `${entidade}-modal-filter`;
   const temCamposFiltro = camposFiltro?.length > 0;
 
   return (

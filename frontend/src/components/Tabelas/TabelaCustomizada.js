@@ -33,14 +33,15 @@ const TabelaCustomizada = (props = {}) => {
     quantidade = 0,
     acaoEditar = null,
     acaoRemover = null,
+    entidade = "filtro",
     acaoDetalhar = null,
     botoesExtrasAcao = [],
     mostrarAcaoEditar = true,
     mostrarAcaoRemover = true,
     mostrarAcaoDetalhar = true,
-    nomeModalFiltro = "filtro-modal-form",
   } = props;
 
+  const nomeModalFiltro = `${entidade}-modal-filter`;
   const [itemSelecionado, setItemSelecionado] = useState(null);
 
   useEffect(() => {

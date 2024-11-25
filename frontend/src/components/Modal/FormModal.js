@@ -7,12 +7,12 @@ import Formulario from "../../components/Formularios/Formulario";
 
 const FormModal = (props = {}) => {
   const {
-    onClose,
     onSubmit,
     campos = [],
     entidade = "",
     tituloCard = "",
     itemDetalhe = {},
+    onClose = () => null,
   } = props;
 
   const nomeModal = `${entidade}-modal-form`;

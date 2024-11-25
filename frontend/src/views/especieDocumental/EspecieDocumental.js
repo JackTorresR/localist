@@ -4,93 +4,40 @@ import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
 import { TiThMenu } from "react-icons/ti";
 import {
+  camposFormEspecieDocumental,
+  colunasTabelaEspecieDocumental,
   getEspeciesDocumentais,
   removerEspecieDocumental,
   salvarEspecieDocumental,
 } from "../../database/dbEspecieDocumental";
-import { calcularTempo } from "../../utils/utils";
 import { useState } from "react";
 import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
 import FormModal from "../../components/Modal/FormModal";
 import InfoModal from "../../components/Modal/InfoModal";
+import {} from "../../database/dbAreaDepartamento";
+import { dadoExiste } from "../../utils/utils";
 
 const EspecieDocumental = () => {
   const especiesDocumentais = useSelector((state) => state?.especieDocumental);
   const [itemDetalhe, setItemDetalhe] = useState({});
 
-  const campos = [
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Nome",
-      name: "nome",
-      filtravel: false,
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Nome sem pontuação",
-      name: "nomeSemPontuacao",
-      mostrarFormulario: false,
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Área/Departamento",
-      name: "idAreaDepartamento",
-      formatar: (item) => item?.nomeAreaDepartamento,
-    },
-    {
-      tamanhoGrid: { md: 6 },
-      label: "Retenção",
-      name: "retencao",
-      formatar: (item) =>
-        calcularTempo({
-          retencao: item?.retencao,
-          tipoRetencao: item?.tipoRetencao,
-        }),
-    },
-    {
-      tamanhoGrid: { md: 6 },
-      label: "Tipo retenção",
-      name: "tipoRetencao",
-      tipo: "select",
-      selectItems: [
-        { label: "Dia", value: "Dia" },
-        { label: "Mês", value: "Mês" },
-        { label: "Ano", value: "Ano" },
-      ],
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Categoria",
-      name: "categoria",
-      tipo: "select",
-      selectItems: [
-        { label: "Pessoal", value: "Pessoal" },
-        { label: "Empresarial", value: "Empresarial" },
-        { label: "Fiscal", value: "Fiscal" },
-        { label: "Outros", value: "Outros" },
-      ],
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Descrição",
-      name: "descricao",
-      rows: 3,
-      filtravel: false,
-    },
-  ];
   const handleSubmit = (dados) => {
     salvarEspecieDocumental(dados);
     setItemDetalhe({});
   };
 
-  const entidade = "cliente";
+  const entidade = "especieDocumental";
+  const campos = camposFormEspecieDocumental;
   const propsComponentes = { campos, entidade, itemDetalhe };
+  const tituloCard =
+    (dadoExiste(itemDetalhe?._id) ? "Editar" : "Criar") + " espécie documental";
 
   return (
     <div style={Estilos.containerPrincipal}>
       <div style={{ flex: 1 }}>
         <FormModal
           {...propsComponentes}
+          tituloCard={tituloCard}
           onSubmit={handleSubmit}
           onClose={() => setItemDetalhe({})}
         />
@@ -110,15 +57,7 @@ const EspecieDocumental = () => {
         <TabelaCustomizada
           {...especiesDocumentais}
           titulo="Espécies documentais"
-          colunas={[
-            { name: "Nome", value: "nome" },
-            { name: "Área", value: "nomeAreaDepartamento" },
-            {
-              name: "Retenção",
-              formatar: (item) => calcularTempo(item),
-            },
-            { name: "Descrição", value: "descricao" },
-          ]}
+          colunas={colunasTabelaEspecieDocumental}
           acao={getEspeciesDocumentais}
           camposFiltro={campos}
           exibirFiltro={true}

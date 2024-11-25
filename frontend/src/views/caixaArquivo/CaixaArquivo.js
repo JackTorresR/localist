@@ -4,6 +4,8 @@ import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
 import { TiThMenu } from "react-icons/ti";
 import {
+  camposFormCaixaArquivo,
+  colunasTabelaCaixaArquivo,
   getCaixasArquivo,
   removerCaixaArquivo,
   salvarCaixaArquivo,
@@ -12,95 +14,29 @@ import { useState } from "react";
 import FormModal from "../../components/Modal/FormModal";
 import InfoModal from "../../components/Modal/InfoModal";
 import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
-import { normalizarData } from "../../utils/utils";
+import { dadoExiste, normalizarData } from "../../utils/utils";
 
 const CaixaArquivo = () => {
   const caixasArquivos = useSelector((state) => state?.caixaArquivo);
   const [itemDetalhe, setItemDetalhe] = useState({});
-
-  const campos = [
-    {
-      tamanhoGrid: { md: 6 },
-      label: "Identificador",
-      name: "identificador",
-      obrigatorio: true,
-    },
-    {
-      tamanhoGrid: { md: 6 },
-      label: "Ano dos documentos",
-      name: "anoDocumentos",
-      obrigatorio: true,
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Localização",
-      name: "localizacao",
-      obrigatorio: true,
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Cliente",
-      name: "idCliente",
-      obrigatorio: true,
-      formatar: (item) => item?.nomeCliente,
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Espécie documental",
-      name: "idEspecieDocumental",
-      obrigatorio: true,
-      formatar: (item) => item?.nomeEspecieDocumental,
-    },
-    {
-      tamanhoGrid: { md: 6 },
-      label: "Data armazenamento",
-      name: "dataArmazenamento",
-      tipo: "date",
-      obrigatorio: true,
-      formatar: (item) => normalizarData(item?.dataArmazenamento),
-    },
-    {
-      tamanhoGrid: { md: 6 },
-      label: "Data expiração",
-      name: "dataExpiracao",
-      tipo: "date",
-      obrigatorio: true,
-      formatar: (item) => normalizarData(item?.dataExpiracao),
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Situação",
-      name: "situacao",
-      tipo: "select",
-      obrigatorio: true,
-      selectItems: [
-        { label: "Em Prazo", value: "Em Prazo" },
-        { label: "Aguardando descarte", value: "Aguardando descarte" },
-        { label: "Descartado", value: "Descartado" },
-      ],
-    },
-    {
-      tamanhoGrid: { md: 12 },
-      label: "Observações",
-      name: "observacoes",
-      rows: 3,
-      filtravel: false,
-    },
-  ];
 
   const handleSubmit = (dados) => {
     salvarCaixaArquivo(dados);
     setItemDetalhe({});
   };
 
-  const entidade = "caixa-arquivo";
+  const entidade = "caixaArquivo";
+  const campos = camposFormCaixaArquivo;
   const propsComponentes = { campos, entidade, itemDetalhe };
+  const tituloCard =
+    (dadoExiste(itemDetalhe?._id) ? "Editar" : "Criar") + " caixa de arquivo";
 
   return (
     <div style={Estilos.containerPrincipal}>
       <div style={{ flex: 1 }}>
         <FormModal
           {...propsComponentes}
+          tituloCard={tituloCard}
           onSubmit={handleSubmit}
           onClose={() => setItemDetalhe({})}
         />
@@ -120,18 +56,7 @@ const CaixaArquivo = () => {
         <TabelaCustomizada
           {...caixasArquivos}
           titulo="Caixas de arquivos"
-          colunas={[
-            { name: "Ano", value: "anoDocumentos", alinhar: "center" },
-            {
-              name: "Expiração",
-              alinhar: "center",
-              formatar: (item) => normalizarData(item?.dataExpiracao),
-            },
-            { name: "Espécie", value: "nomeEspecieDocumental" },
-            { name: "Cliente", value: "nomeCliente" },
-            { name: "Situação", value: "situacao" },
-            { name: "Observações", value: "observacoes" },
-          ]}
+          colunas={colunasTabelaCaixaArquivo}
           acao={getCaixasArquivo}
           camposFiltro={campos}
           exibirFiltro={true}
