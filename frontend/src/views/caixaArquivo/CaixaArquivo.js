@@ -147,8 +147,11 @@ const CaixaArquivo = () => {
           acaoEditar={(item) => {
             setItemDetalhe({
               ...item,
-              dataArmazenamento: normalizarData(item?.dataArmazenamento),
-              dataExpiracao: normalizarData(item?.dataExpiracao),
+              dataArmazenamento: normalizarData(
+                item?.dataArmazenamento,
+                "YYYY-MM-DD"
+              ),
+              dataExpiracao: normalizarData(item?.dataExpiracao, "YYYY-MM-DD"),
             });
             abrirModal(`${entidade}-modal-form`);
           }}
