@@ -210,6 +210,49 @@ const atualizarSituacaoCaixas = async () => {
   }
 };
 
+const descartarCaixaArquivo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idUsuario = req.user?.id;
+
+    if (!idUsuario) {
+      return res.status(403).json({ mensagem: "Usuário não autenticado!" });
+    }
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ mensagem: "Caixa de arquivo não informada!" });
+    }
+
+    const dataAtual = dayjs().tz("America/Sao_Paulo").toDate();
+    const caixaAtualizada = await CaixaArquivo.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          situacao: "Descartado",
+          idUsuarioDescarte: idUsuario,
+          dataDescarte: dataAtual,
+        },
+      },
+      { new: true }
+    );
+
+    if (!caixaAtualizada) {
+      return res.status(404).json({
+        mensagem: "Caixa de arquivo não encontrada!",
+      });
+    }
+
+    res
+      .status(200)
+      .json({ mensagem: "Caixa de arquivo descartada com sucesso!" });
+  } catch (error) {
+    console.error("Erro ao descartar caixa de arquivo:", error);
+    res.status(500).json({ mensagem: "Erro interno do servidor!" });
+  }
+};
+
 module.exports = {
   criarCaixaArquivo,
   listarCaixasArquivos,
@@ -217,4 +260,5 @@ module.exports = {
   editarCaixaArquivo,
   deletarCaixaArquivo,
   atualizarSituacaoCaixas,
+  descartarCaixaArquivo,
 };

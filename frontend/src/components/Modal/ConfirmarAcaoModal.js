@@ -14,16 +14,27 @@ import Estilos from "../../styles/Styles";
 import { dadoExiste } from "../../utils/utils";
 
 const ConfirmarAcaoModal = (props = {}) => {
-  const { acao, titulo, entidade = "", descricao, itemDetalhe = {} } = props;
+  const {
+    acao,
+    titulo,
+    descricao,
+    entidade = "",
+    itemDetalhe = {},
+    nomeAlternativoModal = "",
+  } = props;
 
-  const nomeModal = `${entidade}-modal-delete`;
+  const nomeModal = dadoExiste(nomeAlternativoModal)
+    ? nomeAlternativoModal
+    : `${entidade}-modal-delete`;
+
   const open = useSelector((state) => state?.modal?.[nomeModal]) || false;
 
   const handleClose = () => fecharModal(nomeModal);
 
   const tituloDefault = "CONFIRMAR";
   const descricaoDefault = "Tem certeza que deseja excluir este item?";
-  const nomeRegistro = itemDetalhe?.nome || itemDetalhe?.observacoes
+  const nomeRegistro =
+    itemDetalhe?.nome || itemDetalhe?.observacoes || itemDetalhe?.descricao;
 
   return (
     <Modal

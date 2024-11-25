@@ -8,8 +8,10 @@ import {
   limparCaixaArquivoDetalhe,
 } from "../redux/acoes/acoesCaixaArquivo";
 import Store from "../redux/Store";
+import httpRequest from "../utils/httpRequest";
 
 const prefixo = "caixaArquivo";
+const url = "caixa-arquivo";
 
 export const getCaixasArquivo = async (params = {}) => {
   const {
@@ -68,7 +70,7 @@ export const getNotificacoes = async (params = {}) =>
 
 export const getCaixaArquivo = async (id) => {
   try {
-    const resposta = await fetch(`${configs.API_URL}/caixa-arquivo/${id}`, {
+    const resposta = await fetch(`${configs.API_URL}/${url}/${id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
@@ -105,8 +107,8 @@ export const salvarCaixaArquivo = async (dados = {}) => {
 
 export const editarCaixaArquivo = async (caixaArquivo) => {
   try {
-    const url = `${configs.API_URL}/caixa-arquivo/${caixaArquivo._id}`;
-    const response = await fetch(url, {
+    const urlCompleta = `${configs.API_URL}/${url}/${caixaArquivo._id}`;
+    const response = await fetch(urlCompleta, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(caixaArquivo),
@@ -131,8 +133,8 @@ export const editarCaixaArquivo = async (caixaArquivo) => {
 
 export const criarCaixaArquivo = async (caixaArquivo) => {
   try {
-    const url = `${configs.API_URL}/caixa-arquivo`;
-    const response = await fetch(url, {
+    const urlCompleta = `${configs.API_URL}/${url}`;
+    const response = await fetch(urlCompleta, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(caixaArquivo),
@@ -163,7 +165,7 @@ export const removerCaixaArquivo = async (id) => {
   }
 
   try {
-    const resposta = await fetch(`${configs.API_URL}/caixa-arquivo/${id}`, {
+    const resposta = await fetch(`${configs.API_URL}/${url}/${id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     });
@@ -175,12 +177,35 @@ export const removerCaixaArquivo = async (id) => {
       return;
     }
 
-    await getCaixasArquivo();
-    limparCaixaArquivoDetalhe();
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    getCaixasArquivo(parametrosBusca);
 
     toast.success(
       resultado.mensagem || "Caixa de arquivo removida com sucesso!"
     );
+  } catch (erro) {
+    verificarPorErros(erro);
+  }
+};
+
+export const informarDescarteCaixaArquivo = async (id) => {
+  try {
+    const resposta =
+      (await httpRequest({
+        url: `${url}/${id}/descartar`,
+        method: "PUT",
+      })) || {};
+
+    const { mensagem } = resposta;
+
+    toast.success(mensagem);
+
+    const parametrosBusca =
+      Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
+
+    getNotificacoes(parametrosBusca);
   } catch (erro) {
     verificarPorErros(erro);
   }

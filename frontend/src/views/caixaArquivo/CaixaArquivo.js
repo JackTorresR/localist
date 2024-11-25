@@ -8,22 +8,11 @@ import {
   removerCaixaArquivo,
   salvarCaixaArquivo,
 } from "../../database/dbCaixaArquivo";
-import dayjs from "dayjs";
-import "dayjs/locale/pt-br";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-import localeData from "dayjs/plugin/localeData";
 import { useState } from "react";
 import FormModal from "../../components/Modal/FormModal";
 import InfoModal from "../../components/Modal/InfoModal";
 import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
-
-dayjs.extend(customParseFormat);
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.extend(localeData);
-dayjs.locale("pt-br");
+import { normalizarData } from "../../utils/utils";
 
 const CaixaArquivo = () => {
   const caixasArquivos = useSelector((state) => state?.caixaArquivo);
@@ -68,8 +57,7 @@ const CaixaArquivo = () => {
       name: "dataArmazenamento",
       tipo: "date",
       obrigatorio: true,
-      formatar: (item) =>
-        dayjs(item?.dataExpiracao).tz("America/Sao_Paulo").format("DD/MM/YYYY"),
+      formatar: (item) => normalizarData(item?.dataArmazenamento),
     },
     {
       tamanhoGrid: { md: 6 },
@@ -77,8 +65,7 @@ const CaixaArquivo = () => {
       name: "dataExpiracao",
       tipo: "date",
       obrigatorio: true,
-      formatar: (item) =>
-        dayjs(item?.dataExpiracao).tz("America/Sao_Paulo").format("DD/MM/YYYY"),
+      formatar: (item) => normalizarData(item?.dataExpiracao),
     },
     {
       tamanhoGrid: { md: 12 },
@@ -106,7 +93,7 @@ const CaixaArquivo = () => {
     setItemDetalhe({});
   };
 
-  const entidade = "cliente";
+  const entidade = "caixa-arquivo";
   const propsComponentes = { campos, entidade, itemDetalhe };
 
   return (
@@ -138,10 +125,7 @@ const CaixaArquivo = () => {
             {
               name: "Expiração",
               alinhar: "center",
-              formatar: (item) =>
-                dayjs(item?.dataExpiracao)
-                  .tz("America/Sao_Paulo")
-                  .format("DD/MM/YYYY"),
+              formatar: (item) => normalizarData(item?.dataExpiracao),
             },
             { name: "Espécie", value: "nomeEspecieDocumental" },
             { name: "Cliente", value: "nomeCliente" },
@@ -163,12 +147,8 @@ const CaixaArquivo = () => {
           acaoEditar={(item) => {
             setItemDetalhe({
               ...item,
-              dataArmazenamento: dayjs(item?.dataArmazenamento)
-                .tz("America/Sao_Paulo")
-                .format("YYYY-MM-DD"),
-              dataExpiracao: dayjs(item?.dataExpiracao)
-                .tz("America/Sao_Paulo")
-                .format("YYYY-MM-DD"),
+              dataArmazenamento: normalizarData(item?.dataArmazenamento),
+              dataExpiracao: normalizarData(item?.dataExpiracao),
             });
             abrirModal(`${entidade}-modal-form`);
           }}

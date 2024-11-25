@@ -227,9 +227,11 @@ const TabelaCustomizada = (props = {}) => {
                             border: "1px solid #ccc",
                           }}
                         >
-                          {botoesAcao(item)?.map((botao, ix) =>
-                            botaoAcaoLinhaTabela({ botao, item, ix })
-                          )}
+                          {botoesAcao(item)
+                            ?.filter((item) => item?.condicional !== false)
+                            ?.map((botao, ix) =>
+                              botaoAcaoLinhaTabela({ botao, item, ix })
+                            )}
                         </Box>
                       </Collapse>
                     </TableCell>

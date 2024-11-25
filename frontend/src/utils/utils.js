@@ -1,4 +1,16 @@
 import Store from "../redux/Store";
+import dayjs from "dayjs";
+import "dayjs/locale/pt-br";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import localeData from "dayjs/plugin/localeData";
+
+dayjs.extend(customParseFormat);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(localeData);
+dayjs.locale("pt-br");
 
 export const dispatcher = (type, payload) => Store.dispatch({ type, payload });
 
@@ -76,6 +88,9 @@ export const normalizarTelefone = (telefone = "") =>
     : dadoExiste(telefone)
     ? telefone
     : "Telefone não é válido!";
+
+export const normalizarData = (data, formato = "DD/MM/YYYY") =>
+  dayjs(data).tz("America/Sao_Paulo").format(formato);
 
 export const mascaras = {
   cpf: "###.###.###-###",
