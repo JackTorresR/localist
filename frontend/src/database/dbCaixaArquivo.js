@@ -183,6 +183,7 @@ export const informarDescarteCaixaArquivo = async (id) => {
       Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
 
     getNotificacoes(parametrosBusca);
+    getCaixasArquivo(parametrosBusca);
   } catch (erro) {
     verificarPorErros(erro);
   }

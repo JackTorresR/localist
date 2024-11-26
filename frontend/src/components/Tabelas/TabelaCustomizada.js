@@ -94,33 +94,50 @@ const TabelaCustomizada = (props = {}) => {
   const botaoAcaoLinhaTabela = (props = {}) => {
     const { botao, item, ix } = props;
 
+    const tipoCondicional = botao?.condicional
+      ? typeof botao?.condicional
+      : null;
+
+    let podeMostrarAcao = true;
+    const condicionalFuncao = tipoCondicional === "function";
+    if (condicionalFuncao) {
+      podeMostrarAcao = botao?.condicional(item);
+    }
+
+    const condicionalBooleano = tipoCondicional === "boolean";
+    if (condicionalBooleano) {
+      podeMostrarAcao = botao?.condicional;
+    }
+
     return (
-      <Button
-        sx={{
-          flex: 1,
-          display: "flex",
-          margin: "5px 5px",
-          alignItems: "center",
-          lineHeight: "normal",
-          position: "relative",
-          justifyContent: "center",
-          borderRadius: "0px 0px 10px 10px",
-          backgroundColor: botao?.cor || CORES.CINZA_ESCURO,
-          ...botao?.sx,
-        }}
-        key={`${ix}_botao_acao`}
-        onClick={() =>
-          botao?.acao ? botao?.acao(item) : toast.error("🚧 em construção!")
-        }
-      >
-        <Typography
-          fontSize={18}
-          color={CORES.PRETO}
-          sx={{ display: "flex", position: "sticky", left: 0 }}
+      podeMostrarAcao && (
+        <Button
+          sx={{
+            flex: 1,
+            display: "flex",
+            margin: "5px 5px",
+            alignItems: "center",
+            lineHeight: "normal",
+            position: "relative",
+            justifyContent: "center",
+            borderRadius: "0px 0px 10px 10px",
+            backgroundColor: botao?.cor || CORES.CINZA_ESCURO,
+            ...botao?.sx,
+          }}
+          key={`${ix}_botao_acao`}
+          onClick={() =>
+            botao?.acao ? botao?.acao(item) : toast.error("🚧 em construção!")
+          }
         >
-          {botao?.titulo || "Não informado"}
-        </Typography>
-      </Button>
+          <Typography
+            fontSize={18}
+            color={CORES.PRETO}
+            sx={{ display: "flex", position: "sticky", left: 0 }}
+          >
+            {botao?.titulo || "Não informado"}
+          </Typography>
+        </Button>
+      )
     );
   };
 
@@ -228,11 +245,9 @@ const TabelaCustomizada = (props = {}) => {
                             border: "1px solid #ccc",
                           }}
                         >
-                          {botoesAcao(item)
-                            ?.filter((item) => item?.condicional !== false)
-                            ?.map((botao, ix) =>
-                              botaoAcaoLinhaTabela({ botao, item, ix })
-                            )}
+                          {botoesAcao(item)?.map((botao, ix) =>
+                            botaoAcaoLinhaTabela({ botao, item, ix })
+                          )}
                         </Box>
                       </Collapse>
                     </TableCell>

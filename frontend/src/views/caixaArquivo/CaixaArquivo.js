@@ -7,6 +7,7 @@ import {
   camposFormCaixaArquivo,
   colunasTabelaCaixaArquivo,
   getCaixasArquivo,
+  informarDescarteCaixaArquivo,
   removerCaixaArquivo,
   salvarCaixaArquivo,
 } from "../../database/dbCaixaArquivo";
@@ -48,6 +49,12 @@ const CaixaArquivo = () => {
           {...propsComponentes}
           acao={() => removerCaixaArquivo(itemDetalhe?._id)}
         />
+        <ConfirmarAcaoModal
+          {...propsComponentes}
+          descricao="Tem certeza que deseja informar o descarte?"
+          nomeAlternativoModal="descarte-modal-update"
+          acao={() => informarDescarteCaixaArquivo(itemDetalhe?._id)}
+        />
         <TiThMenu
           onClick={() => abrirModal("drawer")}
           size={40}
@@ -61,6 +68,16 @@ const CaixaArquivo = () => {
           camposFiltro={campos}
           exibirFiltro={true}
           exibirBotaoAdicionar={true}
+          botoesExtrasAcao={[
+            {
+              titulo: "Descartar",
+              acao: (item) => {
+                setItemDetalhe(item);
+                abrirModal("descarte-modal-update");
+              },
+              condicional: (item) => item?.situacao === "Aguardando descarte",
+            },
+          ]}
           acaoRemover={(item) => {
             setItemDetalhe(item);
             abrirModal(`${entidade}-modal-delete`);
