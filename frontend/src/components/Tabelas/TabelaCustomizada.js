@@ -2,13 +2,11 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TableRow,
   Box,
   Button,
   Typography,
-  IconButton,
   Collapse,
 } from "@mui/material";
 import Paginacao, {
@@ -22,7 +20,6 @@ import toast from "react-hot-toast";
 import React, { useEffect, useState } from "react";
 import { dadoExiste } from "../../utils/utils";
 import TooltipAplicavel from "../Tooltip/TooltipAplicavel";
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const TabelaCustomizada = (props = {}) => {
   const {
@@ -39,6 +36,7 @@ const TabelaCustomizada = (props = {}) => {
     mostrarAcaoEditar = true,
     mostrarAcaoRemover = true,
     mostrarAcaoDetalhar = true,
+    width = "80%",
   } = props;
 
   const nomeModalFiltro = `${entidade}-modal-filter`;
@@ -50,9 +48,9 @@ const TabelaCustomizada = (props = {}) => {
     fetchData();
   }, [acao]);
 
-  const parametrosBusca = useSelector(
-    (state) => state?.parametroBusca?.[nomeModalFiltro] || {}
-  );
+  const parametrosBusca = useSelector((state) => state?.parametroBusca || {})?.[
+    nomeModalFiltro
+  ];
 
   const parametrosGerais = (pag) => ({
     ...parametrosBusca,
@@ -115,7 +113,7 @@ const TabelaCustomizada = (props = {}) => {
           sx={{
             flex: 1,
             display: "flex",
-            margin: "5px 5px",
+            margin: "0px 5px 5px",
             alignItems: "center",
             lineHeight: "normal",
             position: "relative",
@@ -149,115 +147,103 @@ const TabelaCustomizada = (props = {}) => {
   };
 
   return (
-    <Box sx={{ mt: 4, borderRadius: "8px", boxShadow: 3 }}>
+    <Box
+      overflow={"auto"}
+      sx={{
+        mt: 4,
+        borderRadius: "8px",
+        boxShadow: 3,
+        maxHeight: "80vh",
+        overflow: "auto",
+        "&::-webkit-scrollbar": { width: "8px" },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: CORES.CINZA_PADRAO,
+          borderRadius: "4px",
+          border: "2px solid #fff",
+        },
+        "&::-webkit-scrollbar-track": {
+          backgroundColor: "#f1f1f1",
+          borderRadius: "4px",
+        },
+        width: { xs: "100%", md: width },
+      }}
+    >
       <CabecalhoTabela {...props} />
-      <TableContainer
-        sx={{
-          maxHeight: "60vh",
-          overflow: "auto",
-          "&::-webkit-scrollbar": { width: "8px" },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: CORES.CINZA_PADRAO,
-            borderRadius: "4px",
-            border: "2px solid #fff",
-          },
-          "&::-webkit-scrollbar-track": {
-            backgroundColor: "#f1f1f1",
-            borderRadius: "4px",
-          },
-        }}
-      >
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell key={"botao-cell"} sx={estiloColuna} />
-              {colunas?.map((item, index) => (
-                <TableCell key={index} sx={estiloColuna}>
-                  {item?.name}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {lista.map((item, index) => {
-              const estaSelecionado = itemSelecionado === item?._id;
 
-              return (
-                <React.Fragment key={`linha-${index}`}>
-                  <TableRow>
-                    <TableCell key={index + "-botao"}>
-                      <IconButton
-                        onClick={() =>
-                          setItemSelecionado(estaSelecionado ? null : item?._id)
-                        }
-                      >
-                        {estaSelecionado ? (
-                          <MdKeyboardArrowUp />
-                        ) : (
-                          <MdKeyboardArrowDown />
-                        )}
-                      </IconButton>
-                    </TableCell>
-                    {colunas?.map((coluna, colIndex) => {
-                      let dado = item?.[coluna?.value || coluna?.name] || "---";
-                      if (coluna?.formatar) {
-                        const infoFormatacao = dadoExiste(dado) ? dado : item;
-                        dado = coluna?.formatar(infoFormatacao);
-                      }
+      <Table stickyHeader>
+        <TableHead>
+          <TableRow>
+            {colunas?.map((item, index) => (
+              <TableCell key={index} sx={estiloColuna}>
+                {item?.name}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {lista.map((item, index) => {
+            const estaSelecionado = itemSelecionado === item?._id;
 
-                      const componenteItem = (
-                        <TableCell key={`dado-coluna-${colIndex}`}>
-                          {dado}
-                        </TableCell>
-                      );
+            return (
+              <React.Fragment key={`linha-${index}`}>
+                <TableRow
+                  onClick={() =>
+                    setItemSelecionado(estaSelecionado ? null : item?._id)
+                  }
+                >
+                  {colunas?.map((coluna, colIndex) => {
+                    let dado = item?.[coluna?.value || coluna?.name] || "---";
+                    if (coluna?.formatar) {
+                      const infoFormatacao = dadoExiste(dado) ? dado : item;
+                      dado = coluna?.formatar(infoFormatacao);
+                    }
 
-                      const mostrarTooltip = dado?.length > 100;
-                      const texto = dadoExiste(dado) ? dado : "Não informado";
-                      if (mostrarTooltip) {
-                        return (
-                          <TooltipAplicavel
-                            key={`dado-coluna-tooltip-${colIndex}`}
-                            titulo={texto?.substring(0, 300)}
-                          >
-                            {componenteItem}
-                          </TooltipAplicavel>
-                        );
-                      }
+                    const componenteItem = (
+                      <TableCell key={`dado-coluna-${colIndex}`}>
+                        {dado}
+                      </TableCell>
+                    );
 
-                      return componenteItem;
-                    })}
-                  </TableRow>
-                  <TableRow>
-                    <TableCell
-                      style={{ paddingBottom: 0, paddingTop: 0 }}
-                      colSpan={colunas?.length + 1}
-                    >
-                      <Collapse
-                        in={estaSelecionado}
-                        timeout="auto"
-                        unmountOnExit
-                      >
-                        <Box
-                          sx={{
-                            mb: 2,
-                            display: "flex",
-                            overflow: "hidden",
-                            border: "1px solid #ccc",
-                          }}
+                    const mostrarTooltip = dado?.length > 100;
+                    const texto = dadoExiste(dado) ? dado : "Não informado";
+                    if (mostrarTooltip) {
+                      return (
+                        <TooltipAplicavel
+                          key={`dado-coluna-tooltip-${colIndex}`}
+                          titulo={texto?.substring(0, 300)}
                         >
-                          {botoesAcao(item)?.map((botao, ix) =>
-                            botaoAcaoLinhaTabela({ botao, item, ix })
-                          )}
-                        </Box>
-                      </Collapse>
-                    </TableCell>
-                  </TableRow>
-                </React.Fragment>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                          {componenteItem}
+                        </TooltipAplicavel>
+                      );
+                    }
+
+                    return componenteItem;
+                  })}
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    style={{ paddingBottom: 0, paddingTop: 0 }}
+                    colSpan={colunas?.length}
+                  >
+                    <Collapse in={estaSelecionado} timeout="auto" unmountOnExit>
+                      <Box
+                        sx={{
+                          mb: 2,
+                          display: "flex",
+                        }}
+                      >
+                        {botoesAcao(item)?.map((botao, ix) =>
+                          botaoAcaoLinhaTabela({ botao, item, ix })
+                        )}
+                      </Box>
+                    </Collapse>
+                  </TableCell>
+                </TableRow>
+              </React.Fragment>
+            );
+          })}
+        </TableBody>
+      </Table>
       <Paginacao listaPaginas={listaPaginas} />
     </Box>
   );

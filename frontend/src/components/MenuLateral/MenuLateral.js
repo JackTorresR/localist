@@ -4,7 +4,7 @@ import {
   ListItem,
   ListItemText,
   Avatar,
-  Box
+  Box,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import { fecharModal } from "../../redux/acoes/acoesModal";
@@ -171,11 +171,12 @@ const MenuLateral = () => {
             key={index}
             sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.25)" }}
             style={Estilos.clicavel}
-            onClick={() =>
+            onClick={() => {
               item?.acao
                 ? item?.acao()
-                : toast.error(`🚧 '${item?.nome}' em construção!`)
-            }
+                : toast.error(`🚧 '${item?.nome}' em construção!`);
+              fecharModal("drawer");
+            }}
           >
             <div
               style={{

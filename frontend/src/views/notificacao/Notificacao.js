@@ -2,7 +2,6 @@ import { useSelector } from "react-redux";
 import TabelaCustomizada from "../../components/Tabelas/TabelaCustomizada";
 import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
-import { TiThMenu } from "react-icons/ti";
 import {
   getNotificacoes,
   informarDescarteCaixaArquivo,
@@ -11,6 +10,7 @@ import InfoModal from "../../components/Modal/InfoModal";
 import { useState } from "react";
 import { normalizarData } from "../../utils/utils";
 import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
+import { Box } from "@mui/material";
 
 const Notificacao = () => {
   const notificacoes = useSelector((state) => state?.notificacao);
@@ -90,58 +90,51 @@ const Notificacao = () => {
   const propsComponentes = { campos, entidade, itemDetalhe };
 
   return (
-    <div style={Estilos.containerPrincipal}>
-      <div style={{ flex: 1 }}>
-        <InfoModal
-          {...propsComponentes}
-          titulo="Informações da caixa de arquivos"
-        />
-        <ConfirmarAcaoModal
-          {...propsComponentes}
-          descricao="Tem certeza que deseja informar o descarte?"
-          nomeAlternativoModal="descarte-modal-update"
-          acao={() => informarDescarteCaixaArquivo(itemDetalhe?._id)}
-        />
-        <TiThMenu
-          onClick={() => abrirModal("drawer")}
-          size={40}
-          style={Estilos.clicavel}
-        />
-        <TabelaCustomizada
-          {...notificacoes}
-          titulo="Notificações"
-          colunas={[
-            { name: "Ano", value: "anoDocumentos", alinhar: "center" },
-            {
-              name: "Expiração",
-              alinhar: "center",
-              formatar: (item) => normalizarData(item?.dataExpiracao),
+    <Box style={Estilos.containerPrincipal}>
+      <InfoModal
+        {...propsComponentes}
+        titulo="Informações da caixa de arquivos"
+      />
+      <ConfirmarAcaoModal
+        {...propsComponentes}
+        descricao="Tem certeza que deseja informar o descarte?"
+        nomeAlternativoModal="descarte-modal-update"
+        acao={() => informarDescarteCaixaArquivo(itemDetalhe?._id)}
+      />
+      <TabelaCustomizada
+        {...notificacoes}
+        titulo="Notificações"
+        colunas={[
+          { name: "Ano", value: "anoDocumentos", alinhar: "center" },
+          {
+            name: "Expiração",
+            alinhar: "center",
+            formatar: (item) => normalizarData(item?.dataExpiracao),
+          },
+          { name: "Espécie", value: "nomeEspecieDocumental" },
+          { name: "Cliente", value: "nomeCliente" },
+          { name: "Observações", value: "observacoes" },
+        ]}
+        acao={getNotificacoes}
+        camposFiltro={campos}
+        exibirFiltro={true}
+        botoesExtrasAcao={[
+          {
+            titulo: "Descartar",
+            acao: (item) => {
+              setItemDetalhe(item);
+              abrirModal("descarte-modal-update");
             },
-            { name: "Espécie", value: "nomeEspecieDocumental" },
-            { name: "Cliente", value: "nomeCliente" },
-            { name: "Observações", value: "observacoes" },
-          ]}
-          acao={getNotificacoes}
-          camposFiltro={campos}
-          exibirFiltro={true}
-          botoesExtrasAcao={[
-            {
-              titulo: "Descartar",
-              acao: (item) => {
-                setItemDetalhe(item);
-                abrirModal("descarte-modal-update");
-              },
-            },
-          ]}
-          mostrarAcaoRemover={false}
-          mostrarAcaoEditar={false}
-          acaoDetalhar={(item) => {
-            setItemDetalhe(item);
-            abrirModal(`${entidade}-modal-info`);
-          }}
-        />
-      </div>
-    </div>
+          },
+        ]}
+        mostrarAcaoRemover={false}
+        mostrarAcaoEditar={false}
+        acaoDetalhar={(item) => {
+          setItemDetalhe(item);
+          abrirModal(`${entidade}-modal-info`);
+        }}
+      />
+    </Box>
   );
 };
 

@@ -29,8 +29,10 @@ const CabecalhoTabela = (props = {}) => {
         justifyContent: "space-between",
         alignItems: "center",
         padding: "16px",
-        backgroundColor: CORES.CINZA_ESCURO,
+        background: CORES.BACKGROUND_GRADIENT,
         borderBottom: "1px solid #ddd",
+        position: "sticky",
+        left: 0,
       }}
     >
       {temCamposFiltro && <FiltrarRegistrosModal {...props} />}
@@ -63,7 +65,11 @@ const CabecalhoTabela = (props = {}) => {
             flexDirection: "column",
           }}
         >
-          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+          <Typography
+            color={CORES.PRETO_ALT}
+            variant="h5"
+            sx={{ fontWeight: "bold" }}
+          >
             {titulo}
           </Typography>
           {dadoExiste(quantidade) && (

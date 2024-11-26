@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import AcessoForm from "./views/acesso/AcessoForm";
 import { acessoAutomatico } from "./database/dbAuth";
 import { Toaster } from "react-hot-toast";
-import Cliente from "./views/cliente/Cliente";
-import MenuLateral from "./components/MenuLateral/MenuLateral";
+import Cliente from "./views/Cliente/Cliente";
 import Usuario from "./views/usuario/Usuario";
 import AreaDepartamento from "./views/areaDepartamento/AreaDepartamento";
 import EspecieDocumental from "./views/especieDocumental/EspecieDocumental";
@@ -14,6 +13,7 @@ import AlterarSenhaForm from "./views/usuario/AlterarSenhaForm";
 import MeuPerfil from "./views/usuario/MeuPerfil";
 import Notificacao from "./views/notificacao/Notificacao";
 import { getNotificacoes } from "./database/dbCaixaArquivo";
+import NavbarCustom from "./components/Navbar/NavbarCustom";
 
 const RotaPrivativa = ({ children }) => {
   const token = useSelector((state) => state.auth.token);
@@ -68,7 +68,7 @@ const Rotas = () => {
           style: { maxWidth: "95%", fontSize: 20, wordBreak: "break-word" },
         }}
       />
-      <MenuLateral />
+      <NavbarCustom />
       <Routes>
         <Route path="*" element={<Navigate to="/" />} />
         <Route path="/" element={<RotaLoginOuTelaInicial />} />

@@ -23,6 +23,7 @@ const Estilos = {
     display: "flex",
     height: "97vh",
     justifyContent: "center",
+    paddingTop: 70,
   },
   clicavel: { cursor: "pointer" },
   containerModal: {

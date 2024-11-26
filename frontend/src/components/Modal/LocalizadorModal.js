@@ -52,9 +52,9 @@ const LocalizadorModal = (props = {}) => {
 
   const handleClose = () => fecharModal(nomeModal);
 
-  const parametrosBusca = useSelector(
-    (state) => state?.parametroBusca?.[nomeModal] || {}
-  );
+  const parametrosBusca = useSelector((state) => state?.parametroBusca || {})?.[
+    nomeModal
+  ];
 
   const parametrosGerais = (pag) => ({
     ...parametrosBusca,

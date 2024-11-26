@@ -12,9 +12,9 @@ const FiltrarRegistrosModal = (props = {}) => {
 
   const nomeModalFiltro = `${entidade}-modal-filter`;
 
-  const parametrosBusca = useSelector(
-    (state) => state?.parametroBusca?.[nomeModalFiltro] || {}
-  );
+  const parametrosBusca = useSelector((state) => state?.parametroBusca || {})?.[
+    nomeModalFiltro
+  ];
   const open = useSelector((state) => state?.modal?.[nomeModalFiltro]) || false;
 
   const handleClose = () => fecharModal(nomeModalFiltro);

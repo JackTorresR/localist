@@ -1,7 +1,5 @@
 import { useSelector } from "react-redux";
-import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
-import { TiThMenu } from "react-icons/ti";
 import CORES from "../../styles/Cores";
 import avatarPlaceholder from "../../assets/avatar_placeholder.png";
 
@@ -15,11 +13,6 @@ const MeuPerfil = () => {
   return (
     <div style={Estilos.containerPrincipal}>
       <div style={{ flex: 1 }}>
-        <TiThMenu
-          onClick={() => abrirModal("drawer")}
-          size={40}
-          style={Estilos.clicavel}
-        />
         <div
           style={{
             ...Estilos.containerFlexCentralizado,

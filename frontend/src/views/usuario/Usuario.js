@@ -2,7 +2,6 @@ import { useSelector } from "react-redux";
 import TabelaCustomizada from "../../components/Tabelas/TabelaCustomizada";
 import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
-import { TiThMenu } from "react-icons/ti";
 import {
   getUsuarios,
   removerUsuario,
@@ -13,6 +12,7 @@ import { normalizarTelefone } from "../../utils/utils";
 import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
 import InfoModal from "../../components/Modal/InfoModal";
 import FormModal from "../../components/Modal/FormModal";
+import { Box } from "@mui/material";
 
 const Usuario = () => {
   const usuarios = useSelector((state) => state?.usuario);
@@ -90,61 +90,54 @@ const Usuario = () => {
   const propsComponentes = { campos, entidade, itemDetalhe };
 
   return (
-    <div style={Estilos.containerPrincipal}>
-      <div style={{ flex: 1 }}>
-        <FormModal
-          {...propsComponentes}
-          onSubmit={handleSubmit}
-          onClose={() => setItemDetalhe({})}
-        />
-        <InfoModal {...propsComponentes} titulo="Informações do usuário" />
-        <ConfirmarAcaoModal
-          {...propsComponentes}
-          acao={() => removerUsuario(itemDetalhe?._id)}
-        />
-        <TiThMenu
-          onClick={() => abrirModal("drawer")}
-          size={40}
-          style={Estilos.clicavel}
-        />
-        <TabelaCustomizada
-          {...usuarios}
-          titulo="Usuários"
-          colunas={[
-            { name: "Matrícula", value: "matricula" },
-            { name: "Nome", value: "nome" },
-            { name: "Email", value: "email" },
-            { name: "Função", value: "funcao" },
-            {
-              name: "Telefone",
-              value: "telefone",
-              formatar: (v) => normalizarTelefone(v),
-            },
-            { name: "Perfil", value: "perfilAcesso" },
-          ]}
-          acao={getUsuarios}
-          camposFiltro={campos}
-          exibirFiltro={true}
-          exibirBotaoAdicionar={true}
-          acaoRemover={(item) => {
-            setItemDetalhe(item);
-            abrirModal(`${entidade}-modal-delete`);
-          }}
-          acaoDetalhar={(item) => {
-            setItemDetalhe(item);
-            abrirModal(`${entidade}-modal-info`);
-          }}
-          acaoEditar={(item) => {
-            setItemDetalhe(item);
-            abrirModal(`${entidade}-modal-form`);
-          }}
-          onAdd={() => {
-            setItemDetalhe({});
-            abrirModal(`${entidade}-modal-form`);
-          }}
-        />
-      </div>
-    </div>
+    <Box style={Estilos.containerPrincipal}>
+      <FormModal
+        {...propsComponentes}
+        onSubmit={handleSubmit}
+        onClose={() => setItemDetalhe({})}
+      />
+      <InfoModal {...propsComponentes} titulo="Informações do usuário" />
+      <ConfirmarAcaoModal
+        {...propsComponentes}
+        acao={() => removerUsuario(itemDetalhe?._id)}
+      />
+      <TabelaCustomizada
+        {...usuarios}
+        titulo="Usuários"
+        colunas={[
+          { name: "Matrícula", value: "matricula" },
+          { name: "Nome", value: "nome" },
+          { name: "Email", value: "email" },
+          { name: "Função", value: "funcao" },
+          {
+            name: "Telefone",
+            value: "telefone",
+            formatar: (v) => normalizarTelefone(v),
+          },
+          { name: "Perfil", value: "perfilAcesso" },
+        ]}
+        acao={getUsuarios}
+        camposFiltro={campos}
+        exibirFiltro={true}
+        exibirBotaoAdicionar={true}
+        acaoRemover={(item) => {
+          setItemDetalhe(item);
+          abrirModal(`${entidade}-modal-delete`);
+        }}
+        acaoDetalhar={(item) => {
+          setItemDetalhe(item);
+          abrirModal(`${entidade}-modal-info`);
+        }}
+        acaoEditar={(item) => {
+          setItemDetalhe(item);
+          abrirModal(`${entidade}-modal-form`);
+        }}
+        onAdd={() => {
+          setItemDetalhe({});
+          abrirModal(`${entidade}-modal-form`);
+        }}
+      />
+    </Box>
   );
 };
 
