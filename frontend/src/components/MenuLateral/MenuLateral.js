@@ -20,16 +20,30 @@ import { TiDropbox } from "react-icons/ti";
 import CORES from "../../styles/Cores";
 import Estilos from "../../styles/Styles";
 import TooltipAplicavel from "../Tooltip/TooltipAplicavel";
-import { sairDoSistema } from "../../database/dbAuth";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import avatarPlaceholder from "../../assets/avatar_placeholder.png";
+import { buscarImagensUsuarios } from "../../database/dbUsuario";
+import { sairDoSistema } from "../../database/dbAuth";
 
 const MenuLateral = () => {
   const navigate = useNavigate();
+  const usuarioLogado = useSelector((state) => state?.auth);
   const quantidadeNotificacoes = useSelector(
     (state) => state?.notificacao?.quantidade
   );
   const drawerAberto = useSelector((state) => state?.modal?.["drawer"]);
+  const [imagemUsuario, setImagemUsuario] = useState(avatarPlaceholder);
+
+  useEffect(() => {
+    const carregarImagem = async () => {
+      const imagens = await buscarImagensUsuarios(usuarioLogado);
+      setImagemUsuario(imagens[0]?.url || avatarPlaceholder);
+    };
+
+    carregarImagem();
+  }, [usuarioLogado]);
 
   const acoesRapidas = [
     {
@@ -108,10 +122,10 @@ const MenuLateral = () => {
         <Box display="flex" alignItems="center">
           <Avatar
             alt="Imagem do usuário"
-            src="https://randomuser.me/api/portraits/lego/5.jpg"
+            src={imagemUsuario}
             sx={{ width: 80, height: 80, marginRight: 2 }}
           />
-          <ListItemText primary="Cássio Oliveira" />
+          <ListItemText primary={usuarioLogado?.nome || "Usuário"} />
         </Box>
       </Box>
       <Box

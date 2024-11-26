@@ -8,6 +8,7 @@ import {
   limparUsuarioDetalhe,
 } from "../redux/acoes/acoesUsuario";
 import Store from "../redux/Store";
+import avatarPlaceholder from "../assets/avatar_placeholder.png";
 
 const prefixo = "usuario";
 
@@ -193,4 +194,76 @@ export const alterarSenhaUsuario = async (dados) => {
   } catch (erro) {
     verificarPorErros(erro);
   }
+};
+
+export const salvarImagem = async (evento) => {
+  const arquivos = evento.target.files;
+  if (!arquivos?.length) return null;
+
+  const tiposPermitidos = ["image/jpeg", "image/jpg", "image/png"];
+  const arquivosValidos = [...arquivos].filter((arquivo) =>
+    tiposPermitidos.includes(arquivo.type)
+  );
+  if (!arquivosValidos.length) {
+    toast.error("Por favor, envie apenas arquivos JPG ou PNG!");
+    return null;
+  }
+
+  try {
+    const id = Store.getState()?.auth?._id;
+
+    for (const arquivo of arquivosValidos) {
+      const formData = new FormData();
+      formData.append("file", arquivo);
+
+      const resposta = await fetch(
+        `${configs.API_URL}/arquivos/enviar-arquivo?nomePasta=usuario&idFuncionario=${id}`,
+        { method: "POST", body: formData }
+      );
+
+      const resultado = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(resultado.mensagem || "Erro ao salvar imagem!");
+      }
+
+      await getUsuario(id);
+      toast.success("Imagem salva com sucesso!");
+    }
+  } catch (erro) {
+    verificarPorErros(erro);
+  }
+};
+
+export const buscarImagensUsuarios = async (funcionario) => {
+  const naoTemInformacoes =
+    !dadoExiste(funcionario?._id) || funcionario?.imagens?.length <= 0;
+
+  if (naoTemInformacoes) {
+    return [];
+  }
+
+  const urls = await Promise.all(
+    funcionario.imagens.map(async (imagem) => {
+      const url = `${configs.API_URL}/arquivos/usuario/${funcionario._id}/${imagem}`;
+
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error("Erro ao carregar a imagem!");
+        }
+
+        const blob = await response.blob();
+        const urlImagem = URL.createObjectURL(blob);
+
+        return { nomeArquivo: imagem, url: urlImagem };
+      } catch (error) {
+        console.error(error);
+        return avatarPlaceholder;
+      }
+    })
+  );
+
+  return urls;
 };

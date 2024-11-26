@@ -3,6 +3,24 @@ const Usuario = require("../models/usuario");
 const md5 = require("md5");
 const jwt = require("jsonwebtoken");
 const { identificarParametros } = require("../utils");
+const path = require("path");
+const fs = require("fs");
+
+const obterArquivosPorUsuarioId = (id) => {
+  try {
+    const idString = id.toString();
+    const uploadDir = path.join(__dirname, "../uploads/usuario", idString);
+
+    if (!fs.existsSync(uploadDir)) {
+      return [];
+    }
+
+    return fs.readdirSync(uploadDir);
+  } catch (error) {
+    console.error("Erro ao obter arquivos do usuário:", error);
+    return [];
+  }
+};
 
 const criarUsuario = async (req, res) => {
   try {
@@ -90,7 +108,11 @@ const detalharUsuario = async (req, res) => {
       return res.status(404).json({ mensagem: "Usuário não encontrado!" });
     }
 
-    res.status(200).json(usuario);
+    const imagens = obterArquivosPorUsuarioId(id);
+    let retorno = { ...usuario.toObject(), imagens };
+    delete retorno.senha;
+
+    res.status(200).json(retorno);
   } catch (error) {
     console.error("Erro ao detalhar usuário:", error);
     res.status(500).json({ mensagem: "Erro interno do servidor!" });
@@ -118,9 +140,14 @@ const editarUsuario = async (req, res) => {
 
     const { senha: _, ...retorno } = usuarioAtualizado.toObject();
 
+    const imagens = obterArquivosPorUsuarioId(id);
+
+    let usuario = { ...retorno.toObject(), imagens };
+    delete usuario.senha;
+
     res
       .status(200)
-      .json({ mensagem: "Usuário atualizado com sucesso!", usuario: retorno });
+      .json({ mensagem: "Usuário atualizado com sucesso!", usuario });
   } catch (error) {
     console.error("Erro ao editar usuário:", error);
     res.status(500).json({ mensagem: "Erro interno do servidor!" });
@@ -156,6 +183,10 @@ const acessarSistema = async (req, res) => {
 
     const usuarioEncontrado = await Usuario.findOne({ usuario });
 
+    if (!usuarioEncontrado) {
+      return res.status(401).json({ mensagem: "Informações incorretas!" });
+    }
+
     const senhaHash = md5(senha);
     const senhaValida =
       senhaHash === usuarioEncontrado?.senha ||
@@ -165,16 +196,18 @@ const acessarSistema = async (req, res) => {
       return res.status(401).json({ mensagem: "Informações incorretas!" });
     }
 
-    const dadosUsuario = {
-      _id: usuarioEncontrado?._id,
-      nome: usuarioEncontrado?.nome,
-      usuario: usuarioEncontrado?.usuario,
-      matricula: usuarioEncontrado?.matricula || "---",
-      funcao: usuarioEncontrado?.funcao || "---",
-      telefone: usuarioEncontrado?.telefone || "---",
-      perfilAcesso: usuarioEncontrado?.perfilAcesso || "---",
+    const objUsuario = {
+      _id: usuarioEncontrado._id,
+      nome: usuarioEncontrado.nome,
+      usuario: usuarioEncontrado.usuario,
+      matricula: usuarioEncontrado.matricula || "---",
+      funcao: usuarioEncontrado.funcao || "---",
+      telefone: usuarioEncontrado.telefone || "---",
+      perfilAcesso: usuarioEncontrado.perfilAcesso || "---",
     };
 
+    const imagens = obterArquivosPorUsuarioId(usuarioEncontrado._id);
+    const dadosUsuario = { ...objUsuario, imagens };
     const token = jwt.sign(dadosUsuario, CHAVE_SECRETA, { expiresIn: "1h" });
 
     dadosUsuario.token = token;
