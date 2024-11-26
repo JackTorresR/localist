@@ -1,12 +1,19 @@
 const express = require("express");
-const clienteController = require("../controllers/clienteController");
+const { autenticar } = require("../controllers/usuarioController");
+const {
+  criarCliente,
+  listarClientes,
+  detalharCliente,
+  editarCliente,
+  deletarCliente,
+} = require("../controllers/clienteController");
 
 const rota = express.Router();
 
-rota.post("/", clienteController.criarCliente);
-rota.get("/", clienteController.listarClientes);
-rota.get("/:id", clienteController.detalharCliente);
-rota.patch("/:id", clienteController.editarCliente);
-rota.delete("/:id", clienteController.deletarCliente);
+rota.post("/", autenticar, criarCliente);
+rota.get("/", autenticar, listarClientes);
+rota.get("/:id", autenticar, detalharCliente);
+rota.patch("/:id", autenticar, editarCliente);
+rota.delete("/:id", autenticar, deletarCliente);
 
 module.exports = rota;

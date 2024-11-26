@@ -4,7 +4,7 @@ import {
   ListItem,
   ListItemText,
   Avatar,
-  Box,
+  Box
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import { fecharModal } from "../../redux/acoes/acoesModal";
@@ -22,9 +22,7 @@ import Estilos from "../../styles/Styles";
 import TooltipAplicavel from "../Tooltip/TooltipAplicavel";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import avatarPlaceholder from "../../assets/avatar_placeholder.png";
-import { buscarImagensUsuarios } from "../../database/dbUsuario";
 import { sairDoSistema } from "../../database/dbAuth";
 
 const MenuLateral = () => {
@@ -34,16 +32,6 @@ const MenuLateral = () => {
     (state) => state?.notificacao?.quantidade
   );
   const drawerAberto = useSelector((state) => state?.modal?.["drawer"]);
-  const [imagemUsuario, setImagemUsuario] = useState(avatarPlaceholder);
-
-  useEffect(() => {
-    const carregarImagem = async () => {
-      const imagens = await buscarImagensUsuarios(usuarioLogado);
-      setImagemUsuario(imagens[0]?.url || avatarPlaceholder);
-    };
-
-    carregarImagem();
-  }, [usuarioLogado]);
 
   const acoesRapidas = [
     {
@@ -122,7 +110,7 @@ const MenuLateral = () => {
         <Box display="flex" alignItems="center">
           <Avatar
             alt="Imagem do usuário"
-            src={imagemUsuario}
+            src={avatarPlaceholder}
             sx={{ width: 80, height: 80, marginRight: 2 }}
           />
           <ListItemText primary={usuarioLogado?.nome || "Usuário"} />

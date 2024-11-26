@@ -1,7 +1,11 @@
 import configs from "../config/config";
 
 const httpRequest = async (props = {}) => {
-  const { url, method = "GET", body = null, params = null } = props;
+  const { url = null, method = "GET", body = null, params = null } = props;
+
+  if (!url) {
+    throw new Error("Solicitação não identificada!");
+  }
 
   try {
     const usuarioTexto = localStorage.getItem("usuario");
@@ -9,7 +13,7 @@ const httpRequest = async (props = {}) => {
     const token = usuario?.token;
 
     if (!token) {
-      throw new Error("Usuário não autenticado!");
+      throw new Error("Usuário desconectado do sistema!");
     }
 
     let urlCompleta = `${configs.API_URL}/${url}`;
@@ -34,10 +38,10 @@ const httpRequest = async (props = {}) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData?.mensagem || "Erro ao realizar a requisição!");
+      throw new Error(errorData?.mensagem || "Erro ao realizar a solicitação!");
     }
 
-    return await response.json();
+    return (await response.json()) || {};
   } catch (error) {
     console.error("Erro na requisição HTTP:", error);
     throw error;
