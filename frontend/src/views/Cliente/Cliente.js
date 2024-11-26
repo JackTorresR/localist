@@ -7,10 +7,10 @@ import {
   camposFormCliente,
   getClientes,
   removerCliente,
-  salvarCliente
+  salvarCliente,
 } from "../../database/dbCliente";
 import { useState } from "react";
-import { normalizarTelefone } from "../../utils/utils";
+import { normalizarData, normalizarTelefone } from "../../utils/utils";
 import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
 import InfoModal from "../../components/Modal/InfoModal";
 import FormModal from "../../components/Modal/FormModal";
@@ -72,7 +72,10 @@ const Cliente = () => {
             abrirModal(`${entidade}-modal-info`);
           }}
           acaoEditar={(item) => {
-            setItemDetalhe(item);
+            setItemDetalhe({
+              ...item,
+              dataContrato: normalizarData(item?.dataContrato, "YYYY-MM-DD"),
+            });
             abrirModal(`${entidade}-modal-form`);
           }}
           onAdd={() => {

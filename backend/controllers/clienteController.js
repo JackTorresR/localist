@@ -1,5 +1,6 @@
 const Cliente = require("../models/cliente");
 const { identificarParametros } = require("../utils");
+const dayjs = require("dayjs");
 
 const criarCliente = async (req, res) => {
   try {
@@ -20,6 +21,10 @@ const criarCliente = async (req, res) => {
         .json({ mensagem: "Campos obrigatórios faltando!" });
     }
 
+    const dataContratoUTC = dataContrato
+      ? dayjs(dataContrato).startOf("day").toISOString()
+      : null;
+
     const novoCliente = new Cliente({
       nome,
       nomeSemPontuacao,
@@ -28,7 +33,7 @@ const criarCliente = async (req, res) => {
       endereco,
       cpfCnpj,
       observacoes,
-      dataContrato,
+      dataContrato: dataContratoUTC,
     });
 
     await novoCliente.save();
@@ -96,9 +101,13 @@ const editarCliente = async (req, res) => {
     const { id } = req.params;
     const atualizacoes = req.body;
 
+    const dataContratoUTC = dayjs(atualizacoes?.dataContrato)
+      .startOf("day")
+      .toISOString();
+
     const clienteAtualizado = await Cliente.findOneAndUpdate(
       { _id: id },
-      atualizacoes,
+      { ...atualizacoes, dataContrato: dataContratoUTC },
       { new: true, runValidators: true }
     );
 

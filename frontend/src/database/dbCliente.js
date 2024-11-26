@@ -2,6 +2,7 @@ import {
   dadoExiste,
   dispatcher,
   gerarNomeSemPontuacao,
+  normalizarData,
   normalizarDocumento,
   normalizarTelefone,
 } from "../utils/utils";
@@ -261,9 +262,16 @@ export const camposFormCliente = [
     name: "email",
   },
   {
-    tamanhoGrid: { md: 12 },
+    tamanhoGrid: { md: 7 },
     label: "Endereço",
     name: "endereco",
+  },
+  {
+    tamanhoGrid: { md: 5 },
+    label: "Data contrato",
+    name: "dataContrato",
+    tipo: "date",
+    formatar: (item) => normalizarData(item?.dataContrato),
   },
   {
     tamanhoGrid: { md: 6 },

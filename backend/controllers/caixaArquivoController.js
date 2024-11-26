@@ -3,13 +3,6 @@ const EspecieDocumental = require("../models/especieDocumental");
 const Cliente = require("../models/cliente");
 const { identificarParametros } = require("../utils");
 const dayjs = require("dayjs");
-const utc = require("dayjs/plugin/utc");
-const timezone = require("dayjs/plugin/timezone");
-const customParseFormat = require("dayjs/plugin/customParseFormat");
-
-dayjs.extend(customParseFormat);
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
 const criarCaixaArquivo = async (req, res) => {
   try {
@@ -41,14 +34,19 @@ const criarCaixaArquivo = async (req, res) => {
         .json({ mensagem: "Campos obrigatórios faltando!" });
     }
 
+    const dataExpiracaoUTC = dayjs(dataExpiracao).startOf("day").toISOString();
+    const dataArmazenamentoUTC = dayjs(dataArmazenamento)
+      .startOf("day")
+      .toISOString();
+
     const novaCaixaArquivo = new CaixaArquivo({
       identificador,
       localizacao,
       idCliente,
       idEspecieDocumental,
       anoDocumentos,
-      dataArmazenamento,
-      dataExpiracao,
+      dataArmazenamento: dataArmazenamentoUTC,
+      dataExpiracao: dataExpiracaoUTC,
       situacao,
       observacoes,
     });
@@ -140,9 +138,20 @@ const editarCaixaArquivo = async (req, res) => {
     const { id } = req.params;
     const atualizacoes = req.body;
 
+    const dataExpiracaoUTC = dayjs(atualizacoes?.dataExpiracao)
+      .startOf("day")
+      .toISOString();
+    const dataArmazenamentoUTC = dayjs(atualizacoes?.dataArmazenamento)
+      .startOf("day")
+      .toISOString();
+
     const caixaArquivoAtualizado = await CaixaArquivo.findOneAndUpdate(
       { _id: id },
-      atualizacoes,
+      {
+        ...atualizacoes,
+        dataArmazenamento: dataArmazenamentoUTC,
+        dataExpiracao: dataExpiracaoUTC,
+      },
       { new: true, runValidators: true }
     );
 
@@ -187,7 +196,7 @@ const deletarCaixaArquivo = async (req, res) => {
 
 const atualizarSituacaoCaixas = async () => {
   try {
-    const dataAtual = dayjs().tz("America/Sao_Paulo").toDate();
+    const dataAtual = dayjs().toISOString();
     const caixasParaAtualizar = await CaixaArquivo.find({
       situacao: "Em Prazo",
       dataExpiracao: { $lt: dataAtual },
@@ -225,7 +234,7 @@ const descartarCaixaArquivo = async (req, res) => {
         .json({ mensagem: "Caixa de arquivo não informada!" });
     }
 
-    const dataAtual = dayjs().tz("America/Sao_Paulo").toDate();
+    const dataAtual = dayjs().toISOString();
     const caixaAtualizada = await CaixaArquivo.findOneAndUpdate(
       { _id: id },
       {

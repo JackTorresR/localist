@@ -28,15 +28,18 @@ const identificarParametros = (props = {}) => {
       } else if (tipo === "BOOLEAN") {
         filtro[campo] = valorCampo.toUpperCase() === "SIM";
       } else if (tipo === "DATE") {
-        const dataInicio = dayjs
-          .tz(valorCampo, "America/Sao_Paulo")
+        const dataInicio = dayjs(valorCampo)
           .startOf("day")
-          .toDate();
-
-        const dataFim = dayjs
-          .tz(valorCampo, "America/Sao_Paulo")
+          .tz("America/Fortaleza")
+          .toISOString();
+        const dataFim = dayjs(valorCampo)
           .endOf("day")
-          .toDate();
+          .tz("America/Fortaleza")
+          .toISOString();
+
+        console.log("valorCampo", valorCampo);
+        console.log("dataInicio", dataInicio);
+        console.log("dataFim", dataFim);
 
         filtro[campo] = { $gte: dataInicio, $lt: dataFim };
       } else if (tipo === "REF") {
