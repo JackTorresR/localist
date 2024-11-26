@@ -2,14 +2,20 @@ import { dadoExiste, dispatcher, gerarNomeSemPontuacao } from "../utils/utils";
 import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
 import { toast } from "react-hot-toast";
-import configs from "../config/config";
 import {
   detalharAreaDepartamento,
-  limparAreaDepartamentoDetalhe,
+  limparAreaDepartamentoDetalhe
 } from "../redux/acoes/acoesAreaDepartamento";
 import Store from "../redux/Store";
-import { camposFormCliente, colunasTabelaClientes, getClientes, salvarCliente } from "./dbCliente";
+import {
+  camposFormCliente,
+  colunasTabelaClientes,
+  getClientes,
+  salvarCliente
+} from "./dbCliente";
+import httpRequest from "../utils/httpRequest";
 
+const url = "area-departamento";
 const prefixo = "areaDepartamento";
 
 export const getAreasDepartamentos = async (params = {}) => {
@@ -26,15 +32,12 @@ export const getAreasDepartamentos = async (params = {}) => {
   });
 
   try {
-    const response = await fetch(
-      `${configs.API_URL}/area-departamento?${searchParams.toString()}`,
-      { method: "GET", headers: { "Content-Type": "application/json" } }
-    );
-    if (!response.ok) {
-      throw new Error("Erro ao listar áreas/departamentos!");
-    }
+    const resposta = await httpRequest({
+      url: `${url}?${searchParams.toString()}`,
+      method: "GET",
+    });
 
-    const { lista, quantidade } = await response.json();
+    const { lista, quantidade } = resposta;
 
     const buscouLimitado = dadoExiste(params?.limite) || params?.limite === 0;
     if (buscouLimitado) return lista;
@@ -49,27 +52,6 @@ export const getAreasDepartamentos = async (params = {}) => {
     if (filtrouAchouSoUm) {
       detalharAreaDepartamento(lista?.[0]);
     }
-  } catch (erro) {
-    verificarPorErros(erro);
-  }
-};
-
-export const getAreaDepartamento = async (id) => {
-  try {
-    const resposta = await fetch(`${configs.API_URL}/area-departamento/${id}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-
-    const resultado = await resposta.json();
-
-    if (!resposta.ok) {
-      throw new Error(
-        resultado.mensagem || "Erro ao buscar área/departamento!"
-      );
-    }
-
-    detalharAreaDepartamento(resultado?.areaDepartamento);
   } catch (erro) {
     verificarPorErros(erro);
   }
@@ -95,25 +77,19 @@ export const salvarAreaDepartamento = async (dados = {}) => {
 
 export const editarAreaDepartamento = async (areaDepartamento) => {
   try {
-    const url = `${configs.API_URL}/area-departamento/${areaDepartamento._id}`;
-    const response = await fetch(url, {
+    const resposta = await httpRequest({
+      url: `${url}/${areaDepartamento._id}`,
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(areaDepartamento),
+      body: areaDepartamento,
     });
 
-    if (!response.ok) {
-      throw new Error("Erro ao editar área/departamento!");
-    }
-
-    const { mensagem } = await response.json();
+    const { mensagem } = resposta;
+    toast.success(mensagem);
 
     const parametrosBusca =
       Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
 
     getAreasDepartamentos(parametrosBusca);
-
-    toast.success(mensagem);
   } catch (erro) {
     verificarPorErros(erro);
   }
@@ -121,25 +97,19 @@ export const editarAreaDepartamento = async (areaDepartamento) => {
 
 export const criarAreaDepartamento = async (areaDepartamento) => {
   try {
-    const url = `${configs.API_URL}/area-departamento`;
-    const response = await fetch(url, {
+    const resposta = await httpRequest({
+      url: `${url}`,
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(areaDepartamento),
+      body: areaDepartamento,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData?.mensagem);
-    }
+    const { mensagem } = resposta;
+    toast.success(mensagem);
 
     const parametrosBusca =
       Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
 
     getAreasDepartamentos(parametrosBusca);
-
-    const data = await response.json();
-    toast.success(data.mensagem);
   } catch (erro) {
     verificarPorErros(erro);
   }
@@ -152,24 +122,17 @@ export const removerAreaDepartamento = async (id) => {
   }
 
   try {
-    const resposta = await fetch(`${configs.API_URL}/area-departamento/${id}`, {
+    const resposta = await httpRequest({
+      url: `${url}/${id}`,
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
     });
 
-    const resultado = await resposta.json();
+    const { mensagem } = resposta;
 
-    if (!resposta.ok) {
-      toast.error(resultado.mensagem || "Erro ao remover área/departamento!");
-      return;
-    }
+    toast.success(mensagem || "Área/Departamento removido com sucesso!");
 
     await getAreasDepartamentos();
     limparAreaDepartamentoDetalhe();
-
-    toast.success(
-      resultado.mensagem || "Área/Departamento removido com sucesso!"
-    );
   } catch (erro) {
     verificarPorErros(erro);
   }

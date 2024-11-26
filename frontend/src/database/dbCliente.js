@@ -85,13 +85,12 @@ export const editarCliente = async (cliente) => {
     });
 
     const { mensagem } = resposta;
+    toast.success(mensagem);
 
     const parametrosBusca =
       Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
 
     getClientes(parametrosBusca);
-
-    toast.success(mensagem);
   } catch (erro) {
     verificarPorErros(erro);
   }
