@@ -19,15 +19,15 @@ const situacoesCaixas = () => {
   mensagemExecucao += criarTituloEstilizado(titulo);
 
   (async () => {
-    console.log(mensagemExecucao);
+    console.info(mensagemExecucao);
     await atualizarSituacaoCaixas();
-    console.log("-".repeat(comprimentoTotal));
+    console.info("-".repeat(comprimentoTotal));
   })();
 
   cron.schedule("1 0 * * *", async () => {
-    console.log(mensagemExecucao);
+    console.info(mensagemExecucao);
     await atualizarSituacaoCaixas();
-    console.log("-".repeat(comprimentoTotal));
+    console.info("-".repeat(comprimentoTotal));
   });
 };
 

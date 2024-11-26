@@ -37,10 +37,6 @@ const identificarParametros = (props = {}) => {
           .tz("America/Fortaleza")
           .toISOString();
 
-        console.log("valorCampo", valorCampo);
-        console.log("dataInicio", dataInicio);
-        console.log("dataFim", dataFim);
-
         filtro[campo] = { $gte: dataInicio, $lt: dataFim };
       } else if (tipo === "REF") {
         filtro[campo] = valorCampo;

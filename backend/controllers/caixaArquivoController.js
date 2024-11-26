@@ -208,11 +208,11 @@ const atualizarSituacaoCaixas = async () => {
         { _id: { $in: idsAtualizar } },
         { $set: { situacao: "Aguardando descarte" } }
       );
-      console.log(
+      console.info(
         `${caixasParaAtualizar.length} caixas de arquivo atualizadas para "Aguardando descarte"!`
       );
     } else {
-      console.log("Nenhuma caixa de arquivo necessita atualização!");
+      console.info("Nenhuma caixa de arquivo necessita atualização!");
     }
   } catch (error) {
     console.error("Erro ao atualizar situação das caixas de arquivo:", error);

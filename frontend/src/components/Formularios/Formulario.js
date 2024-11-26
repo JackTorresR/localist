@@ -18,6 +18,7 @@ import VisibilidadeCampo from "./VisibilidadeCampo";
 import { abrirModal } from "../../redux/acoes/acoesModal";
 import { FaSearch } from "react-icons/fa";
 import LocalizadorModal from "../Modal/LocalizadorModal";
+import CORES from "../../styles/Cores";
 
 const Formulario = (props) => {
   const {
@@ -53,7 +54,7 @@ const Formulario = (props) => {
   const handleValueChange = ({ name, value }) => onChange({ name, value });
 
   const autocompleteCustomizado = {
-    email: "new-email",
+    usuario: "new-usuario",
     senha: "new-password",
   };
 
@@ -86,6 +87,16 @@ const Formulario = (props) => {
           handleToggleSenha={() => handleToggleSenha(campo?.name)}
         />
       ),
+    },
+    sx: {
+      "& input:-webkit-autofill": {
+        WebkitBoxShadow: `0 0 0 1000px rgba(255, 255, 255, 0.2) inset`,
+        WebkitTextFillColor: CORES.PRETO,
+        transition: "background-color 5000s ease-in-out 0s",
+      },
+      "& .MuiInputBase-input": {
+        color: CORES.PRETO,
+      },
     },
     error: Boolean(erros?.[campo.name]),
     helperText: erros?.[campo.name] || "",

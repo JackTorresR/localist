@@ -18,10 +18,10 @@ const config = { MONGO_URI, PORT };
 mongoose
   .connect(config.MONGO_URI)
   .then(() => {
-    console.log(`Conectado ao banco de dados no ambiente: ${ENV}`);
+    console.info(`Conectado ao banco de dados no ambiente: ${ENV}`);
 
     app.listen(config.PORT, () => {
-      console.log(`Job iniciado com sucesso na porta: ${config.PORT}`);
+      console.info(`Job iniciado com sucesso na porta: ${config.PORT}`);
 
       cronJobs();
     });
