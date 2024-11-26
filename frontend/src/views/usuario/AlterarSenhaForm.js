@@ -1,12 +1,10 @@
-import { abrirModal } from "../../redux/acoes/acoesModal";
 import Estilos from "../../styles/Styles";
-import { TiThMenu } from "react-icons/ti";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Formulario from "../../components/Formularios/Formulario";
 import { useState } from "react";
-import CabecalhoTabela from "../../components/Tabelas/CabecalhoTabela";
 import { alterarSenhaUsuario } from "../../database/dbUsuario";
 import { useSelector } from "react-redux";
+import CORES from "../../styles/Cores";
 
 const AlterarSenhaForm = () => {
   const usuarioId = useSelector((state) => state?.auth?._id);
@@ -38,34 +36,49 @@ const AlterarSenhaForm = () => {
   };
 
   return (
-    <div style={Estilos.containerPrincipal}>
-      <div style={{ flex: 1 }}>
-        <TiThMenu
-          onClick={() => abrirModal("drawer")}
-          size={40}
-          style={Estilos.clicavel}
-        />
+    <div
+      style={{
+        ...Estilos.containerPrincipal,
+        alignItems: "flex-start",
+        paddingTop: 100,
+      }}
+    >
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        sx={{
+          height: "auto",
+          p: 3,
+          boxShadow: 3,
+          borderRadius: 3,
+          bordercolor: CORES.PRETO_ALT,
+        }}
+      >
         <Box
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
           sx={{
-            borderRadius: "8px",
+            height: 100,
+            background: CORES.BACKGROUND_GRADIENT,
+            borderRadius: 3,
+            mb: 5,
             boxShadow: 3,
-            width: { xs: "90%", sm: "80%", md: "70%" },
-            margin: "32px auto",
           }}
         >
-          <CabecalhoTabela titulo="Alterar senha" />
-          <Box maxHeight={"80vh"} overflow={"auto"} sx={{ p: 2 }}>
-            <Formulario
-              campos={campos}
-              dados={dados}
-              onChange={handleChange}
-              onSubmit={handleApply}
-              sx={{ m: 0, ml: 0, mr: 0, pb: 0 }}
-              buttonTitleSubmit="Alterar"
-            />
-          </Box>
+          <Typography fontSize={36} color={CORES.PRETO_ALT} fontWeight={"bold"}>
+            Alterar senha
+          </Typography>
         </Box>
-      </div>
+        <Formulario
+          campos={campos}
+          dados={dados}
+          onChange={handleChange}
+          onSubmit={handleApply}
+          sx={{ m: 0, ml: 0, mr: 0, pb: 0 }}
+          buttonTitleSubmit="Alterar"
+        />
+      </Box>
     </div>
   );
 };
