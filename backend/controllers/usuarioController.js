@@ -212,7 +212,7 @@ const acessarSistema = async (req, res) => {
 
     const imagens = obterArquivosPorUsuarioId(usuarioEncontrado._id);
     const dadosUsuario = { ...objUsuario, imagens };
-    const token = jwt.sign(dadosUsuario, CHAVE_SECRETA, { expiresIn: "1h" });
+    const token = jwt.sign(dadosUsuario, CHAVE_SECRETA, { expiresIn: "10h" });
 
     dadosUsuario.token = token;
 
