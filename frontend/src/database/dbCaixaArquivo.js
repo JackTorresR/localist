@@ -81,25 +81,6 @@ export const getCaixasArquivo = async (params = {}) => {
 export const getNotificacoes = async (params = {}) =>
   getCaixasArquivo({ ...params, listarNotificacoes: true });
 
-export const getCaixaArquivo = async (id) => {
-  try {
-    const resposta = await httpRequest({
-      url: `${url}/${id}`,
-      method: "GET",
-    });
-
-    const resultado = await resposta;
-
-    if (!resposta.ok) {
-      throw new Error(resultado.mensagem || "Erro ao buscar caixa de arquivo!");
-    }
-
-    detalharCaixaArquivo(resultado?.caixaArquivo);
-  } catch (erro) {
-    verificarPorErros(erro);
-  }
-};
-
 export const salvarCaixaArquivo = async (dados = {}) => {
   try {
     const caixaArquivo = {

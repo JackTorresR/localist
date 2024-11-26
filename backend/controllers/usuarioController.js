@@ -32,6 +32,8 @@ const criarUsuario = async (req, res) => {
       senha,
       telefone,
       perfilAcesso,
+      matricula,
+      funcao,
     } = req.body;
 
     if (!nome || !email || !usuario || !senha || !perfilAcesso) {
@@ -50,6 +52,8 @@ const criarUsuario = async (req, res) => {
       senha: senhaCriptografada,
       telefone,
       perfilAcesso,
+      matricula,
+      funcao,
     });
 
     await novoUsuario.save();
@@ -142,7 +146,7 @@ const editarUsuario = async (req, res) => {
 
     const imagens = obterArquivosPorUsuarioId(id);
 
-    let usuario = { ...retorno.toObject(), imagens };
+    let usuario = { ...retorno, imagens };
     delete usuario.senha;
 
     res
@@ -158,7 +162,7 @@ const deletarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const usuario = await Usuario.findOneAndDelete({ id });
+    const usuario = await Usuario.findOneAndDelete({ _id: id });
 
     if (!usuario) {
       return res.status(404).json({ mensagem: "Usuário não encontrado!" });

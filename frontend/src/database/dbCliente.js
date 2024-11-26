@@ -4,7 +4,7 @@ import {
   gerarNomeSemPontuacao,
   normalizarData,
   normalizarDocumento,
-  normalizarTelefone
+  normalizarTelefone,
 } from "../utils/utils";
 import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
@@ -12,7 +12,7 @@ import Store from "../redux/Store";
 import { toast } from "react-hot-toast";
 import {
   detalharCliente,
-  limparClienteDetalhe
+  limparClienteDetalhe,
 } from "../redux/acoes/acoesCliente";
 import httpRequest from "../utils/httpRequest";
 
@@ -105,14 +105,13 @@ export const criarCliente = async (cliente) => {
       body: cliente,
     });
 
+    const { mensagem } = resposta;
+    toast.success(mensagem);
+
     const parametrosBusca =
       Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
 
     getClientes(parametrosBusca);
-
-    const { mensagem } = resposta;
-
-    toast.success(mensagem);
   } catch (erro) {
     verificarPorErros(erro);
   }
