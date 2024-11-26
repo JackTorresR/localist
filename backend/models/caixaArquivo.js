@@ -18,12 +18,8 @@ const caixaArquivoSchema = new mongoose.Schema({
   anoDocumentos: { type: String, required: true },
   dataArmazenamento: { type: Date, required: true },
   dataExpiracao: { type: Date, required: true },
-  dataDescarte: { type: Date, required: true },
-  idUsuarioDescarte: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Usuario",
-    required: true,
-  },
+  dataDescarte: { type: Date },
+  idUsuarioDescarte: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario" },
   situacao: {
     type: String,
     enum: ["Em Prazo", "Aguardando descarte", "Descartado"],

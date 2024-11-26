@@ -7,7 +7,6 @@ import {
 import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
 import { toast } from "react-hot-toast";
-import configs from "../config/config";
 import {
   detalharCaixaArquivo,
   limparCaixaArquivoDetalhe,
@@ -53,15 +52,12 @@ export const getCaixasArquivo = async (params = {}) => {
   });
 
   try {
-    const response = await fetch(
-      `${configs.API_URL}/caixa-arquivo?${searchParams.toString()}`,
-      { method: "GET", headers: { "Content-Type": "application/json" } }
-    );
-    if (!response.ok) {
-      throw new Error("Erro ao listar caixas de arquivos!");
-    }
+    const resposta = await httpRequest({
+      url: `${url}?${searchParams.toString()}`,
+      method: "GET",
+    });
 
-    const { lista, quantidade } = await response.json();
+    const { lista, quantidade } = resposta;
 
     const buscouLimitado = dadoExiste(params?.limite) || params?.limite === 0;
     if (buscouLimitado) return lista;
@@ -87,12 +83,12 @@ export const getNotificacoes = async (params = {}) =>
 
 export const getCaixaArquivo = async (id) => {
   try {
-    const resposta = await fetch(`${configs.API_URL}/${url}/${id}`, {
+    const resposta = await httpRequest({
+      url: `${url}/${id}`,
       method: "GET",
-      headers: { "Content-Type": "application/json" },
     });
 
-    const resultado = await resposta.json();
+    const resultado = await resposta;
 
     if (!resposta.ok) {
       throw new Error(resultado.mensagem || "Erro ao buscar caixa de arquivo!");
@@ -124,18 +120,13 @@ export const salvarCaixaArquivo = async (dados = {}) => {
 
 export const editarCaixaArquivo = async (caixaArquivo) => {
   try {
-    const urlCompleta = `${configs.API_URL}/${url}/${caixaArquivo._id}`;
-    const response = await fetch(urlCompleta, {
+    const resposta = await httpRequest({
+      url: `${url}/${caixaArquivo._id}`,
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(caixaArquivo),
+      body: caixaArquivo,
     });
 
-    if (!response.ok) {
-      throw new Error("Erro ao editar caixa de arquivo!");
-    }
-
-    const { mensagem } = await response.json();
+    const { mensagem } = resposta;
 
     const parametrosBusca =
       Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
@@ -150,19 +141,13 @@ export const editarCaixaArquivo = async (caixaArquivo) => {
 
 export const criarCaixaArquivo = async (caixaArquivo) => {
   try {
-    const urlCompleta = `${configs.API_URL}/${url}`;
-    const response = await fetch(urlCompleta, {
+    const resposta = await httpRequest({
+      url: `${url}`,
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(caixaArquivo),
+      body: caixaArquivo,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData?.mensagem);
-    }
-
-    const data = await response.json();
+    const data = resposta;
 
     const parametrosBusca =
       Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
@@ -182,17 +167,12 @@ export const removerCaixaArquivo = async (id) => {
   }
 
   try {
-    const resposta = await fetch(`${configs.API_URL}/${url}/${id}`, {
+    const resposta = await httpRequest({
+      url: `${url}/${id}`,
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
     });
 
-    const resultado = await resposta.json();
-
-    if (!resposta.ok) {
-      toast.error(resultado.mensagem || "Erro ao remover caixa de arquivo!");
-      return;
-    }
+    const resultado = resposta;
 
     const parametrosBusca =
       Store?.getState()?.parametroBusca?.["filtro-modal-form"] || {};
@@ -209,11 +189,10 @@ export const removerCaixaArquivo = async (id) => {
 
 export const informarDescarteCaixaArquivo = async (id) => {
   try {
-    const resposta =
-      (await httpRequest({
-        url: `${url}/${id}/descartar`,
-        method: "PUT",
-      })) || {};
+    const resposta = await httpRequest({
+      url: `${url}/${id}/descartar`,
+      method: "PUT",
+    });
 
     const { mensagem } = resposta;
 
