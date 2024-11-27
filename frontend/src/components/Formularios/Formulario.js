@@ -15,6 +15,10 @@ import {
 import { PatternFormat } from "react-number-format";
 import { dadoExiste, mascaras } from "../../utils/utils";
 import VisibilidadeCampo from "./VisibilidadeCampo";
+import { abrirModal } from "../../redux/acoes/acoesModal";
+import { FaSearch } from "react-icons/fa";
+import LocalizadorModal from "../Modal/LocalizadorModal";
+import CORES from "../../styles/Cores";
 
 const Formulario = (props) => {
   const {
@@ -31,8 +35,11 @@ const Formulario = (props) => {
   } = props;
 
   const [mostrarSenha, setMostrarSenha] = useState({});
+  const [propsCampoLocalizador, setPropsCampoLocalizador] = useState({});
 
   const mostrarBotaoLimpar = onReset;
+
+  const defaultSubmitText = dadoExiste(dados?._id) ? "Salvar" : "Criar";
 
   const handleToggleSenha = useCallback(
     (name) => setMostrarSenha((prev) => ({ ...prev, [name]: !prev[name] })),
@@ -44,12 +51,10 @@ const Formulario = (props) => {
     handleValueChange({ name, value });
   };
 
-  const handleValueChange = ({ name, value }) => {
-    onChange({ name, value });
-  };
+  const handleValueChange = ({ name, value }) => onChange({ name, value });
 
   const autocompleteCustomizado = {
-    email: "new-email",
+    usuario: "new-usuario",
     senha: "new-password",
   };
 
@@ -60,6 +65,8 @@ const Formulario = (props) => {
     fullWidth: true,
     variant: "outlined",
     required: campo.obrigatorio || false,
+    rows: campo?.rows || 1,
+    multiline: campo?.rows > 1,
     type:
       campo?.tipo === "password" && mostrarSenha?.[campo.name]
         ? "text"
@@ -81,85 +88,160 @@ const Formulario = (props) => {
         />
       ),
     },
+    sx: {
+      "& input:-webkit-autofill": {
+        WebkitBoxShadow: `0 0 0 1000px rgba(255, 255, 255, 0.2) inset`,
+        WebkitTextFillColor: CORES.PRETO,
+        transition: "background-color 5000s ease-in-out 0s",
+      },
+      "& .MuiInputBase-input": {
+        color: CORES.PRETO,
+      },
+    },
     error: Boolean(erros?.[campo.name]),
     helperText: erros?.[campo.name] || "",
   });
 
-  return (
-    <Box
-      component="form"
-      onSubmit={(e) => onSubmit(e)}
-      onReset={() => onReset()}
-      sx={{
-        ml: { xs: 5, md: 20 },
-        mr: { xs: 5, md: 20 },
-        mt: 10,
-        pb: 10,
-        ...sx,
-      }}
-    >
-      {dadoExiste(titulo) && (
-        <Typography variant="h4" gutterBottom>
-          {titulo}
-        </Typography>
-      )}
-      <Grid container spacing={2} flex={1}>
-        {campos
-          ?.filter((campo) => campo?.condicao !== false)
-          ?.map((campo, index) => (
-            <Grid
-              item
-              container
-              xs={campo?.tamanhoGrid?.xs || 12}
-              md={campo?.tamanhoGrid?.md}
-              key={index}
-              alignItems="center"
-            >
-              {campo?.tipo === "checkbox" ? (
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={dados[campo.name] || false}
-                      onChange={(e) =>
-                        handleValueChange({
-                          name: campo.name,
-                          value: e.target.checked,
-                        })
-                      }
-                      color="primary"
-                    />
-                  }
-                  label={campo.label}
-                />
-              ) : campo?.tipo === "select" ? (
-                <TextField
-                  select
-                  onChange={handleChange}
-                  {...propsInput(campo)}
-                >
-                  <MenuItem value="">
-                    <em>Nenhum selecionado</em>
-                  </MenuItem>
-                  {campo.selectItems.map((item, i) => (
-                    <MenuItem key={i} value={item.value}>
-                      {item.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              ) : campo.mask ? (
-                <PatternFormat
-                  customInput={TextField}
-                  format={mascaras[campo.mask]}
-                  onValueChange={({ value }) =>
-                    handleValueChange({ name: campo.name, value })
-                  }
-                  {...propsInput(campo)}
-                />
-              ) : (
-                <TextField onChange={handleChange} {...propsInput(campo)} />
-              )}
-            </Grid>
+  const renderizarCampo = (campo = {}, index) => {
+    const { tamanhoGrid, componente, mask, tipo } = campo;
+    let campoRenderizado = (
+      <TextField onChange={handleChange} {...propsInput(campo)} />
+    );
+
+    if (tipo === "checkbox") {
+      campoRenderizado = (
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={dados[campo.name] || false}
+              onChange={(e) =>
+                handleValueChange({
+                  name: campo.name,
+                  value: e.target.checked,
+                })
+              }
+              color="primary"
+            />
+          }
+          label={campo.label}
+        />
+      );
+    }
+
+    if (tipo === "select") {
+      campoRenderizado = (
+        <TextField select onChange={handleChange} {...propsInput(campo)}>
+          <MenuItem value="">
+            <em>Nenhum selecionado</em>
+          </MenuItem>
+          {campo.selectItems.map((item, i) => (
+            <MenuItem key={i} value={item.value}>
+              {item.label}
+            </MenuItem>
           ))}
+        </TextField>
+      );
+    }
+
+    if (dadoExiste(mask)) {
+      campoRenderizado = (
+        <PatternFormat
+          customInput={TextField}
+          format={
+            campo?.mask === "cpfCnpj"
+              ? dados?.[campo?.name]?.length > 11
+                ? mascaras?.cnpj
+                : mascaras?.cpf
+              : mascaras[campo.mask]
+          }
+          onValueChange={({ value }) =>
+            handleValueChange({ name: campo.name, value })
+          }
+          {...propsInput(campo)}
+        />
+      );
+    }
+
+    if (componente) {
+      campoRenderizado = (
+        <TextField
+          {...propsInput(campo)}
+          InputProps={{
+            ...propsInput(campo).InputProps,
+            endAdornment: (
+              <>
+                {propsInput(campo).InputProps.endAdornment}
+                <InputAdornment position="end">
+                  <FaSearch
+                    onClick={() => {
+                      setPropsCampoLocalizador({
+                        ...componente,
+                        campoNome: campo?.name,
+                      });
+                      abrirModal(`${componente?.entidade}-modal-smartcard`);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  />
+                </InputAdornment>
+              </>
+            ),
+          }}
+          editable="false"
+        />
+      );
+    }
+
+    return (
+      <Grid
+        item
+        container
+        xs={tamanhoGrid?.xs || 12}
+        md={tamanhoGrid?.md}
+        key={index}
+        alignItems="center"
+      >
+        {campoRenderizado}
+      </Grid>
+    );
+  };
+
+  return (
+    <>
+      <LocalizadorModal
+        {...propsCampoLocalizador}
+        onRegistroSelecionado={(item) => {
+          handleValueChange({
+            name: propsCampoLocalizador?.campoId,
+            value: item?._id,
+          });
+          handleValueChange({
+            name: propsCampoLocalizador?.campoNome,
+            value: item?.nome,
+          });
+        }}
+      />
+      <Box
+        component="form"
+        onSubmit={(e) => onSubmit(e)}
+        onReset={() => onReset()}
+        sx={{
+          ml: { xs: 5, md: 20 },
+          mr: { xs: 5, md: 20 },
+          mt: 10,
+          pb: 10,
+          ...sx,
+        }}
+      >
+        {dadoExiste(titulo) && (
+          <Typography variant="h4" gutterBottom>
+            {titulo}
+          </Typography>
+        )}
+        <Grid container spacing={2} flex={1}>
+          {campos
+            ?.filter((campo) => campo?.condicao !== false)
+            ?.map((campo, index) => renderizarCampo(campo, index))}
+        </Grid>
         <Grid
           item
           sx={{ mt: 2 }}
@@ -184,11 +266,11 @@ const Formulario = (props) => {
             variant="contained"
             color="primary"
           >
-            {buttonTitleSubmit || "Gravar"}
+            {buttonTitleSubmit || defaultSubmitText}
           </Button>
         </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </>
   );
 };
 

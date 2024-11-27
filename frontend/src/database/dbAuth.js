@@ -2,6 +2,7 @@ import verificarPorErros from "../config/verificarPorErros";
 import { dadoExiste, dispatcher } from "../utils/utils";
 import toast from "react-hot-toast";
 import configs from "../config/config";
+import { fecharModal } from "../redux/acoes/acoesModal";
 
 const prefixo = "auth";
 
@@ -71,6 +72,7 @@ export const acessoAutomatico = async (dispatch) => {
 export const sairDoSistema = async () => {
   try {
     dispatcher(`${prefixo}/SAIR`);
+    fecharModal();
   } catch (erro) {
     verificarPorErros(erro);
   }

@@ -1,38 +1,47 @@
-import React from "react";
+import { useState } from "react";
 import { Modal, Card, Typography, Box, Paper } from "@mui/material";
 import { useSelector } from "react-redux";
 import { fecharModal } from "../../redux/acoes/acoesModal";
 import CORES from "../../styles/Cores";
 import Formulario from "../Formularios/Formulario";
 import { atualizarParametrosBusca } from "../../redux/acoes/acoesParametroBusca";
+import toast from "react-hot-toast";
 
-const FiltrarRegistrosModal = ({ modalName, onApplyFilter, searchFields }) => {
-  const open = useSelector((state) => state?.modal?.[modalName]) || false;
+const FiltrarRegistrosModal = (props = {}) => {
+  const { acao = null, camposFiltro = [], entidade = "filtro" } = props;
 
-  const handleClose = () => fecharModal(modalName);
+  const nomeModalFiltro = `${entidade}-modal-filter`;
 
-  const [filterData, setFilterData] = React.useState({});
+  const parametrosBusca = useSelector((state) => state?.parametroBusca || {})?.[
+    nomeModalFiltro
+  ];
+  const open = useSelector((state) => state?.modal?.[nomeModalFiltro]) || false;
 
-  const handleChange = ({ name, value }) => {
-    setFilterData((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleClose = () => fecharModal(nomeModalFiltro);
+
+  const [dadosFiltrados, setDadosFiltrados] = useState(parametrosBusca);
+
+  const handleChange = ({ name, value }) =>
+    setDadosFiltrados((prev) => ({ ...prev, [name]: value }));
 
   const handleApply = () => {
-    atualizarParametrosBusca(modalName, filterData);
-    onApplyFilter(filterData);
+    atualizarParametrosBusca(nomeModalFiltro, dadosFiltrados);
+    acao ? acao(dadosFiltrados) : toast.error("🚧 Em construção!");
     handleClose();
   };
 
-  const handleReset = () => {
-    setFilterData({});
-  };
+  const handleReset = () => setDadosFiltrados({});
+
+  const camposFiltraveis = camposFiltro
+    ?.filter((item) => item?.filtravel !== false)
+    ?.map((item) => ({ ...item, obrigatorio: false }));
 
   return (
     <Modal
       open={open}
       onClose={handleClose}
-      aria-labelledby={`${modalName}-titulo`}
-      aria-describedby={`${modalName}-descricao`}
+      aria-labelledby={`${nomeModalFiltro}-titulo`}
+      aria-describedby={`${nomeModalFiltro}-descricao`}
       sx={{
         display: "flex",
         justifyContent: "center",
@@ -60,17 +69,18 @@ const FiltrarRegistrosModal = ({ modalName, onApplyFilter, searchFields }) => {
           }}
         >
           <Typography
-            id={`${modalName}-titulo`}
-            variant="h6"
-            color={CORES.BRANCO}
+            variant="h5"
+            fontWeight="bold"
+            color={CORES.PRETO}
+            id={`${nomeModalFiltro}-titulo`}
           >
-            FILTRAR REGISTROS
+            Filtrar registros
           </Typography>
         </Box>
         <Box maxHeight={"80vh"} overflow={"auto"} sx={{ p: 2 }}>
           <Formulario
-            campos={searchFields}
-            dados={filterData}
+            campos={camposFiltraveis}
+            dados={dadosFiltrados}
             onChange={handleChange}
             onSubmit={handleApply}
             onReset={handleReset}

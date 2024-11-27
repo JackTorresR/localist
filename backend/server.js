@@ -1,6 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const app = require("./app");
+const cronJobs = require("./cronJobs");
 
 const ENV = process.env.APP_ENV || "LOCAL";
 
@@ -17,10 +18,12 @@ const config = { MONGO_URI, PORT };
 mongoose
   .connect(config.MONGO_URI)
   .then(() => {
-    console.log(`Conectado ao banco de dados no ambiente: ${ENV}`);
+    console.info(`Conectado ao banco de dados no ambiente: ${ENV}`);
 
     app.listen(config.PORT, () => {
-      console.log(`Job iniciado com sucesso na porta: ${config.PORT}`);
+      console.info(`Job iniciado com sucesso na porta: ${config.PORT}`);
+
+      cronJobs();
     });
   })
   .catch((error) =>

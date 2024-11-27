@@ -2,6 +2,25 @@ const { CHAVE_SECRETA } = require("../config");
 const Usuario = require("../models/usuario");
 const md5 = require("md5");
 const jwt = require("jsonwebtoken");
+const { identificarParametros } = require("../utils");
+const path = require("path");
+const fs = require("fs");
+
+const obterArquivosPorUsuarioId = (id) => {
+  try {
+    const idString = id.toString();
+    const uploadDir = path.join(__dirname, "../uploads/usuario", idString);
+
+    if (!fs.existsSync(uploadDir)) {
+      return [];
+    }
+
+    return fs.readdirSync(uploadDir);
+  } catch (error) {
+    console.error("Erro ao obter arquivos do usuário:", error);
+    return [];
+  }
+};
 
 const criarUsuario = async (req, res) => {
   try {
@@ -13,6 +32,8 @@ const criarUsuario = async (req, res) => {
       senha,
       telefone,
       perfilAcesso,
+      matricula,
+      funcao,
     } = req.body;
 
     if (!nome || !email || !usuario || !senha || !perfilAcesso) {
@@ -31,6 +52,8 @@ const criarUsuario = async (req, res) => {
       senha: senhaCriptografada,
       telefone,
       perfilAcesso,
+      matricula,
+      funcao,
     });
 
     await novoUsuario.save();
@@ -53,8 +76,27 @@ const criarUsuario = async (req, res) => {
 
 const listarUsuarios = async (req, res) => {
   try {
-    const usuarios = await Usuario.find({}, "-senha");
-    res.status(200).json(usuarios);
+    const { offset = 0, limite = 15, ...params } = req.query;
+
+    const camposPermitidos = [
+      { campo: "nomeSemPontuacao" },
+      { campo: "usuario" },
+      { campo: "email" },
+      { campo: "matricula" },
+      { campo: "funcao" },
+      { campo: "telefone" },
+      { campo: "perfilAcesso" },
+    ];
+
+    const filtro = identificarParametros({ params, camposPermitidos });
+
+    const quantidade = await Usuario.countDocuments(filtro);
+    const lista = await Usuario.find(filtro, "-senha")
+      .sort({ nomeSemPontuacao: 1 })
+      .skip(parseInt(offset))
+      .limit(parseInt(limite));
+
+    res.status(200).json({ lista, quantidade });
   } catch (error) {
     console.error("Erro ao listar usuários:", error);
     res.status(500).json({ mensagem: "Erro interno do servidor!" });
@@ -70,7 +112,11 @@ const detalharUsuario = async (req, res) => {
       return res.status(404).json({ mensagem: "Usuário não encontrado!" });
     }
 
-    res.status(200).json(usuario);
+    const imagens = obterArquivosPorUsuarioId(id);
+    let retorno = { ...usuario.toObject(), imagens };
+    delete retorno.senha;
+
+    res.status(200).json(retorno);
   } catch (error) {
     console.error("Erro ao detalhar usuário:", error);
     res.status(500).json({ mensagem: "Erro interno do servidor!" });
@@ -87,7 +133,7 @@ const editarUsuario = async (req, res) => {
     }
 
     const usuarioAtualizado = await Usuario.findOneAndUpdate(
-      { id },
+      { _id: id },
       atualizacoes,
       { new: true, runValidators: true }
     );
@@ -98,9 +144,14 @@ const editarUsuario = async (req, res) => {
 
     const { senha: _, ...retorno } = usuarioAtualizado.toObject();
 
+    const imagens = obterArquivosPorUsuarioId(id);
+
+    let usuario = { ...retorno, imagens };
+    delete usuario.senha;
+
     res
       .status(200)
-      .json({ mensagem: "Usuário atualizado com sucesso!", usuario: retorno });
+      .json({ mensagem: "Usuário atualizado com sucesso!", usuario });
   } catch (error) {
     console.error("Erro ao editar usuário:", error);
     res.status(500).json({ mensagem: "Erro interno do servidor!" });
@@ -111,7 +162,7 @@ const deletarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const usuario = await Usuario.findOneAndDelete({ id });
+    const usuario = await Usuario.findOneAndDelete({ _id: id });
 
     if (!usuario) {
       return res.status(404).json({ mensagem: "Usuário não encontrado!" });
@@ -136,6 +187,10 @@ const acessarSistema = async (req, res) => {
 
     const usuarioEncontrado = await Usuario.findOne({ usuario });
 
+    if (!usuarioEncontrado) {
+      return res.status(401).json({ mensagem: "Informações incorretas!" });
+    }
+
     const senhaHash = md5(senha);
     const senhaValida =
       senhaHash === usuarioEncontrado?.senha ||
@@ -145,18 +200,21 @@ const acessarSistema = async (req, res) => {
       return res.status(401).json({ mensagem: "Informações incorretas!" });
     }
 
-    const token = jwt.sign(
-      { id: usuarioEncontrado.id, usuario: usuarioEncontrado.usuario },
-      CHAVE_SECRETA,
-      { expiresIn: "1h" }
-    );
-
-    const dadosUsuario = {
-      token,
-      id: usuarioEncontrado.id,
+    const objUsuario = {
+      _id: usuarioEncontrado._id,
       nome: usuarioEncontrado.nome,
       usuario: usuarioEncontrado.usuario,
+      matricula: usuarioEncontrado.matricula || "---",
+      funcao: usuarioEncontrado.funcao || "---",
+      telefone: usuarioEncontrado.telefone || "---",
+      perfilAcesso: usuarioEncontrado.perfilAcesso || "---",
     };
+
+    const imagens = obterArquivosPorUsuarioId(usuarioEncontrado._id);
+    const dadosUsuario = { ...objUsuario, imagens };
+    const token = jwt.sign(dadosUsuario, CHAVE_SECRETA, { expiresIn: "10h" });
+
+    dadosUsuario.token = token;
 
     res.status(200).json({ mensagem: "Acesso autorizado!", dadosUsuario });
   } catch (error) {
@@ -187,32 +245,55 @@ const validarAcesso = (req, res) => {
 
 const editarSenha = async (req, res) => {
   try {
-    const { id, novaSenha } = req.query;
+    const { usuarioId, senhaAtual, novaSenha } = req.body;
 
-    if (!id || !novaSenha || novaSenha.trim().length < 6) {
+    if (!usuarioId || !senhaAtual || !novaSenha) {
       return res.status(400).json({
-        mensagem:
-          "O ID e a nova senha são obrigatórios e a senha deve ter pelo menos 6 caracteres!",
+        mensagem: "Usuário, senha atual e nova senha são obrigatórios!",
       });
     }
 
-    const usuario = await Usuario.findOne({ id });
-
-    if (!usuario || !usuario.ativo) {
-      return res
-        .status(404)
-        .json({ mensagem: "Usuário não encontrado ou inativo!" });
+    const usuario = await Usuario.findById(usuarioId);
+    if (!usuario) {
+      return res.status(404).json({ mensagem: "Usuário não encontrado!" });
     }
 
-    const senhaHash = md5(novaSenha);
-    usuario.senha = senhaHash;
+    const senhaHash = md5(senhaAtual);
+    const senhaValida =
+      senhaHash === usuario?.senha || senhaAtual === usuario?.senha;
 
+    if (!senhaValida) {
+      return res.status(401).json({ mensagem: "Senha atual incorreta!" });
+    }
+
+    usuario.senha = md5(novaSenha);
     await usuario.save();
 
-    res.status(200).json({ mensagem: "Senha atualizada com sucesso!" });
+    res.status(200).json({ mensagem: "Senha alterada com sucesso!" });
   } catch (error) {
-    console.error("Erro ao atualizar senha:", error);
     res.status(500).json({ mensagem: "Erro interno do servidor!" });
+  }
+};
+
+const autenticar = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ mensagem: "Token não fornecido!" });
+    }
+
+    const decoded = jwt.verify(token, CHAVE_SECRETA);
+    const usuario = await Usuario.findById(decoded._id);
+
+    if (!usuario) {
+      return res.status(401).json({ mensagem: "Usuário não encontrado!" });
+    }
+
+    req.user = { id: usuario?._id?.toString(), nome: usuario.nome };
+    next();
+  } catch (error) {
+    console.error("Erro na autenticação:", error);
+    return res.status(401).json({ mensagem: "Autenticação inválida!" });
   }
 };
 
@@ -225,4 +306,5 @@ module.exports = {
   acessarSistema,
   validarAcesso,
   editarSenha,
+  autenticar,
 };
