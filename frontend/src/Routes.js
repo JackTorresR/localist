@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import AcessoForm from "./views/acesso/AcessoForm";
 import { acessoAutomatico } from "./database/dbAuth";
 import { Toaster } from "react-hot-toast";
-import Cliente from "./views/Cliente/Cliente";
+import Cliente from "./views/cliente/Cliente";
 import Usuario from "./views/usuario/Usuario";
 import AreaDepartamento from "./views/areaDepartamento/AreaDepartamento";
 import EspecieDocumental from "./views/especieDocumental/EspecieDocumental";
