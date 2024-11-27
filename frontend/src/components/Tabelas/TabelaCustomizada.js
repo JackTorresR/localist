@@ -169,7 +169,6 @@ const TabelaCustomizada = (props = {}) => {
       }}
     >
       <CabecalhoTabela {...props} />
-
       <Table stickyHeader>
         <TableHead>
           <TableRow>

@@ -1,4 +1,3 @@
-import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -8,18 +7,17 @@ import Typography from "@mui/material/Typography";
 import { GiHamburgerMenu } from "react-icons/gi";
 import CORES from "../../styles/Cores";
 import { useSelector } from "react-redux";
-import { separarPrimeiroNome } from "../../utils/utils";
+import { dadoExiste, separarPrimeiroNome } from "../../utils/utils";
 import MenuLateral from "../MenuLateral/MenuLateral";
 import { abrirModal } from "../../redux/acoes/acoesModal";
 
 const NavbarCustom = () => {
-  const nomeFuncionarioLogado = separarPrimeiroNome(
-    useSelector((state) => state?.auth?.nome || "Funcionário")
-  );
+  const usuarioLogado = useSelector((state) => state?.auth);
+  const jaLogado = dadoExiste(usuarioLogado?._id);
+  if (!jaLogado) return null;
 
-  const handleDrawerOpen = () => {
-    abrirModal("drawer");
-  };
+  const nomeFuncionarioLogado = separarPrimeiroNome(usuarioLogado?.nome);
+  const handleDrawerOpen = () => abrirModal("drawer");
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -40,29 +38,10 @@ const NavbarCustom = () => {
             component="div"
             noWrap
             color={CORES.PRETO_ALT}
-            fontSize={36}
-            // sx={{ display: { xs: "none", sm: "block", md: "block" } }}
+            fontSize={26}
           >
             {`Olá, ${nomeFuncionarioLogado}!`}
           </Typography>
-          {/* <Box
-            sx={{
-              display: { xs: "none", sm: "none", md: "flex" },
-              flexGrow: 1,
-              ml: 3,
-            }}
-          >
-            {BOTOES_ACAO_GERENCIAMENTO()?.map((item, ix) => (
-              <ButtonTopNavbar item={item} key={`${ix}_navBar_topo`} />
-            ))}
-          </Box>
-          <ButtonTopNavbar
-            item={botaoSair}
-            extraConfig={{
-              sx: { display: { xs: "none", sm: "none", md: "block" } },
-              style: { marginRight: -24 },
-            }}
-          /> */}
         </Toolbar>
       </AppBar>
       <MenuLateral />
