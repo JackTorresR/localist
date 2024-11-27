@@ -6,7 +6,7 @@ const configs = {
 };
 
 if (configs.env === "PRODUCAO") {
-  configs.API_URL = "https://localist.nagelconsultoria.com.br:5160";
+  configs.API_URL = "https://localist.nagelconsultoria.com.br:5161";
 }
 
 module.exports = configs;
