@@ -189,6 +189,14 @@ const TabelaCustomizada = (props = {}) => {
                   onClick={() =>
                     setItemSelecionado(estaSelecionado ? null : item?._id)
                   }
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.cursor = "pointer";
+                    e.currentTarget.style.backgroundColor = CORES.CINZA_CLARO;
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.cursor = "default";
+                    e.currentTarget.style.backgroundColor = "";
+                  }}
                 >
                   {colunas?.map((coluna, colIndex) => {
                     let dado = item?.[coluna?.value || coluna?.name] || "---";
@@ -225,12 +233,7 @@ const TabelaCustomizada = (props = {}) => {
                     colSpan={colunas?.length}
                   >
                     <Collapse in={estaSelecionado} timeout="auto" unmountOnExit>
-                      <Box
-                        sx={{
-                          mb: 2,
-                          display: "flex",
-                        }}
-                      >
+                      <Box sx={{ mb: 2, display: "flex" }}>
                         {botoesAcao(item)?.map((botao, ix) =>
                           botaoAcaoLinhaTabela({ botao, item, ix })
                         )}
