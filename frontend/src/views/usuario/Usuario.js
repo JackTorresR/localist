@@ -8,7 +8,7 @@ import {
   salvarUsuario,
 } from "../../database/dbUsuario";
 import { useState } from "react";
-import { normalizarTelefone } from "../../utils/utils";
+import { dadoExiste, normalizarTelefone } from "../../utils/utils";
 import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
 import InfoModal from "../../components/Modal/InfoModal";
 import FormModal from "../../components/Modal/FormModal";
@@ -87,13 +87,16 @@ const Usuario = () => {
     setItemDetalhe({});
   };
 
-  const entidade = "usuario";
+  const entidade = "USUARIO";
   const propsComponentes = { campos, entidade, itemDetalhe };
+  const tituloCard =
+    (dadoExiste(itemDetalhe?._id) ? "Editar" : "Criar") + " usuário";
 
   return (
     <Box style={Estilos.containerPrincipal}>
       <FormModal
         {...propsComponentes}
+        tituloCard={tituloCard}
         onSubmit={handleSubmit}
         onClose={() => setItemDetalhe({})}
       />
@@ -105,6 +108,7 @@ const Usuario = () => {
       <TabelaCustomizada
         {...usuarios}
         titulo="Usuários"
+        entidade={entidade}
         colunas={[
           { name: "Matrícula", value: "matricula" },
           { name: "Nome", value: "nome" },

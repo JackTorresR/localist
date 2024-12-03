@@ -1,4 +1,9 @@
-import { dadoExiste, dispatcher, gerarNomeSemPontuacao } from "../utils/utils";
+import {
+  checarPermissao,
+  dadoExiste,
+  dispatcher,
+  gerarNomeSemPontuacao,
+} from "../utils/utils";
 import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
 import { toast } from "react-hot-toast";
@@ -12,11 +17,18 @@ import {
 } from "./dbCliente";
 import httpRequest from "../utils/httpRequest";
 
+const prefixoPermissao = "AREA_DEPARTAMENTO";
 const url = "area-departamento";
 const prefixo = "areaDepartamento";
 
 export const getAreasDepartamentos = async (params = {}) => {
   const { offset = 0, limite = limiteItemsPorPagina, ...outrosParams } = params;
+
+  const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_LISTAR`);
+  if (semPermissaoAcao) {
+    toast.error("Você não possuí permissão de listagem!");
+    return null;
+  }
 
   limparAreaDepartamentoDetalhe();
 
@@ -67,6 +79,12 @@ export const salvarAreaDepartamento = async (dados = {}) => {
 
 export const editarAreaDepartamento = async (areaDepartamento) => {
   try {
+    const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_EDITAR`);
+    if (semPermissaoAcao) {
+      toast.error("Você não possuí permissão de edição!");
+      return null;
+    }
+
     const resposta = await httpRequest({
       url: `${url}/${areaDepartamento._id}`,
       method: "PATCH",
@@ -87,6 +105,12 @@ export const editarAreaDepartamento = async (areaDepartamento) => {
 
 export const criarAreaDepartamento = async (areaDepartamento) => {
   try {
+    const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_CRIAR`);
+    if (semPermissaoAcao) {
+      toast.error("Você não possuí permissão de criar!");
+      return null;
+    }
+
     const resposta = await httpRequest({
       url: `${url}`,
       method: "POST",
@@ -106,6 +130,12 @@ export const criarAreaDepartamento = async (areaDepartamento) => {
 };
 
 export const removerAreaDepartamento = async (id) => {
+  const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_DELETAR`);
+  if (semPermissaoAcao) {
+    toast.error("Você não possuí permissão de remover registro!");
+    return null;
+  }
+
   if (!dadoExiste(id)) {
     toast.error("Não conseguimos identificar a área/departamento!");
     return null;

@@ -22,7 +22,6 @@ import Estilos from "../../styles/Styles";
 import TooltipAplicavel from "../Tooltip/TooltipAplicavel";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import avatarPlaceholder from "../../assets/avatar_placeholder.png";
 import { sairDoSistema } from "../../database/dbAuth";
 import { checarPermissao, dadoExiste } from "../../utils/utils";
 
@@ -127,12 +126,25 @@ const MenuLateral = () => {
         justifyContent="space-between"
       >
         <Box display="flex" alignItems="center">
-          <Avatar
-            alt="Imagem do usuário"
-            src={avatarPlaceholder}
-            sx={{ width: 80, height: 80, marginRight: 2 }}
+          <div
+            style={{
+              position: "relative",
+              overflow: "hidden",
+              borderRadius: "50%",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
+              backgroundColor: CORES.BRANCO,
+            }}
+          >
+            <Avatar
+              src={"/logo512.png"}
+              alt="Imagem do usuário"
+              sx={{ width: 80, height: 80 }}
+            />
+          </div>
+          <ListItemText
+            primary={usuarioLogado?.nome || "Usuário"}
+            sx={{ marginLeft: 2 }}
           />
-          <ListItemText primary={usuarioLogado?.nome || "Usuário"} />
         </Box>
       </Box>
       <Box

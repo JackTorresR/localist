@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import Estilos from "../../styles/Styles";
 import CORES from "../../styles/Cores";
-import avatarPlaceholder from "../../assets/avatar_placeholder.png";
 
 const MeuPerfil = () => {
   const usuarioLogado = useSelector((state) => state?.auth);
@@ -49,7 +48,7 @@ const MeuPerfil = () => {
               }}
             >
               <img
-                src={avatarPlaceholder}
+                src={"/logo512.png"}
                 alt="Imagem do usuário"
                 style={{
                   width: "100%",

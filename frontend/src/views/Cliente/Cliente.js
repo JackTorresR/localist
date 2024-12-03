@@ -9,7 +9,11 @@ import {
   salvarCliente,
 } from "../../database/dbCliente";
 import { useState } from "react";
-import { normalizarData, normalizarTelefone } from "../../utils/utils";
+import {
+  dadoExiste,
+  normalizarData,
+  normalizarTelefone,
+} from "../../utils/utils";
 import ConfirmarAcaoModal from "../../components/Modal/ConfirmarAcaoModal";
 import InfoModal from "../../components/Modal/InfoModal";
 import FormModal from "../../components/Modal/FormModal";
@@ -24,14 +28,17 @@ const Cliente = () => {
     setItemDetalhe({});
   };
 
-  const entidade = "cliente";
+  const entidade = "CLIENTE";
   const campos = camposFormCliente;
   const propsComponentes = { campos, entidade, itemDetalhe };
+  const tituloCard =
+    (dadoExiste(itemDetalhe?._id) ? "Editar" : "Criar") + " cliente";
 
   return (
     <Box style={Estilos.containerPrincipal}>
       <FormModal
         {...propsComponentes}
+        tituloCard={tituloCard}
         onSubmit={handleSubmit}
         onClose={() => setItemDetalhe({})}
       />

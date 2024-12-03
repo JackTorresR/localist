@@ -1,4 +1,5 @@
 import {
+  checarPermissao,
   dadoExiste,
   dispatcher,
   gerarNomeSemPontuacao,
@@ -13,11 +14,18 @@ import { toast } from "react-hot-toast";
 import { limparClienteDetalhe } from "../redux/acoes/acoesCliente";
 import httpRequest from "../utils/httpRequest";
 
+const prefixoPermissao = "CLIENTE";
 const url = "cliente";
 const prefixo = "cliente";
 
 export const getClientes = async (params = {}) => {
   const { offset = 0, limite = limiteItemsPorPagina, ...outrosParams } = params;
+
+  const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_LISTAR`);
+  if (semPermissaoAcao) {
+    toast.error("Você não possuí permissão de listagem!");
+    return null;
+  }
 
   limparClienteDetalhe();
 
@@ -68,6 +76,12 @@ export const salvarCliente = async (dados = {}) => {
 
 export const editarCliente = async (cliente) => {
   try {
+    const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_EDITAR`);
+    if (semPermissaoAcao) {
+      toast.error("Você não possuí permissão de edição!");
+      return null;
+    }
+
     const resposta = await httpRequest({
       url: `${url}/${cliente._id}`,
       method: "PATCH",
@@ -88,6 +102,12 @@ export const editarCliente = async (cliente) => {
 
 export const criarCliente = async (cliente) => {
   try {
+    const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_CRIAR`);
+    if (semPermissaoAcao) {
+      toast.error("Você não possuí permissão de criar!");
+      return null;
+    }
+
     const resposta = await httpRequest({
       url: `${url}`,
       method: "POST",
@@ -107,6 +127,12 @@ export const criarCliente = async (cliente) => {
 };
 
 export const removerCliente = async (id) => {
+  const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_DELETAR`);
+  if (semPermissaoAcao) {
+    toast.error("Você não possuí permissão de remover registro!");
+    return null;
+  }
+
   if (!dadoExiste(id)) {
     toast.error("Não conseguimos identificar o cliente!");
     return null;

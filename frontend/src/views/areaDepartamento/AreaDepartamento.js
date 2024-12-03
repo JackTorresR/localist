@@ -26,7 +26,7 @@ const AreaDepartamento = () => {
     setItemDetalhe({});
   };
 
-  const entidade = "areaDepartamento";
+  const entidade = "AREA_DEPARTAMENTO";
   const campos = camposFormAreaDepartamento;
   const propsComponentes = { campos, entidade, itemDetalhe };
   const tituloCard =
@@ -52,6 +52,7 @@ const AreaDepartamento = () => {
       <TabelaCustomizada
         {...areasDepartamentos}
         titulo="Áreas e departamentos"
+        entidade={entidade}
         colunas={colunasTabelaAreaDepartamento}
         acao={getAreasDepartamentos}
         camposFiltro={campos}

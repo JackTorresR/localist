@@ -26,7 +26,7 @@ const EspecieDocumental = () => {
     setItemDetalhe({});
   };
 
-  const entidade = "especieDocumental";
+  const entidade = "ESPECIE_DOCUMENTAL";
   const campos = camposFormEspecieDocumental;
   const propsComponentes = { campos, entidade, itemDetalhe };
   const tituloCard =
@@ -51,6 +51,7 @@ const EspecieDocumental = () => {
       <TabelaCustomizada
         {...especiesDocumentais}
         titulo="Espécies documentais"
+        entidade={entidade}
         colunas={colunasTabelaEspecieDocumental}
         acao={getEspeciesDocumentais}
         camposFiltro={campos}

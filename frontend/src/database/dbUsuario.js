@@ -1,4 +1,9 @@
-import { dadoExiste, dispatcher, gerarNomeSemPontuacao } from "../utils/utils";
+import {
+  checarPermissao,
+  dadoExiste,
+  dispatcher,
+  gerarNomeSemPontuacao,
+} from "../utils/utils";
 import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
 import { toast } from "react-hot-toast";
@@ -6,11 +11,18 @@ import { limparUsuarioDetalhe } from "../redux/acoes/acoesUsuario";
 import Store from "../redux/Store";
 import httpRequest from "../utils/httpRequest";
 
+const prefixoPermissao = "USUARIO";
 const url = "usuario";
 const prefixo = "usuario";
 
 export const getUsuarios = async (params = {}) => {
   const { offset = 0, limite = limiteItemsPorPagina, ...outrosParams } = params;
+
+  const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_LISTAR`);
+  if (semPermissaoAcao) {
+    toast.error("Você não possuí permissão de listagem!");
+    return null;
+  }
 
   limparUsuarioDetalhe();
 
@@ -61,6 +73,12 @@ export const salvarUsuario = async (dados = {}) => {
 
 export const editarUsuario = async (usuario) => {
   try {
+    const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_EDITAR`);
+    if (semPermissaoAcao) {
+      toast.error("Você não possuí permissão de edição!");
+      return null;
+    }
+
     const resposta = await httpRequest({
       url: `${url}/${usuario._id}`,
       method: "PATCH",
@@ -82,6 +100,12 @@ export const editarUsuario = async (usuario) => {
 
 export const criarUsuario = async (usuario) => {
   try {
+    const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_CRIAR`);
+    if (semPermissaoAcao) {
+      toast.error("Você não possuí permissão de criar!");
+      return null;
+    }
+
     const resposta = await httpRequest({
       url: `${url}`,
       method: "POST",
@@ -101,6 +125,12 @@ export const criarUsuario = async (usuario) => {
 };
 
 export const removerUsuario = async (id) => {
+  const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_DELETAR`);
+  if (semPermissaoAcao) {
+    toast.error("Você não possuí permissão de remover registro!");
+    return null;
+  }
+
   if (!dadoExiste(id)) {
     toast.error("Não conseguimos identificar o usuário!");
     return null;
@@ -125,6 +155,12 @@ export const removerUsuario = async (id) => {
 
 export const alterarSenhaUsuario = async (dados) => {
   try {
+    const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_ALTERAR_SENHA`);
+    if (semPermissaoAcao) {
+      toast.error("Você não possuí permissão de alterar senha!");
+      return null;
+    }
+
     const resposta = await httpRequest({
       url: `${url}/editar-senha`,
       method: "PUT",

@@ -1,5 +1,6 @@
 import {
   calcularTempo,
+  checarPermissao,
   dadoExiste,
   dispatcher,
   gerarNomeSemPontuacao,
@@ -17,11 +18,18 @@ import {
 } from "./dbAreaDepartamento";
 import httpRequest from "../utils/httpRequest";
 
+const prefixoPermissao = "ESPECIE_DOCUMENTAL";
 const prefixo = "especieDocumental";
 const url = "especie-documental";
 
 export const getEspeciesDocumentais = async (params = {}) => {
   const { offset = 0, limite = limiteItemsPorPagina, ...outrosParams } = params;
+
+  const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_LISTAR`);
+  if (semPermissaoAcao) {
+    toast.error("Você não possuí permissão de listagem!");
+    return null;
+  }
 
   limparEspecieDocumentalDetalhe();
 
@@ -72,6 +80,12 @@ export const salvarEspecieDocumental = async (dados = {}) => {
 
 export const editarEspecieDocumental = async (especieDocumental) => {
   try {
+    const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_EDITAR`);
+    if (semPermissaoAcao) {
+      toast.error("Você não possuí permissão de edição!");
+      return null;
+    }
+
     const resposta = await httpRequest({
       url: `${url}/${especieDocumental._id}`,
       method: "PATCH",
@@ -92,6 +106,12 @@ export const editarEspecieDocumental = async (especieDocumental) => {
 
 export const criarEspecieDocumental = async (especieDocumental) => {
   try {
+    const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_CRIAR`);
+    if (semPermissaoAcao) {
+      toast.error("Você não possuí permissão de criar!");
+      return null;
+    }
+
     const resposta = await httpRequest({
       url: `${url}`,
       method: "POST",
@@ -111,6 +131,12 @@ export const criarEspecieDocumental = async (especieDocumental) => {
 };
 
 export const removerEspecieDocumental = async (id) => {
+  const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_DELETAR`);
+  if (semPermissaoAcao) {
+    toast.error("Você não possuí permissão de remover registro!");
+    return null;
+  }
+
   if (!dadoExiste(id)) {
     toast.error("Não conseguimos identificar a espécie documental!");
     return null;
