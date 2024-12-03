@@ -2,21 +2,18 @@ import {
   calcularTempo,
   dadoExiste,
   dispatcher,
-  gerarNomeSemPontuacao
+  gerarNomeSemPontuacao,
 } from "../utils/utils";
 import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
 import { toast } from "react-hot-toast";
-import {
-  detalharEspecieDocumental,
-  limparEspecieDocumentalDetalhe
-} from "../redux/acoes/acoesEspecieDocumental";
+import { limparEspecieDocumentalDetalhe } from "../redux/acoes/acoesEspecieDocumental";
 import Store from "../redux/Store";
 import {
   camposFormAreaDepartamento,
   colunasTabelaAreaDepartamento,
   getAreasDepartamentos,
-  salvarAreaDepartamento
+  salvarAreaDepartamento,
 } from "./dbAreaDepartamento";
 import httpRequest from "../utils/httpRequest";
 
@@ -50,13 +47,6 @@ export const getEspeciesDocumentais = async (params = {}) => {
     const pagina = offset / limite;
 
     dispatcher(`${prefixo}/LISTAR`, { lista, pagina, quantidade });
-
-    const filtrouAchouSoUm =
-      Object.keys(outrosParams)?.length > 0 && quantidade === 1;
-
-    if (filtrouAchouSoUm) {
-      detalharEspecieDocumental(lista?.[0]);
-    }
   } catch (erro) {
     verificarPorErros(erro);
   }

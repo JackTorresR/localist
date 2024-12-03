@@ -117,22 +117,6 @@ const listarCaixasArquivos = async (req, res) => {
   }
 };
 
-const detalharCaixaArquivo = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const caixaArquivo = await CaixaArquivo.findOne({ _id: id }, "-__v");
-    if (!caixaArquivo) {
-      return res
-        .status(404)
-        .json({ mensagem: "Caixa de arquivo não encontrado!" });
-    }
-    res.status(200).json(caixaArquivo);
-  } catch (error) {
-    console.error("Erro ao detalhar caixa de arquivo:", error);
-    res.status(500).json({ mensagem: "Erro interno do servidor!" });
-  }
-};
-
 const editarCaixaArquivo = async (req, res) => {
   try {
     const { id } = req.params;
@@ -265,7 +249,6 @@ const descartarCaixaArquivo = async (req, res) => {
 module.exports = {
   criarCaixaArquivo,
   listarCaixasArquivos,
-  detalharCaixaArquivo,
   editarCaixaArquivo,
   deletarCaixaArquivo,
   atualizarSituacaoCaixas,

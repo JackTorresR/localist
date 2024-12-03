@@ -43,25 +43,26 @@ export const acessoAutomatico = async (dispatch) => {
   const usuarioTexto = localStorage.getItem("usuario");
   if (!usuarioTexto) return false;
 
-  const usuario = JSON.parse(usuarioTexto || {});
+  const usuarioSalvo = JSON.parse(usuarioTexto || {});
 
   try {
     const resposta = await fetch(`${configs.API_URL}/usuario/validar`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${usuario?.token}`,
+        Authorization: `Bearer ${usuarioSalvo?.token}`,
         "Content-Type": "application/json",
       },
     });
 
     const dados = await resposta.json();
+    const { mensagem, usuario } = dados;
 
     if (!resposta.ok) {
       sairDoSistema();
-      throw new Error(dados.mensagem);
+      throw new Error(mensagem);
     }
 
-    dispatch({ type: `${prefixo}/ACESSAR_AUTOMATICAMENTE` });
+    dispatch({ type: `${prefixo}/ACESSAR_AUTOMATICAMENTE`, payload: usuario });
   } catch (erro) {
     sairDoSistema();
     toast.error(erro.message || "Erro ao autenticar automaticamente!");

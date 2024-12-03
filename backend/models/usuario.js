@@ -13,7 +13,7 @@ const usuarioSchema = new mongoose.Schema({
   telefone: { type: String },
   perfilAcesso: {
     type: String,
-    enum: ["Administrativo", "Operacional"],
+    enum: ["Administrativo", "Cliente", "Operacional"],
     required: true,
   },
 });

@@ -2,10 +2,7 @@ import { dadoExiste, dispatcher, gerarNomeSemPontuacao } from "../utils/utils";
 import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
 import { toast } from "react-hot-toast";
-import {
-  detalharUsuario,
-  limparUsuarioDetalhe
-} from "../redux/acoes/acoesUsuario";
+import { limparUsuarioDetalhe } from "../redux/acoes/acoesUsuario";
 import Store from "../redux/Store";
 import httpRequest from "../utils/httpRequest";
 
@@ -39,13 +36,6 @@ export const getUsuarios = async (params = {}) => {
     const pagina = offset / limite;
 
     dispatcher(`${prefixo}/LISTAR`, { lista, pagina, quantidade });
-
-    const filtrouAchouSoUm =
-      Object.keys(outrosParams)?.length > 0 && quantidade === 1;
-
-    if (filtrouAchouSoUm) {
-      detalharUsuario(lista?.[0]);
-    }
   } catch (erro) {
     verificarPorErros(erro);
   }
@@ -144,7 +134,7 @@ export const alterarSenhaUsuario = async (dados) => {
     const { mensagem } = resposta;
     toast.success(mensagem || "Senha alterada com sucesso!");
 
-    window.location.href = "/cliente";
+    window.location.href = "/caixa-arquivo";
   } catch (erro) {
     verificarPorErros(erro);
   }

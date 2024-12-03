@@ -142,3 +142,11 @@ export const calcularTempo = (item = {}) => {
 
   return resultado.length ? resultado.join("") : "0 Dia";
 };
+
+export const checarPermissao = (permissao) => {
+  const permissoes = Store?.getState()?.auth?.permissoes || [];
+  const temPermissao =
+    permissoes?.filter((item) => item === permissao)?.length > 0;
+
+  return temPermissao;
+};

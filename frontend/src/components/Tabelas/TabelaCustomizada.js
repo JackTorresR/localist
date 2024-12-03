@@ -18,7 +18,7 @@ import CORES from "../../styles/Cores";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import React, { useEffect, useState } from "react";
-import { dadoExiste } from "../../utils/utils";
+import { checarPermissao, dadoExiste } from "../../utils/utils";
 import TooltipAplicavel from "../Tooltip/TooltipAplicavel";
 
 const TabelaCustomizada = (props = {}) => {
@@ -40,6 +40,7 @@ const TabelaCustomizada = (props = {}) => {
   } = props;
 
   const nomeModalFiltro = `${entidade}-modal-filter`;
+  const prefixoPermissao = props?.prefixoPermissao || entidade?.toUpperCase();
   const [itemSelecionado, setItemSelecionado] = useState(null);
 
   useEffect(() => {
@@ -80,11 +81,13 @@ const TabelaCustomizada = (props = {}) => {
       {
         titulo: "Editar",
         condicional: mostrarAcaoEditar,
+        permissao: `${prefixoPermissao}_EDITAR`,
         acao: () => (acaoEditar ? acaoEditar(item) : null),
       },
       {
         titulo: "Remover",
         condicional: mostrarAcaoRemover,
+        permissao: `${prefixoPermissao}_DELETAR`,
         acao: () => (acaoRemover ? acaoRemover(item) : null),
       },
     ]?.concat(botoesExtrasAcao);
@@ -106,6 +109,11 @@ const TabelaCustomizada = (props = {}) => {
     if (condicionalBooleano) {
       podeMostrarAcao = botao?.condicional;
     }
+
+    const temPermissao =
+      !dadoExiste(botao?.permissao) || checarPermissao(botao?.permissao);
+
+    if (!temPermissao) podeMostrarAcao = false;
 
     return (
       podeMostrarAcao && (

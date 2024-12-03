@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const { identificarParametros } = require("../utils");
 const path = require("path");
 const fs = require("fs");
+const { PERMISSOES, perfil } = require("../permissoes");
 
 const obterArquivosPorUsuarioId = (id) => {
   try {
@@ -103,26 +104,6 @@ const listarUsuarios = async (req, res) => {
   }
 };
 
-const detalharUsuario = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const usuario = await Usuario.findOne({ id }, "-senha");
-    if (!usuario) {
-      return res.status(404).json({ mensagem: "Usuário não encontrado!" });
-    }
-
-    const imagens = obterArquivosPorUsuarioId(id);
-    let retorno = { ...usuario.toObject(), imagens };
-    delete retorno.senha;
-
-    res.status(200).json(retorno);
-  } catch (error) {
-    console.error("Erro ao detalhar usuário:", error);
-    res.status(500).json({ mensagem: "Erro interno do servidor!" });
-  }
-};
-
 const editarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
@@ -144,9 +125,10 @@ const editarUsuario = async (req, res) => {
 
     const { senha: _, ...retorno } = usuarioAtualizado.toObject();
 
+    const permissoes = perfil[usuarioAtualizado?.perfilAcesso] || [];
     const imagens = obterArquivosPorUsuarioId(id);
 
-    let usuario = { ...retorno, imagens };
+    let usuario = { ...retorno, imagens, permissoes };
     delete usuario.senha;
 
     res
@@ -210,8 +192,9 @@ const acessarSistema = async (req, res) => {
       perfilAcesso: usuarioEncontrado.perfilAcesso || "---",
     };
 
+    const permissoes = perfil[usuarioEncontrado?.perfilAcesso] || [];
     const imagens = obterArquivosPorUsuarioId(usuarioEncontrado._id);
-    const dadosUsuario = { ...objUsuario, imagens };
+    const dadosUsuario = { ...objUsuario, imagens, permissoes };
     const token = jwt.sign(dadosUsuario, CHAVE_SECRETA, { expiresIn: "10h" });
 
     dadosUsuario.token = token;
@@ -237,9 +220,13 @@ const validarAcesso = (req, res) => {
       return res.status(401).json({ mensagem: "Token inválido!" });
     }
 
+    const perfilAcesso = decoded.perfilAcesso;
+    const permissoes = perfil[perfilAcesso] || [];
+    const usuarioComPermissoes = { ...decoded, permissoes };
+
     return res
       .status(200)
-      .json({ mensagem: "Acesso autorizado!", usuario: decoded });
+      .json({ mensagem: "Acesso autorizado!", usuario: usuarioComPermissoes });
   });
 };
 
@@ -289,7 +276,12 @@ const autenticar = async (req, res, next) => {
       return res.status(401).json({ mensagem: "Usuário não encontrado!" });
     }
 
-    req.user = { id: usuario?._id?.toString(), nome: usuario.nome };
+    req.user = {
+      id: usuario?._id?.toString(),
+      nome: usuario.nome,
+      perfilAcesso: usuario.perfilAcesso,
+    };
+
     next();
   } catch (error) {
     console.error("Erro na autenticação:", error);
@@ -297,14 +289,41 @@ const autenticar = async (req, res, next) => {
   }
 };
 
+const verificarPermissao = (permissao) => (req, res, next) => {
+  try {
+    const { perfilAcesso } = req.user;
+
+    if (!perfilAcesso || !perfil[perfilAcesso]) {
+      return res.status(403).json({
+        mensagem: "Perfil de acesso inválido ou não informado!",
+      });
+    }
+
+    const permissoesPerfil = perfil[perfilAcesso];
+
+    const possuiPermissao = permissoesPerfil?.includes(permissao);
+    if (!possuiPermissao) {
+      const textoPermissao = PERMISSOES[permissao];
+      return res.status(403).json({
+        mensagem: `Você não possui a permissão de ${textoPermissao}!`,
+      });
+    }
+
+    next();
+  } catch (error) {
+    console.error("Erro ao verificar permissão:", error);
+    res.status(500).json({ mensagem: "Erro interno do servidor!" });
+  }
+};
+
 module.exports = {
   criarUsuario,
   listarUsuarios,
-  detalharUsuario,
   editarUsuario,
   deletarUsuario,
   acessarSistema,
   validarAcesso,
   editarSenha,
   autenticar,
+  verificarPermissao,
 };

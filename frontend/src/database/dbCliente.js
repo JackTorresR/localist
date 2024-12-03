@@ -10,10 +10,7 @@ import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
 import Store from "../redux/Store";
 import { toast } from "react-hot-toast";
-import {
-  detalharCliente,
-  limparClienteDetalhe,
-} from "../redux/acoes/acoesCliente";
+import { limparClienteDetalhe } from "../redux/acoes/acoesCliente";
 import httpRequest from "../utils/httpRequest";
 
 const url = "cliente";
@@ -46,13 +43,6 @@ export const getClientes = async (params = {}) => {
     const pagina = offset / limite;
 
     dispatcher(`${prefixo}/LISTAR`, { lista, pagina, quantidade });
-
-    const filtrouAchouSoUm =
-      Object.keys(outrosParams)?.length > 0 && quantidade === 1;
-
-    if (filtrouAchouSoUm) {
-      detalharCliente(lista?.[0]);
-    }
   } catch (erro) {
     verificarPorErros(erro);
   }

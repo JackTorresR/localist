@@ -43,6 +43,7 @@ const Cliente = () => {
       <TabelaCustomizada
         {...clientes}
         titulo="Clientes"
+        entidade={entidade}
         colunas={[
           { name: "Nome", value: "nome" },
           { name: "Email", value: "email" },

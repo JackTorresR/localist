@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import AcessoForm from "./views/acesso/AcessoForm";
 import { acessoAutomatico } from "./database/dbAuth";
 import { Toaster } from "react-hot-toast";
-import Cliente from "./views/cliente/Cliente";
 import Usuario from "./views/usuario/Usuario";
 import AreaDepartamento from "./views/areaDepartamento/AreaDepartamento";
 import EspecieDocumental from "./views/especieDocumental/EspecieDocumental";
@@ -14,6 +13,8 @@ import MeuPerfil from "./views/usuario/MeuPerfil";
 import Notificacao from "./views/notificacao/Notificacao";
 import { getNotificacoes } from "./database/dbCaixaArquivo";
 import NavbarCustom from "./components/Navbar/NavbarCustom";
+import Cliente from "./views/cliente/Cliente";
+import { checarPermissao, dadoExiste } from "./utils/utils";
 
 const RotaPrivativa = ({ children }) => {
   const token = useSelector((state) => state.auth.token);
@@ -26,7 +27,11 @@ const RotaPrivativa = ({ children }) => {
 
 const RotaLoginOuTelaInicial = () => {
   const token = useSelector((state) => state.auth.token);
-  return token || localStorage.getItem("token") ? <Cliente /> : <AcessoForm />;
+  return token || localStorage.getItem("token") ? (
+    <CaixaArquivo />
+  ) : (
+    <AcessoForm />
+  );
 };
 
 const Rotas = () => {
@@ -52,14 +57,52 @@ const Rotas = () => {
   }
 
   const rotasExtras = [
-    { caminho: "/usuario", componente: <Usuario /> },
-    { caminho: "/area", componente: <AreaDepartamento /> },
-    { caminho: "/especie-documental", componente: <EspecieDocumental /> },
-    { caminho: "/caixa-arquivo", componente: <CaixaArquivo /> },
-    { caminho: "/alterar-senha", componente: <AlterarSenhaForm /> },
+    {
+      caminho: "/cliente",
+      componente: <Cliente />,
+      prefixoPermissao: "CLIENTE",
+    },
+    {
+      caminho: "/usuario",
+      componente: <Usuario />,
+      prefixoPermissao: "USUARIO",
+    },
+    {
+      caminho: "/area",
+      componente: <AreaDepartamento />,
+      prefixoPermissao: "AREA_DEPARTAMENTO",
+    },
+    {
+      caminho: "/especie-documental",
+      componente: <EspecieDocumental />,
+      prefixoPermissao: "ESPECIE_DOCUMENTAL",
+    },
+    {
+      caminho: "/caixa-arquivo",
+      componente: <CaixaArquivo />,
+      prefixoPermissao: "CAIXA_ARQUIVO",
+    },
+    {
+      caminho: "/alterar-senha",
+      componente: <AlterarSenhaForm />,
+      permissao: "USUARIO_ALTERAR_SENHA",
+    },
     { caminho: "/meu-perfil", componente: <MeuPerfil /> },
     { caminho: "/notificacao", componente: <Notificacao /> },
   ];
+
+  const filtrarPermissao = (lista = []) => {
+    const novaLista = lista?.filter((item) => {
+      const naoTemPermissao =
+        !dadoExiste(item?.permissao) && !dadoExiste(item?.prefixoPermissao);
+      if (naoTemPermissao) return true;
+
+      const permissao = item?.permissao || `${item?.prefixoPermissao}_MENU`;
+      return checarPermissao(permissao);
+    });
+
+    return novaLista;
+  };
 
   return (
     <BrowserRouter>
@@ -72,7 +115,7 @@ const Rotas = () => {
       <Routes>
         <Route path="*" element={<Navigate to="/" />} />
         <Route path="/" element={<RotaLoginOuTelaInicial />} />
-        {rotasExtras?.map((item, index) => (
+        {filtrarPermissao(rotasExtras)?.map((item, index) => (
           <Route
             key={index}
             path={item?.caminho}

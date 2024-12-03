@@ -76,6 +76,7 @@ const Usuario = () => {
       tipo: "select",
       selectItems: [
         { label: "Administrativo", value: "Administrativo" },
+        { label: "Cliente", value: "Cliente" },
         { label: "Operacional", value: "Operacional" },
       ],
     },

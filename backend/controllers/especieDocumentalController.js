@@ -94,25 +94,6 @@ const listarEspeciesDocumentais = async (req, res) => {
   }
 };
 
-const detalharEspecieDocumental = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const especieDocumental = await EspecieDocumental.findById(id);
-
-    if (!especieDocumental) {
-      return res
-        .status(404)
-        .json({ mensagem: "Espécie Documental não encontrada!" });
-    }
-
-    res.status(200).json(especieDocumental);
-  } catch (error) {
-    console.error("Erro ao detalhar Espécie Documental:", error);
-    res.status(500).json({ mensagem: "Erro interno do servidor!" });
-  }
-};
-
 const editarEspecieDocumental = async (req, res) => {
   try {
     const { id } = req.params;
@@ -164,7 +145,6 @@ const deletarEspecieDocumental = async (req, res) => {
 module.exports = {
   criarEspecieDocumental,
   listarEspeciesDocumentais,
-  detalharEspecieDocumental,
   editarEspecieDocumental,
   deletarEspecieDocumental,
 };

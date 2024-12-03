@@ -2,16 +2,13 @@ import { dadoExiste, dispatcher, gerarNomeSemPontuacao } from "../utils/utils";
 import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
 import { toast } from "react-hot-toast";
-import {
-  detalharAreaDepartamento,
-  limparAreaDepartamentoDetalhe
-} from "../redux/acoes/acoesAreaDepartamento";
+import { limparAreaDepartamentoDetalhe } from "../redux/acoes/acoesAreaDepartamento";
 import Store from "../redux/Store";
 import {
   camposFormCliente,
   colunasTabelaClientes,
   getClientes,
-  salvarCliente
+  salvarCliente,
 } from "./dbCliente";
 import httpRequest from "../utils/httpRequest";
 
@@ -45,13 +42,6 @@ export const getAreasDepartamentos = async (params = {}) => {
     const pagina = offset / limite;
 
     dispatcher(`${prefixo}/LISTAR`, { lista, pagina, quantidade });
-
-    const filtrouAchouSoUm =
-      Object.keys(outrosParams)?.length > 0 && quantidade === 1;
-
-    if (filtrouAchouSoUm) {
-      detalharAreaDepartamento(lista?.[0]);
-    }
   } catch (erro) {
     verificarPorErros(erro);
   }

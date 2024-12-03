@@ -82,20 +82,6 @@ const listarClientes = async (req, res) => {
   }
 };
 
-const detalharCliente = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const cliente = await Cliente.findOne({ _id: id }, "-__v");
-    if (!cliente) {
-      return res.status(404).json({ mensagem: "Cliente não encontrado!" });
-    }
-    res.status(200).json(cliente);
-  } catch (error) {
-    console.error("Erro ao detalhar cliente:", error);
-    res.status(500).json({ mensagem: "Erro interno do servidor!" });
-  }
-};
-
 const editarCliente = async (req, res) => {
   try {
     const { id } = req.params;
@@ -145,7 +131,6 @@ const deletarCliente = async (req, res) => {
 module.exports = {
   criarCliente,
   listarClientes,
-  detalharCliente,
   editarCliente,
   deletarCliente,
 };

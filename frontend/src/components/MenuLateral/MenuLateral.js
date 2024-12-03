@@ -24,6 +24,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import avatarPlaceholder from "../../assets/avatar_placeholder.png";
 import { sairDoSistema } from "../../database/dbAuth";
+import { checarPermissao, dadoExiste } from "../../utils/utils";
 
 const MenuLateral = () => {
   const navigate = useNavigate();
@@ -33,10 +34,22 @@ const MenuLateral = () => {
   );
   const drawerAberto = useSelector((state) => state?.modal?.["drawer"]);
 
+  const filtrarPermissao = (lista = []) => {
+    const listaFiltrada = lista?.filter((item = {}) => {
+      const { permissao } = item;
+      const temPermissao = !dadoExiste(permissao) || checarPermissao(permissao);
+
+      return temPermissao;
+    });
+
+    return listaFiltrada;
+  };
+
   const acoesRapidas = [
     {
       Icon: IoMdLock,
       descricao: "Mudar a senha",
+      permissao: "USUARIO_ALTERAR_SENHA",
       acao: () => navigate("/alterar-senha"),
     },
     { Icon: ImExit, descricao: "Sair do sistema", acao: () => sairDoSistema() },
@@ -48,6 +61,7 @@ const MenuLateral = () => {
     {
       Icon: MdNotificationsActive,
       descricao: "Minhas notificações",
+      permissao: "CAIXA_ARQUIVO_MENU",
       acao: () => navigate("/notificacao"),
       quantitativo: true,
     },
@@ -58,28 +72,33 @@ const MenuLateral = () => {
       Icon: IoIosPeople,
       iconeTamanho: 28,
       nome: "Clientes",
+      permissao: "CLIENTE_MENU",
       acao: () => navigate("/cliente"),
     },
     {
       Icon: FaUserLarge,
       iconeTamanho: 20,
       nome: "Usuários",
+      permissao: "USUARIO_MENU",
       acao: () => navigate("/usuario"),
     },
     {
       Icon: FaMapLocationDot,
       nome: "Áreas/Departamentos",
+      permissao: "AREA_DEPARTAMENTO_MENU",
       acao: () => navigate("/area"),
     },
     {
       Icon: IoFileTrayFullSharp,
       nome: "Espécie Documental",
+      permissao: "ESPECIE_DOCUMENTAL_MENU",
       acao: () => navigate("/especie-documental"),
     },
     {
       Icon: TiDropbox,
       iconeTamanho: 30,
       nome: "Caixas de Arquivos",
+      permissao: "CAIXA_ARQUIVO_MENU",
       acao: () => navigate("/caixa-arquivo"),
     },
   ];
@@ -102,9 +121,9 @@ const MenuLateral = () => {
       }}
     >
       <Box
+        mb={2}
         display="flex"
         alignItems="center"
-        mb={2}
         justifyContent="space-between"
       >
         <Box display="flex" alignItems="center">
@@ -118,14 +137,15 @@ const MenuLateral = () => {
       </Box>
       <Box
         sx={{
-          backgroundColor: CORES.CINZA_ESCURO,
-          padding: "10px",
-          borderRadius: "10px",
+          display: "flex",
           marginBottom: 2,
+          borderRadius: "10px",
+          justifyContent: "center",
+          backgroundColor: CORES.CINZA_ESCURO,
         }}
       >
-        <Box display="flex" justifyContent="space-between">
-          {acoesRapidas.map((item, index) => {
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          {filtrarPermissao(acoesRapidas)?.map((item, index) => {
             const temNotificacao =
               item?.quantitativo === true && quantidadeNotificacoes > 0;
 
@@ -147,11 +167,7 @@ const MenuLateral = () => {
                     />
                     {temNotificacao && (
                       <ListItemText
-                        style={{
-                          color: CORES.BRANCO,
-                          position: "absolute",
-                          right: temMuitaNotificacao ? -3 : 5,
-                        }}
+                        style={{ color: CORES.BRANCO }}
                         primary={
                           temMuitaNotificacao ? "9+" : quantidadeNotificacoes
                         }
@@ -165,7 +181,7 @@ const MenuLateral = () => {
         </Box>
       </Box>
       <List>
-        {botoesMenu.map((item, index) => (
+        {filtrarPermissao(botoesMenu)?.map((item, index) => (
           <ListItem
             button={1}
             key={index}

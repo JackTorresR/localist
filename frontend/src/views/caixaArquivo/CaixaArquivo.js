@@ -26,7 +26,7 @@ const CaixaArquivo = () => {
     setItemDetalhe({});
   };
 
-  const entidade = "caixaArquivo";
+  const entidade = "caixa_arquivo";
   const campos = camposFormCaixaArquivo;
   const propsComponentes = { campos, entidade, itemDetalhe };
   const tituloCard =
@@ -57,6 +57,7 @@ const CaixaArquivo = () => {
       <TabelaCustomizada
         {...caixasArquivos}
         titulo="Caixas de arquivos"
+        entidade={entidade}
         colunas={colunasTabelaCaixaArquivo}
         acao={getCaixasArquivo}
         camposFiltro={campos}

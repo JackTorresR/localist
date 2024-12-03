@@ -84,27 +84,6 @@ const listarAreasDepartamentos = async (req, res) => {
   }
 };
 
-const detalharAreaDepartamento = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const areaDepartamento = await AreaDepartamento.findById(id)
-      .populate("idCliente", "nome")
-      .populate("responsavel", "nome");
-
-    if (!areaDepartamento) {
-      return res
-        .status(404)
-        .json({ mensagem: "Área/Departamento não encontrado!" });
-    }
-
-    res.status(200).json(areaDepartamento);
-  } catch (error) {
-    console.error("Erro ao detalhar Área/Departamento:", error);
-    res.status(500).json({ mensagem: "Erro interno do servidor!" });
-  }
-};
-
 const editarAreaDepartamento = async (req, res) => {
   try {
     const { id } = req.params;
@@ -156,7 +135,6 @@ const deletarAreaDepartamento = async (req, res) => {
 module.exports = {
   criarAreaDepartamento,
   listarAreasDepartamentos,
-  detalharAreaDepartamento,
   editarAreaDepartamento,
   deletarAreaDepartamento,
 };

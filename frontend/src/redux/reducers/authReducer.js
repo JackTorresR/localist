@@ -13,9 +13,9 @@ export const auth = createSlice({
         ...action.payload,
       };
     },
-    ACESSAR_AUTOMATICAMENTE: (state) => {
+    ACESSAR_AUTOMATICAMENTE: (state, action) => {
       const usuario = JSON.parse(localStorage.getItem("usuario"));
-      return { ...state, ...usuario };
+      return { ...state, ...usuario, ...action?.payload };
     },
     SAIR: () => {
       localStorage.removeItem("usuario");

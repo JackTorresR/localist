@@ -4,7 +4,7 @@ import { IoFilter } from "react-icons/io5";
 import Estilos from "../../styles/Styles";
 import { TiPlus } from "react-icons/ti";
 import toast from "react-hot-toast";
-import { dadoExiste } from "../../utils/utils";
+import { checarPermissao, dadoExiste } from "../../utils/utils";
 import FiltrarRegistrosModal from "../Modal/FiltrarRegistrosModal";
 import { abrirModal } from "../../redux/acoes/acoesModal";
 
@@ -15,12 +15,21 @@ const CabecalhoTabela = (props = {}) => {
     titulo = "Tabela",
     camposFiltro = [],
     entidade = "filtro",
-    exibirFiltro = false,
-    exibirBotaoAdicionar = false,
   } = props;
 
   const nomeModalFiltro = `${entidade}-modal-filter`;
   const temCamposFiltro = camposFiltro?.length > 0;
+
+  const prefixoPermissao = props?.prefixoPermissao || entidade?.toUpperCase();
+
+  const permissaoListar = `${prefixoPermissao}_LISTAR`;
+  const podeListar = checarPermissao(permissaoListar);
+  const exibirFiltro = props?.exibirFiltro !== false && podeListar;
+
+  const permissaoCriar = `${prefixoPermissao}_CRIAR`;
+  const podeCriar = checarPermissao(permissaoCriar);
+  const exibirBotaoAdicionar =
+    props?.exibirBotaoAdicionar !== false && podeCriar;
 
   return (
     <Box

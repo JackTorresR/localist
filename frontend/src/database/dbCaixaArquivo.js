@@ -1,4 +1,5 @@
 import {
+  checarPermissao,
   dadoExiste,
   dispatcher,
   gerarNomeSemPontuacao,
@@ -7,10 +8,7 @@ import {
 import verificarPorErros from "../config/verificarPorErros";
 import { limiteItemsPorPagina } from "../components/Tabelas/Paginacao";
 import { toast } from "react-hot-toast";
-import {
-  detalharCaixaArquivo,
-  limparCaixaArquivoDetalhe,
-} from "../redux/acoes/acoesCaixaArquivo";
+import { limparCaixaArquivoDetalhe } from "../redux/acoes/acoesCaixaArquivo";
 import Store from "../redux/Store";
 import httpRequest from "../utils/httpRequest";
 import {
@@ -26,6 +24,7 @@ import {
   salvarEspecieDocumental,
 } from "./dbEspecieDocumental";
 
+const prefixoPermissao = "CAIXA_ARQUIVO";
 const prefixo = "caixaArquivo";
 const url = "caixa-arquivo";
 
@@ -36,6 +35,12 @@ export const getCaixasArquivo = async (params = {}) => {
     limite = limiteItemsPorPagina,
     ...outrosParams
   } = params;
+
+  const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_LISTAR`);
+  if (semPermissaoAcao) {
+    toast.error("Você não possuí permissão de listagem!");
+    return null;
+  }
 
   limparCaixaArquivoDetalhe();
 
@@ -66,13 +71,6 @@ export const getCaixasArquivo = async (params = {}) => {
 
     const prefixoUtilizado = listarNotificacoes ? "notificacao" : prefixo;
     dispatcher(`${prefixoUtilizado}/LISTAR`, { lista, pagina, quantidade });
-
-    const filtrouAchouSoUm =
-      Object.keys(outrosParams)?.length > 0 && quantidade === 1;
-
-    if (filtrouAchouSoUm) {
-      detalharCaixaArquivo(lista?.[0]);
-    }
   } catch (erro) {
     verificarPorErros(erro);
   }
@@ -101,6 +99,12 @@ export const salvarCaixaArquivo = async (dados = {}) => {
 
 export const editarCaixaArquivo = async (caixaArquivo) => {
   try {
+    const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_EDITAR`);
+    if (semPermissaoAcao) {
+      toast.error("Você não possuí permissão de edição!");
+      return null;
+    }
+
     const resposta = await httpRequest({
       url: `${url}/${caixaArquivo._id}`,
       method: "PATCH",
@@ -122,6 +126,12 @@ export const editarCaixaArquivo = async (caixaArquivo) => {
 
 export const criarCaixaArquivo = async (caixaArquivo) => {
   try {
+    const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_CRIAR`);
+    if (semPermissaoAcao) {
+      toast.error("Você não possuí permissão de criar!");
+      return null;
+    }
+
     const resposta = await httpRequest({
       url: `${url}`,
       method: "POST",
@@ -142,6 +152,12 @@ export const criarCaixaArquivo = async (caixaArquivo) => {
 };
 
 export const removerCaixaArquivo = async (id) => {
+  const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_DELETAR`);
+  if (semPermissaoAcao) {
+    toast.error("Você não possuí permissão de remover registro!");
+    return null;
+  }
+
   if (!dadoExiste(id)) {
     toast.error("Não conseguimos identificar a caixa de arquivo!");
     return null;
@@ -170,6 +186,12 @@ export const removerCaixaArquivo = async (id) => {
 
 export const informarDescarteCaixaArquivo = async (id) => {
   try {
+    const semPermissaoAcao = !checarPermissao(`${prefixoPermissao}_DESCARTAR`);
+    if (semPermissaoAcao) {
+      toast.error("Você não possuí permissão de descarte!");
+      return null;
+    }
+
     const resposta = await httpRequest({
       url: `${url}/${id}/descartar`,
       method: "PUT",
